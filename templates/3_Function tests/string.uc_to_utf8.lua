@@ -1,0 +1,1 @@
+print( string.uc_to_utf8("3042") )	--3042 is the unicode for hiragana A.

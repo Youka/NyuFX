@@ -1,0 +1,1 @@
+print( shape.tooutline("m 0 0 l 100 0 100 50 0 50", 5) )

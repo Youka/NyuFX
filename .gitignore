@@ -1,0 +1,9 @@
+src/Release
+src/NyuFX.ncb
+src/NyuFX.suo
+src/NyuFX.vcproj.YOUKA.ASUS.user
+
+tools/*.*
+
+config.ini
+NyuFX.exe

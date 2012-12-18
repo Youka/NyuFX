@@ -1,0 +1,1 @@
+print( string.format("Left-top: %d %d\nRight-bottom: %d %d", shape.bounding("m 10 5 l 25 5 25 42 10 42")) )
