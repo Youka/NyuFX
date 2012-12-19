@@ -8,20 +8,14 @@ class GUI : public wxFrame{
 	public:
 		// Window initialization
 		GUI(const wxArrayString&);
-
 		// Menu handles
-		wxMenuBar *mbar;
 		wxMenu *fileMenu, *editMenu, *viewMenu, *editviewMenu, *openviewMenu, *resetMenu, *toolMenu, *helpMenu;
-
 		// Application files in tools folder
 		wxArrayString tools;
-
 	private:
 		// Interface construction
 		void CreateMenu();
-
         //Events
-        //DECLARE_EVENT_TABLE()
 		enum{
 			ID_MENU_NEW = 100,
 			ID_MENU_OPEN,
@@ -59,4 +53,5 @@ class GUI : public wxFrame{
 			ID_MENU_HELP = 600,
 			ID_MENU_ABOUT
 		};
+		//DECLARE_EVENT_TABLE()
 };
