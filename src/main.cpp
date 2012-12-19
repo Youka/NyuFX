@@ -1,20 +1,15 @@
 #include <wx/app.h>
-#include <wx/intl.h>
 #include "GUI.h"
 
+// Application instance
 class NyuFX : public wxApp{
     public:
         bool OnInit(){
-            // Language
-            static wxLocale lang(wxLANGUAGE_ENGLISH);
-
-            // Application window
-			GUI* main_wnd = new GUI(this->argv.GetArguments());
-            main_wnd->Show();
-            SetTopWindow(main_wnd);
-
-            return true;
+			GUI* app_wnd = new GUI(this->argv.GetArguments());	// Create single application window instance for whole running
+			app_wnd->Show();	// Activate window
+			this->SetTopWindow(app_wnd);	// Set os focus on window
+            return true;	// Everything ok, run application
         }
 };
 
-IMPLEMENT_APP(NyuFX);
+IMPLEMENT_APP(NyuFX);	// wxWidgets application initialization
