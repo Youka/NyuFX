@@ -14,3 +14,18 @@ msgstr ""
 
 msgid "File"
 msgstr "Datei"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "View"
+msgstr "Ansicht"
+
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+msgid "Tools"
+msgstr "Hilfsmittel"
+
+msgid "Help"
+msgstr "Hilfe"

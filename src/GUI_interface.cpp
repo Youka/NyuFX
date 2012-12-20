@@ -1,19 +1,38 @@
 #include "GUI.h"
-#include "System.h"
-#include <wx/dir.h>
 #include <wx/stdpaths.h>
+#include <wx/dir.h>
+#include "System.h"
+#include "Config.h"
 
-GUI::GUI(const wxArrayString &args) : wxFrame(0, wxID_ANY, wxT("NyuFX"), wxDefaultPosition, wxDefaultSize,
+GUI::GUI() : wxFrame(0, wxID_ANY, wxT("NyuFX"), wxDefaultPosition, wxDefaultSize,
 											  wxSYSTEM_MENU | wxCAPTION | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxRESIZE_BORDER | wxCLIP_CHILDREN){
+	// Define global settings
+	this->SetMeta();
 	// Set window icon
 	this->SetIcon(wxICON(exe_ico));
 	//Set window background color
 	this->SetBackgroundColour(wxColor(196,196,255));
-	// Enable tooltips
-	ConfigTooltips(1000, 5000, 0, 200);
-
 	// Create menu
 	this->CreateMenu();
+}
+
+void GUI::SetMeta(){
+	// Enable tooltips
+	ConfigTooltips(1000, 5000, 0, 200);
+	// Disable logging
+	EnableLogging(false);
+	// Load configuration settings
+	Config::Load();
+	// Set language to display
+	wxString *language = Config::Language();
+	if(*language == wxT("english"))
+		SetLanguage(wxLANGUAGE_ENGLISH);
+	else if(*language == wxT("german"))
+		SetLanguage(wxLANGUAGE_GERMAN);
+	else if(*language == wxT("japanese"))
+		SetLanguage(wxLANGUAGE_JAPANESE);
+	else if(*language == wxT("arabic"))
+		SetLanguage(wxLANGUAGE_ARABIC);
 }
 
 void GUI::CreateMenu(){
@@ -70,7 +89,7 @@ void GUI::CreateMenu(){
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &tools, wxT("*.lnk"), wxDIR_FILES);
 	for(unsigned int i = 0; i<tools.GetCount() && i<30; i++){
 		this->toolMenu->Append(ID_MENU_TOOL+i, tools[i].AfterLast('\\').BeforeLast('.'));
-		// TODO: this->Connect(ID_MENU_TOOL+i, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUI::OnTool));
+		this->Connect(ID_MENU_TOOL+i, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUI::OnTool));
 	}
 	// Create help menu
 	this->helpMenu = new wxMenu;

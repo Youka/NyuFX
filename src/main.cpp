@@ -5,7 +5,7 @@
 class NyuFX : public wxApp{
     public:
         bool OnInit(){
-			GUI* app_wnd = new GUI(this->argv.GetArguments());	// Create single application window instance for whole running
+			GUI* app_wnd = new GUI;	// Create single application window instance for whole running
 			app_wnd->Show();	// Activate window
 			this->SetTopWindow(app_wnd);	// Set os focus on window
             return true;	// Everything ok, run application

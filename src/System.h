@@ -1,7 +1,11 @@
 #pragma once
 
+#include <wx/log.h>
 #include <wx/intl.h>
 #include <wx/tooltip.h>
+
+// Disable logging (and displaying) of errors & warning
+#define EnableLogging(status) wxLog::EnableLogging(status)
 
 void SetLanguage(wxLanguage language){
 	// Locale memory
