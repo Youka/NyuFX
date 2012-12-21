@@ -66,7 +66,7 @@ void GUI::CreateMenu(){
 	this->editviewMenu->AppendCheckItem(ID_MENU_VIEW_LUA, _("Lua editor") + wxT("\tSHIFT+F1"), _("Toggle view for Lua editor"))->Check(true);
 	this->editviewMenu->Break();
 	this->editviewMenu->AppendCheckItem(ID_MENU_VIEW_ASS, _("ASS editor") + wxT("\tSHIFT+F2"), _("Toggle view for ASS editor"))->Check(true);
-	this->viewMenu->AppendSubMenu(editviewMenu, _("Editor view"), _("Toggle editors visibility"));
+	this->viewMenu->AppendSubMenu(this->editviewMenu, _("Editor view"), _("Toggle editors visibility"));
 	this->viewMenu->AppendSeparator();
 	this->viewMenu->Append(ID_MENU_GOTO, _("Go to line...") + wxT("\tCTRL+G"), _("Moves caret to line"));
 	this->viewMenu->Append(ID_MENU_ZOOM_IN, _("Zoom in") + wxT("\tPGUP"), _("Zooms one level nearer to editor content"));
@@ -78,17 +78,17 @@ void GUI::CreateMenu(){
 	this->openviewMenu->Append(ID_MENU_OPEN_INCL, _("Includes") + wxT("\tF2"), _("Open include folder"));
 	this->openviewMenu->Append(ID_MENU_OPEN_TMPL, _("Templates") + wxT("\tF3"), _("Open templates folder"));
 	this->openviewMenu->Append(ID_MENU_OPEN_TOOLS, _("Tools") + wxT("\tF4"), _("Open tools folder"));
-	this->viewMenu->AppendSubMenu(openviewMenu, _("Folders"), _("Open folders of NyuFX"));
+	this->viewMenu->AppendSubMenu(this->openviewMenu, _("Folders"), _("Open folders of NyuFX"));
 	// Create reset menu
 	this->resetMenu = new wxMenu;
 	this->resetMenu->Append(ID_MENU_CLEAR_LOG, _("Log") + wxT("\tALT+F1"), _("Clear log text"));
 	this->resetMenu->Append(ID_MENU_RESET_PROG, _("Progressbar") + wxT("\tALT+F2"), _("Set progressbar to 0%"));
 	// Create tool menu
 	this->toolMenu = new wxMenu;
-	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &tools, wxT("*.exe"), wxDIR_FILES);
-	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &tools, wxT("*.lnk"), wxDIR_FILES);
-	for(unsigned int i = 0; i<tools.GetCount() && i<30; i++){
-		this->toolMenu->Append(ID_MENU_TOOL+i, tools[i].AfterLast('\\').BeforeLast('.'));
+	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &this->tools, wxT("*.exe"), wxDIR_FILES);
+	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &this->tools, wxT("*.lnk"), wxDIR_FILES);
+	for(unsigned int i = 0; i < this->tools.GetCount() && i < 30; i++){
+		this->toolMenu->Append(ID_MENU_TOOL+i, this->tools[i].AfterLast('\\').BeforeLast('.'));
 		this->Connect(ID_MENU_TOOL+i, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUI::OnTool));
 	}
 	// Create help menu
@@ -97,12 +97,12 @@ void GUI::CreateMenu(){
 	this->helpMenu->Append(ID_MENU_ABOUT, _("About") + wxT("\tF11"), _("Informations about NyuFX"));
 	// Create menu bar with existing menus
 	wxMenuBar *mbar = new wxMenuBar;
-	mbar->Append(fileMenu, _("File"));
-	mbar->Append(editMenu, _("Edit"));
-	mbar->Append(viewMenu, _("View"));
-	mbar->Append(resetMenu, _("Reset"));
-	mbar->Append(toolMenu, _("Tools"));
-	mbar->Append(helpMenu, _("Help"));
+	mbar->Append(this->fileMenu, _("File"));
+	mbar->Append(this->editMenu, _("Edit"));
+	mbar->Append(this->viewMenu, _("View"));
+	mbar->Append(this->resetMenu, _("Reset"));
+	mbar->Append(this->toolMenu, _("Tools"));
+	mbar->Append(this->helpMenu, _("Help"));
 	this->SetMenuBar(mbar);
 	// Create status bar
 	this->CreateStatusBar(1, wxSTB_DEFAULT_STYLE | wxBORDER_SUNKEN)->SetBackgroundColour(wxColour(164,164,255));
