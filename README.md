@@ -15,5 +15,8 @@ NyuFX has a project file for MSVC++9 (see ***src/NyuFX.vcproj***).
 
 The only thing to change in the project settings is the dependency to wxWidgets. Fix the **include** and **library** path to your own wxWidgets 2.9.4 built.
 
+
+For the installer you need NSIS to execute the script ***installer/installer.nsi***, but before add **ASSDraw3.exe** and **ASSDraw3.chm** (comes with Aegisub) to complete required files.
+
 ##Help
 Forum: http://forum.youka.de

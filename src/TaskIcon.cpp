@@ -1,7 +1,7 @@
 #include "TaskIcon.h"
 
 TaskIcon::TaskIcon(wxFrame *parent) : parent(parent){
-	SetIcon(wxICON(exe_ico), wxT("NyuFX"));	// Set icon and name for taskbar
+	this->SetIcon(wxICON(exe_ico), wxT("NyuFX"));	// Set icon and name for taskbar
 }
 
 wxMenu* TaskIcon::CreatePopupMenu(){

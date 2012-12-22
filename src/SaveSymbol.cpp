@@ -20,7 +20,7 @@ void SaveSymbol::OnPaint(wxPaintEvent& event){
 	wxGraphicsContext *gc = wxGraphicsContext::Create( dc );
 	if(gc){
 		int sz = this->GetSize().y-3;
-		gc->SetBrush(wxBrush(color));
+		gc->SetBrush(wxBrush(this->color));
 		gc->SetPen(wxPen(*wxBLACK, 2, wxSOLID));
 		gc->DrawRoundedRectangle(4,2,sz,sz,180);
 		delete gc;
