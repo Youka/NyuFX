@@ -16,7 +16,7 @@ class GUI : public wxFrame{
 		// Interface construction
 		void SetMeta();
 		void CreateMenu();
-        //Event IDs
+        // Event IDs
 		enum{
 			ID_MENU_NEW = 100,
 			ID_MENU_OPEN,
