@@ -127,6 +127,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\App.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ASSEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ASSEditor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EditorBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EditorBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GUI.h"
 				>
 			</File>
@@ -147,7 +167,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\LuaEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LuaEditor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OutputCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OutputCtrl.h"
 				>
 			</File>
 			<File
@@ -187,14 +219,6 @@
 			Name="Progress"
 			>
 		</Filter>
-		<File
-			RelativePath=".\OutputCtrl.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\OutputCtrl.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

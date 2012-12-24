@@ -10,7 +10,7 @@
 
 class OutputCtrl : public wxPanel{
 	public:
-		// Window initialization
+		// Panel initialization
 		OutputCtrl(wxWindow *wnd);
 		// Subwindow sizers
 		wxBoxSizer *v_box;

@@ -2,14 +2,24 @@
 
 #include <wx/frame.h>
 #include <wx/menu.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
+#include "TaskIcon.h"
+#include "LuaEditor.h"
+#include "ASSEditor.h"
+#include "OutputCtrl.h"
 
 // Main window
 class GUI : public wxFrame{
 	public:
 		// Window initialization
 		GUI();
+		// Clean resources
+		~GUI();
 		// Menu handles
 		wxMenu *fileMenu, *editMenu, *viewMenu, *editviewMenu, *openviewMenu, *resetMenu, *toolMenu, *helpMenu;
+		// System tray
+		TaskIcon *taskicon;
 		// Application files in tools folder
 		wxArrayString tools;
 	private:

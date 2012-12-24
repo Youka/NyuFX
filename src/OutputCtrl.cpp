@@ -6,7 +6,7 @@
 class DropOutputFile : public wxFileDropTarget{
 	public:
 		// Store reference to drop target
-		DropOutputFile(wxTextCtrl *file) : file(file){}
+		DropOutputFile(wxTextCtrl *filetarget) : file(filetarget){}
 		// Handle file drop
 		virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames){
 			this->file->SetValue(filenames[0]);
@@ -139,7 +139,7 @@ void OutputCtrl::OnGenerateCancel(wxCommandEvent& event){
 		}
 	}else if(gencanc->GetLabelText() == "Cancel"){
 		gencanc->Enable(false);
-		gencanc->SetLabelText(_("..."));
+		gencanc->SetLabelText(wxT("..."));
 		gencanc->SetToolTip(_("Currently terminating process!"));
 		gen_thread->Delete();
 	}*/

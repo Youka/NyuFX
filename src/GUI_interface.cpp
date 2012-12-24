@@ -16,6 +16,12 @@ GUI::GUI() : wxFrame(0, wxID_ANY, wxT("NyuFX"), wxDefaultPosition, wxDefaultSize
 	this->CreateMenu();
 }
 
+GUI::~GUI(){
+	// Remove system tray
+	if(this->taskicon)
+		delete this->taskicon;
+}
+
 void GUI::SetMeta(){
 	// Enable tooltips
 	ConfigTooltips(1000, 5000, 0, 200);
@@ -25,14 +31,14 @@ void GUI::SetMeta(){
 	Config::Load();
 	// Set language to display
 	wxString *language = Config::Language();
-	if(*language == wxT("english"))
-		SetLanguage(wxLANGUAGE_ENGLISH);
-	else if(*language == wxT("german"))
+	if(*language == wxT("german"))
 		SetLanguage(wxLANGUAGE_GERMAN);
 	else if(*language == wxT("japanese"))
 		SetLanguage(wxLANGUAGE_JAPANESE);
 	else if(*language == wxT("arabic"))
 		SetLanguage(wxLANGUAGE_ARABIC);
+	else
+		SetLanguage(wxLANGUAGE_ENGLISH);
 }
 
 void GUI::CreateMenu(){
@@ -108,4 +114,9 @@ void GUI::CreateMenu(){
 	this->SetMenuBar(mbar);
 	// Create status bar
 	this->CreateStatusBar(1, wxSTB_DEFAULT_STYLE | wxBORDER_SUNKEN)->SetBackgroundColour(wxColour(164,164,255));
+	// Create system tray
+	if(*Config::Minimize2Icon())
+		this->taskicon = new TaskIcon(this);
+	else
+		this->taskicon = 0;
 }
