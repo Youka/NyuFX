@@ -13,7 +13,7 @@ function gettext(path)
 	end
 	local po_content = ""
 	for entry, _ in pairs(entries) do
-		po_content = po_content .. string.format("msgid %q\nmsgstr \"\"\n\n", entry)
+		po_content = string.format("%smsgid %q\nmsgstr \"\"\n\n", po_content, entry)
 	end
 	return po_content
 end
