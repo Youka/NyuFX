@@ -19,10 +19,9 @@ void SaveSymbol::OnPaint(wxPaintEvent& event){
 	wxPaintDC dc(this);
 	wxGraphicsContext *gc = wxGraphicsContext::Create( dc );
 	if(gc){
-		int sz = this->GetSize().y-3;
 		gc->SetBrush(wxBrush(this->color));
 		gc->SetPen(wxPen(*wxBLACK, 2, wxSOLID));
-		gc->DrawRoundedRectangle(4,2,sz,sz,180);
+		gc->DrawEllipse(1,1,this->GetSize().x-2,this->GetSize().y-2);
 		delete gc;
 	}
 }

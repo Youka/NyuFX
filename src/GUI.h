@@ -20,12 +20,22 @@ class GUI : public wxFrame{
 		wxMenu *fileMenu, *editMenu, *viewMenu, *editviewMenu, *openviewMenu, *resetMenu, *toolMenu, *helpMenu;
 		// System tray
 		TaskIcon *taskicon;
+		// Layout
+		wxBoxSizer *h_box;
+		wxSplitterWindow *splitter;
+		// Subwindows
+		LuaEditor *lua_editor;
+		ASSEditor *ass_editor;
+		OutputCtrl *output_panel;
 		// Application files in tools folder
 		wxArrayString tools;
 	private:
 		// Interface construction
 		void SetMeta();
 		void CreateMenu();
+		void CreateElements();
+		void PlaceElements();
+		void ReadConfig();
         // Event IDs
 		enum{
 			ID_MENU_NEW = 100,

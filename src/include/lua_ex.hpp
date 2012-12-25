@@ -8,7 +8,7 @@ extern "C"{
 	#include <lua/lualib.h>
 };
 
-//Lua macros
+// Lua macros
 #define REGISTER_FUNC(func) lua_register(L, #func, l_##func)
 #define REGISTER_VAR(var) lua_pushnumber(L, var); lua_setglobal(L, #var)
 #define DEFINE(func) int l_##func(lua_State *L)

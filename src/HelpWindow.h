@@ -12,7 +12,7 @@ class HelpWindow : public wxFrame{
 	public:
 		// Window initialization
 		HelpWindow(wxWindow *wnd);
-		// Subwindow sizers
+		// Layout
 		wxBoxSizer *main_hbox, *title_hbox, *web_vbox;
 		// Subwindows
 		wxListBox *entries;

@@ -14,19 +14,27 @@ GUI::GUI() : wxFrame(0, wxID_ANY, wxT("NyuFX"), wxDefaultPosition, wxDefaultSize
 	this->SetBackgroundColour(wxColor(196,196,255));
 	// Create menu
 	this->CreateMenu();
+	// Create subwindows
+	this->CreateElements();
+	// Set layout
+	this->PlaceElements();
+	// Load config settings to interface
+	this->ReadConfig();
 }
 
 GUI::~GUI(){
 	// Remove system tray
 	if(this->taskicon)
 		delete this->taskicon;
+	// Save current configuration settings
+	*Config::LuaInput() = this->lua_editor->title->GetValue();
+	*Config::ASSInput() = this->ass_editor->title->GetValue();
+	*Config::ASSOutput() = this->output_panel->out_file->GetValue();
+	*Config::Command() = this->output_panel->cmd->GetValue();
+	Config::Save();
 }
 
 void GUI::SetMeta(){
-	// Enable tooltips
-	ConfigTooltips(1000, 5000, 0, 200);
-	// Disable logging
-	EnableLogging(false);
 	// Load configuration settings
 	Config::Load();
 	// Set language to display
@@ -39,6 +47,10 @@ void GUI::SetMeta(){
 		SetLanguage(wxLANGUAGE_ARABIC);
 	else
 		SetLanguage(wxLANGUAGE_ENGLISH);
+	// Enable tooltips
+	ConfigTooltips(1000, 5000, 0, 200);
+	// Disable logging
+	EnableLogging(false);
 }
 
 void GUI::CreateMenu(){
@@ -115,8 +127,49 @@ void GUI::CreateMenu(){
 	// Create status bar
 	this->CreateStatusBar(1, wxSTB_DEFAULT_STYLE | wxBORDER_SUNKEN)->SetBackgroundColour(wxColour(164,164,255));
 	// Create system tray
-	if(*Config::Minimize2Icon())
-		this->taskicon = new TaskIcon(this);
-	else
-		this->taskicon = 0;
+	this->taskicon = *Config::Minimize2Icon() ? new TaskIcon(this) : 0;
+}
+
+void GUI::CreateElements(){
+	// Splitter window
+	this->splitter = new wxSplitterWindow(this, wxID_ANY);
+	this->splitter->SetMinimumPaneSize(10);
+	this->splitter->SetSashGravity(0.5);
+	// Lua editor
+	this->lua_editor = new LuaEditor(this->splitter);
+	// ASS editor
+	this->ass_editor = new ASSEditor(this->splitter);
+	// Output panel
+	this->output_panel = new OutputCtrl(this);
+}
+
+void GUI::PlaceElements(){
+	// Set layout
+	this->h_box = new wxBoxSizer(wxHORIZONTAL);
+
+	this->splitter->SplitVertically(this->lua_editor, this->ass_editor);
+	this->h_box->Add(this->splitter, 1, wxGROW);
+	this->h_box->AddSpacer(5);
+	this->h_box->Add(this->output_panel, 0, wxEXPAND | wxALIGN_RIGHT);
+	this->h_box->AddSpacer(5);
+
+	this->SetSizer(this->h_box);
+	this->h_box->SetSizeHints(this);
+
+	// Frame position
+	this->Center();
+	this->Maximize(true);
+}
+
+void GUI::ReadConfig(){
+	// Set editor files
+	this->lua_editor->LoadFile(*Config::LuaInput());
+	this->ass_editor->LoadFile(*Config::ASSInput());
+	// Set output fields
+	this->output_panel->out_file->SetValue(*Config::ASSOutput());
+	this->output_panel->out_file->SetInsertionPointEnd();
+	this->output_panel->cmd->SetValue(*Config::Command());
+	this->output_panel->cmd->SetInsertionPointEnd();
+	// Run immediately?
+	this->output_panel->GetEventHandler()->ProcessEvent( wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, output_panel->gencanc->GetId()) );
 }

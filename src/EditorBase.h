@@ -14,7 +14,7 @@ class EditorBase : public wxPanel{
 		void LoadFile(wxString filename);
 		// Save editor to file
 		void SaveFile(wxString filename);
-		// Subwindow sizers
+		// Layout
 		wxBoxSizer *v_box, *h_box;
 		// Subwindows
 		SaveSymbol *check;

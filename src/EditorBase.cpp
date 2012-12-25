@@ -29,6 +29,8 @@ class DropEditorFile : public wxFileDropTarget{
 };
 
 // Editor
+#include "Config.h"
+
 EditorBase::EditorBase(wxWindow* wnd) : wxPanel(wnd, wxID_ANY){
 	this->CreateElements();
 	this->PlaceElements();
@@ -37,7 +39,7 @@ EditorBase::EditorBase(wxWindow* wnd) : wxPanel(wnd, wxID_ANY){
 
 void EditorBase::CreateElements(){
 	// Save symbol
-	this->check = new SaveSymbol(this, wxPoint(0,0), wxSize(25,18));
+	this->check = new SaveSymbol(this, wxPoint(0,0), wxSize(18,18));
 	// Opened file
 	this-> title = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
 						   wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxTE_READONLY | wxTE_RICH | wxNO_BORDER);
@@ -45,6 +47,11 @@ void EditorBase::CreateElements(){
 	this->title->SetCursor(wxCURSOR_IBEAM);
 	// Editor
 	this->editor = new wxStyledTextCtrl(this, wxID_ANY);
+	if(!Config::Font()->IsEmpty()){
+		wxFont editor_font(*Config::FontSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, *Config::Font());
+		if(editor_font.IsOk())
+			this->editor->StyleSetFont(wxSTC_STYLE_DEFAULT, editor_font);
+	}
 	// Drop target
 	this->editor->SetDropTarget(new DropEditorFile(this->title, this->editor));
 }
