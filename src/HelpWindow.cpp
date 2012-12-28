@@ -17,35 +17,52 @@ HelpWindow::HelpWindow(wxWindow *wnd) : wxFrame(wnd, wxID_ANY, _("Help"), wxDefa
 }
 
 void HelpWindow::CreateElements(){
+	// Create help window (event handlers)
+	this->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	// Create content list
 	this->entries = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(150,-1), 0, reinterpret_cast<wxString*>(NULL), wxLB_HSCROLL);
 	this->entries->SetBackgroundColour(wxColor(225, 225, 225));
 	this->entries->SetCursor(wxCURSOR_RIGHT_ARROW);
 	this->entries->SetToolTip(_("HTML documents in 'docs' folder"));
+	this->entries->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->entries->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	// Create browser title
 	this->title = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
 								wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxTE_RICH | wxTE_PROCESS_ENTER | wxDOUBLE_BORDER);
 	this->title->SetCursor(wxCURSOR_IBEAM);
 	this->title->SetToolTip(_("Current URL"));
-	this->title->Connect(wxID_ANY, wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(HelpWindow::OnEnter));
+	this->title->Connect(wxID_ANY, wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(HelpWindow::OnEnter), 0, this);
+	this->title->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->title->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	// Create title buttons
 	wxSize button_size = wxSize(this->title->GetSize().y, this->title->GetSize().y);
 	this->enter = new wxButton(this, wxID_ANY, wxT("!"), wxDefaultPosition, button_size);
 	this->enter->SetCursor(wxCURSOR_HAND);
 	this->enter->SetToolTip(_("Load page"));
+	this->enter->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->enter->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	this->stop = new wxButton(this, wxID_ANY, wxT("X"), wxDefaultPosition, button_size);
 	this->stop->SetCursor(wxCURSOR_HAND);
 	this->stop->SetToolTip(_("Stop page loading"));
+	this->stop->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->stop->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	this->back = new wxButton(this, wxID_ANY, wxT("<"), wxDefaultPosition, button_size);
 	this->back->Enable(false);
 	this->back->SetCursor(wxCURSOR_HAND);
 	this->back->SetToolTip(_("Back in history"));
+	this->back->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->back->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	this->forward = new wxButton(this, wxID_ANY, wxT(">"), wxDefaultPosition, button_size);
 	this->forward->Enable(false);
 	this->forward->SetCursor(wxCURSOR_HAND);
 	this->forward->SetToolTip(_("Forward in history"));
+	this->forward->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->forward->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	// Create browser field
 	this->web = wxWebView::New(this, wxID_ANY, wxT("www.google.de"), wxDefaultPosition, wxSize(350, 500), wxWEB_VIEW_BACKEND_DEFAULT, wxSUNKEN_BORDER);
+	this->web->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
+	this->web->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 }
 
 void HelpWindow::PlaceElements(){
@@ -80,13 +97,16 @@ void HelpWindow::SetContent(){
 BEGIN_EVENT_TABLE(HelpWindow, wxFrame)
 	EVT_CLOSE(HelpWindow::OnClose)
 	EVT_LISTBOX(wxID_ANY, HelpWindow::OnSelect)
+	// OnEnter defined during title creation
 	EVT_BUTTON(wxID_ANY, HelpWindow::OnHistoryAction)
 	EVT_WEB_VIEW_LOADED(wxID_ANY, HelpWindow::OnLoaded)
+	// OnMouseAux1Down defined during subwindows creation
+	// OnMouseAux2Down defined during subwindows creation
 END_EVENT_TABLE()
 
 // Define event handlers
 void HelpWindow::OnClose(wxCloseEvent &event){
-	Destroy();
+	this->Hide();
 }
 
 void HelpWindow::CheckHistory(){
@@ -113,8 +133,7 @@ void HelpWindow::OnSelect(wxCommandEvent& event){
 }
 
 void HelpWindow::OnEnter(wxCommandEvent& event){
-	wxCommandEvent entered(wxEVT_COMMAND_BUTTON_CLICKED, wxID_ANY);
-	GetEventHandler()->ProcessEvent( entered );
+	this->GetEventHandler()->ProcessEvent( wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, wxID_ANY) );
 }
 
 void HelpWindow::OnHistoryAction(wxCommandEvent& event){
@@ -132,4 +151,19 @@ void HelpWindow::OnHistoryAction(wxCommandEvent& event){
 
 void HelpWindow::OnLoaded(wxWebViewEvent& event){
 	this->CheckHistory();
+}
+
+void HelpWindow::OnMouseAux1Down(wxMouseEvent& event){
+	if(this->web->CanGoBack()){
+		wxCommandEvent button_evt(wxEVT_COMMAND_BUTTON_CLICKED, wxID_ANY);
+		button_evt.SetEventObject( this->back );
+		this->GetEventHandler()->ProcessEvent( button_evt );
+	}
+}
+void HelpWindow::OnMouseAux2Down(wxMouseEvent& event){
+	if(this->web->CanGoForward()){
+		wxCommandEvent button_evt(wxEVT_COMMAND_BUTTON_CLICKED, wxID_ANY);
+		button_evt.SetEventObject( this->forward );
+		this->GetEventHandler()->ProcessEvent( button_evt );
+	}
 }

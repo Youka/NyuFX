@@ -2,6 +2,7 @@
 
 // Resources
 exe_ico ICON "resources/NyuFX.ico"
+help_ico ICON "wx/msw/question.ico"
 logo_bmp BITMAP "resources/NyuFX_Logo_program.bmp"
 nyu_sound WAVE "resources/nyu.wav"
 

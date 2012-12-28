@@ -57,6 +57,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="&quot;E:\PROJEKTE\Librarys\wxWidgets-2.9.4\include&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"

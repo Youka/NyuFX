@@ -34,4 +34,6 @@ class HelpWindow : public wxFrame{
 		void OnEnter(wxCommandEvent& event);
 		void OnHistoryAction(wxCommandEvent& event);
 		void OnLoaded(wxWebViewEvent& event);
+		void OnMouseAux1Down(wxMouseEvent& event);
+		void OnMouseAux2Down(wxMouseEvent& event);
 };

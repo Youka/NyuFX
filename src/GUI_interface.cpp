@@ -98,7 +98,7 @@ void GUI::CreateMenu(){
 	this->openviewMenu->Append(ID_MENU_OPEN_TOOLS, _("Tools") + wxT("\tF4"), _("Open tools folder"));
 	this->viewMenu->AppendSubMenu(this->openviewMenu, _("Folders"), _("Open folders of NyuFX"));
 	this->viewMenu->AppendSeparator();
-	this->viewMenu->Append(ID_MENU_OPTIONS, _("Options") + wxT("\tCTRL+O"), _("Application options"));
+	this->viewMenu->Append(ID_MENU_OPEN_OPTIONS, _("Options") + wxT("\tCTRL+O"), _("Application options"));
 	// Create reset menu
 	this->resetMenu = new wxMenu;
 	this->resetMenu->Append(ID_MENU_CLEAR_LOG, _("Log") + wxT("\tALT+F1"), _("Clear log text"));
