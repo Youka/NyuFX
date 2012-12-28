@@ -10,6 +10,8 @@ class EditorBase : public wxPanel{
 	public:
 		// Panel initialization
 		EditorBase(wxWindow* wnd);
+		// Clear editor
+		void Clear();
 		// Load file into editor
 		void LoadFile(wxString filename);
 		// Save editor to file

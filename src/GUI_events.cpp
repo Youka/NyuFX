@@ -1,5 +1,7 @@
 #include "GUI.h"
 #include <wx/msgdlg.h>
+#include <wx/filedlg.h>
+#include <wx/numdlg.h>
 #include <wx/stdpaths.h>
 #include "Config.h"
 #include "HelpWindow.h"
@@ -134,29 +136,68 @@ void GUI::OnClose(wxCloseEvent &event){
 }
 
 void GUI::OnNew(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->Clear();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->Clear();
 }
 void GUI::OnOpen(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus()){
+		wxFileDialog input(this, _("Open Lua file"), wxEmptyString, wxEmptyString, wxT("Lua (*.lua)|*.lua"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+		if(input.ShowModal() == wxID_OK)
+			this->lua_editor->LoadFile(input.GetPath());
+	}else if(this->ass_editor->editor->HasFocus()){
+		wxFileDialog input(this, _("Open ASS file"), wxEmptyString, wxEmptyString, wxT("Advanced substation alpha (*.ass)|*.ass"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+		if(input.ShowModal() == wxID_OK)
+			this->ass_editor->LoadFile(input.GetPath());
+	}
 }
 void GUI::OnReload(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->LoadFile(this->lua_editor->title->GetValue());
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->LoadFile(this->ass_editor->title->GetValue());
 }
 void GUI::OnSave(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->SaveFile(this->lua_editor->title->GetValue());
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->SaveFile(this->ass_editor->title->GetValue());
 }
 void GUI::OnSaveAs(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus()){
+		wxFileDialog input(this, _("Save Lua file"), wxEmptyString, wxEmptyString, wxT("Lua (*.lua)|*.lua"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+		if(input.ShowModal() == wxID_OK)
+			this->lua_editor->SaveFile(input.GetPath());
+	}else if(this->ass_editor->editor->HasFocus()){
+		wxFileDialog input(this, _("Save ASS file"), wxEmptyString, wxEmptyString, wxT("Advanced substation alpha (*.ass)|*.ass"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+		if(input.ShowModal() == wxID_OK)
+			this->ass_editor->SaveFile(input.GetPath());
+	}
 }
 void GUI::OnQuit(wxCommandEvent& event){
 	this->Close();
 }
 
 void GUI::OnUndo(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->Undo();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->Undo();
+	else if(this->output_panel->out_file->HasFocus())
+		this->output_panel->out_file->Undo();
+	else if(this->output_panel->cmd->HasFocus())
+		this->output_panel->cmd->Undo();
 }
 void GUI::OnRedo(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->Redo();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->Redo();
+	else if(this->output_panel->out_file->HasFocus())
+		this->output_panel->out_file->Redo();
+	else if(this->output_panel->cmd->HasFocus())
+		this->output_panel->cmd->Redo();
 }
 void GUI::OnCut(wxCommandEvent& event){
 
@@ -168,10 +209,37 @@ void GUI::OnPaste(wxCommandEvent& event){
 
 }
 void GUI::OnDelete(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->DeleteBack();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->DeleteBack();
+	else if(this->output_panel->out_file->HasFocus()){
+		long from, to;
+		this->output_panel->out_file->GetSelection(&from,&to);
+		if(from == to && from != 0)
+			this->output_panel->out_file->Remove(from-1,from);
+		else if(from != to)
+			this->output_panel->out_file->Remove(from,to);
+	}else if(this->output_panel->cmd->HasFocus()){
+		long from, to;
+		this->output_panel->cmd->GetSelection(&from,&to);
+		if(from == to && from != 0)
+			this->output_panel->cmd->Remove(from-1,from);
+		else if(from != to)
+			this->output_panel->cmd->Remove(from,to);
+	}
 }
 void GUI::OnSelectAll(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->SelectAll();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->SelectAll();
+	else if(this->output_panel->log->HasFocus())
+		this->output_panel->log->SelectAll();
+	else if(this->output_panel->out_file->HasFocus())
+		this->output_panel->out_file->SelectAll();
+	else if(this->output_panel->cmd->HasFocus())
+		this->output_panel->cmd->SelectAll();
 }
 void GUI::OnReplace(wxCommandEvent& event){
 
@@ -187,19 +255,49 @@ void GUI::OnViewASS(wxCommandEvent& event){
 
 }
 void GUI::OnGotoLine(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus()){
+		long num = wxGetNumberFromUser(_("Choose line number"), wxEmptyString, _("Go to Lua line..."), 1, 1, this->lua_editor->editor->GetLineCount(), this);
+		if(num > 0)
+			this->lua_editor->editor->GotoLine( num-1 );
+	}else if(this->ass_editor->editor->HasFocus()){
+		long num = wxGetNumberFromUser(_("Choose line number"), wxEmptyString, _("Go to ASS line..."), 1, 1, this->ass_editor->editor->GetLineCount(), this);
+		if(num > 0)
+			this->ass_editor->editor->GotoLine( num-1 );
+	}
 }
 void GUI::OnZoomIn(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus()){
+		int zoom = this->lua_editor->editor->GetZoom();
+		if(zoom < 20)
+			this->lua_editor->editor->SetZoom(zoom+1);
+	}else if(this->ass_editor->editor->HasFocus()){
+		int zoom = this->ass_editor->editor->GetZoom();
+		if(zoom < 20)
+			this->ass_editor->editor->SetZoom(zoom+1);
+	}
 }
 void GUI::OnZoomOut(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus()){
+		int zoom = this->lua_editor->editor->GetZoom();
+		if(zoom > -10)
+			this->lua_editor->editor->SetZoom(zoom-1);
+	}else if(this->ass_editor->editor->HasFocus()){
+		int zoom = this->ass_editor->editor->GetZoom();
+		if(zoom > -10)
+			this->ass_editor->editor->SetZoom(zoom-1);
+	}
 }
 void GUI::OnFoldAll(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		for(int i = 0; i < this->lua_editor->editor->GetLineCount(); i++)
+			if((this->lua_editor->editor->GetFoldLevel(i) & wxSTC_FOLDLEVELHEADERFLAG) && this->lua_editor->editor->GetFoldExpanded(i))
+				this->lua_editor->editor->ToggleFold(i);
 }
 void GUI::OnUnfoldAll(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		for(int i = 0; i < this->lua_editor->editor->GetLineCount(); i++)
+			if((this->lua_editor->editor->GetFoldLevel(i) & wxSTC_FOLDLEVELHEADERFLAG) && !this->lua_editor->editor->GetFoldExpanded(i))
+				this->lua_editor->editor->ToggleFold(i);
 }
 void GUI::OnOpenInclude(wxCommandEvent& event){
 	wxLaunchDefaultApplication( wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\include\\") );

@@ -96,6 +96,12 @@ void EditorBase::ConfigureEditor(){
 	this->Connect(wxID_ANY, wxEVT_STC_CHARADDED, wxStyledTextEventHandler(EditorBase::OnCharAdded));
 }
 
+void EditorBase::Clear(){
+	this->editor->ClearAll();
+	this->editor->EmptyUndoBuffer();
+	this->title->Clear();
+}
+
 void EditorBase::LoadFile(wxString filename){
 	wxFFile file;
 	if(file.Open(filename, "r")){
