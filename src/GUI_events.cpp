@@ -3,9 +3,12 @@
 #include <wx/filedlg.h>
 #include <wx/numdlg.h>
 #include <wx/stdpaths.h>
+#include <wx/clipbrd.h>
+#include <wx/regex.h>
 #include "Config.h"
 #include "HelpWindow.h"
 #include "About.h"
+#include "Replace.h"
 
 // Bind event IDs to event handlers
 BEGIN_EVENT_TABLE(GUI, wxFrame)
@@ -200,13 +203,50 @@ void GUI::OnRedo(wxCommandEvent& event){
 		this->output_panel->cmd->Redo();
 }
 void GUI::OnCut(wxCommandEvent& event){
-
+	bool change = true;
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->Cut();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->Cut();
+	else if(this->output_panel->out_file->HasFocus())
+		this->output_panel->out_file->Cut();
+	else if(this->output_panel->cmd->HasFocus())
+		this->output_panel->cmd->Cut();
+	else
+		change = false;
+	// Anything changed, so flush data to global clipboard
+	if(change && wxTheClipboard->Open()){
+		wxTheClipboard->Flush();
+		wxTheClipboard->Close();
+	}
 }
 void GUI::OnCopy(wxCommandEvent& event){
-
+	bool change = true;
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->Copy();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->Copy();
+	else if(this->output_panel->out_file->HasFocus())
+		this->output_panel->out_file->Copy();
+	else if(this->output_panel->cmd->HasFocus())
+		this->output_panel->cmd->Copy();
+	else
+		change = false;
+	// Anything changed, so flush data to global clipboard
+	if(change && wxTheClipboard->Open()){
+		wxTheClipboard->Flush();
+		wxTheClipboard->Close();
+	}
 }
 void GUI::OnPaste(wxCommandEvent& event){
-
+	if(this->lua_editor->editor->HasFocus())
+		this->lua_editor->editor->Paste();
+	else if(this->ass_editor->editor->HasFocus())
+		this->ass_editor->editor->Paste();
+	else if(this->output_panel->out_file->HasFocus())
+		this->output_panel->out_file->Paste();
+	else if(this->output_panel->cmd->HasFocus())
+		this->output_panel->cmd->Paste();
 }
 void GUI::OnDelete(wxCommandEvent& event){
 	if(this->lua_editor->editor->HasFocus())
@@ -242,17 +282,124 @@ void GUI::OnSelectAll(wxCommandEvent& event){
 		this->output_panel->cmd->SelectAll();
 }
 void GUI::OnReplace(wxCommandEvent& event){
-
+	// One instance each running
+	static Replace *replace = 0;
+	if(replace)
+		delete replace;
+	static wxFindReplaceData data;
+	// Create dialog
+	if(this->lua_editor->editor->HasFocus()){
+		replace = new Replace(this, &data, this->lua_editor->editor, this->editMenu->FindItem(ID_MENU_REPLACE));
+		replace->Show();
+	}else if(this->ass_editor->editor->HasFocus()){
+		replace = new Replace(this, &data, this->ass_editor->editor, this->editMenu->FindItem(ID_MENU_REPLACE));
+		replace->Show();
+	}
 }
 void GUI::OnAutoStyle(wxCommandEvent& event){
-
+	// Lua editor
+	if(this->lua_editor->editor->HasFocus()){
+		// Get text
+		int cur_pos = this->lua_editor->editor->GetCurrentPos();
+		wxString text = this->lua_editor->editor->GetText();
+		// Clean text
+		wxRegEx expr;
+		// 1. Clear spaces
+		expr.Compile(wxT("[ \t]+")); // No wide spaces
+		expr.Replace(&text, wxT(" "));
+		text.Replace(wxT("\r"), wxEmptyString); // No senseless carriage returns
+		text.Replace(wxT("\n "), wxT("\n")); // No prespace
+		expr.Compile(wxT("^ "));
+		expr.Replace(&text, wxEmptyString);
+		text.Replace(wxT(" \n"), wxT("\n")); // No postspace
+		expr.Compile(wxT(" $"));
+		expr.Replace(&text, wxEmptyString);
+		expr.Compile(wxT("\n{3,}")); // Not more than 2 newlines in row
+		expr.Replace(&text, wxT("\n\n"));
+		// 2. Extract lines
+		wxArrayString lines;
+		int hit;
+		while(true){
+			hit = text.First(wxT("\n"));
+			if(hit == wxNOT_FOUND){
+				lines.Add(text);
+				text.Clear();
+				break;
+			}else{
+				lines.Add(text.Left(hit));
+				text = text.Mid(hit+1);
+			}
+		}
+		// 3. Indent lines & build text
+		wxString indent, line;
+		size_t n = lines.GetCount();
+		for(unsigned int i=0; i < n; i++){
+			line = lines[i];
+			if(!indent.IsEmpty() && (
+				line.Left(5) == wxT("until") ||
+				line.Left(4) == wxT("else") ||
+				line.Left(6) == wxT("elseif") ||
+				line.Left(3) == wxT("end")
+			   ))
+				indent.RemoveLast();
+			text.Append(indent + line);
+			if(i+1 != n)
+				text.Append(wxT("\n"));
+			if(line.Left(8) == wxT("function") ||
+			   line.Left(14) == wxT("local function") ||
+				line.Left(3) == wxT("for") ||
+				line.Left(5) == wxT("while") ||
+				line.Left(6) == wxT("repeat") ||
+				line.Left(2) == wxT("if") ||
+				line.Left(4) == wxT("else") ||
+				line.Left(6) == wxT("elseif") ||
+				line.Right(4) == wxT("then") ||
+				line.Right(2) == wxT("do")
+			   )
+				indent += wxT("\t");
+		}
+		// Return text
+		this->lua_editor->editor->SetText(text);
+		this->lua_editor->editor->GotoPos(cur_pos);
+	// ASS editor
+	}else if(this->ass_editor->editor->HasFocus()){
+		// Get text
+		int cur_pos = this->ass_editor->editor->GetCurrentPos();
+		wxString text = this->ass_editor->editor->GetText();
+		// Clean text
+		wxRegEx expr;
+		text.Replace(wxT("\r"), wxEmptyString); // No senseless carriage returns
+		expr.Compile(wxT("\n[ \t]+"));  // No prespace
+		expr.Replace(&text, wxT("\n"));
+		expr.Compile(wxT("^[ \t]+"));
+		expr.Replace(&text, wxEmptyString);
+		expr.Compile(wxT("[ \t]+\n"));  // No postspace
+		expr.Replace(&text, wxT("\n"));
+		expr.Compile(wxT("[ \t]+$"));
+		expr.Replace(&text, wxEmptyString);
+		expr.Compile(wxT("\n{3,}")); // Not more than 2 newlines in row
+		expr.Replace(&text, wxT("\n\n"));
+		// Return text
+		this->ass_editor->editor->SetText(text);
+		this->ass_editor->editor->GotoPos(cur_pos);
+	}
 }
 
 void GUI::OnViewLua(wxCommandEvent& event){
-
+	if(this->splitter->IsSplit())
+		this->splitter->Unsplit(this->lua_editor);
+	else if(this->splitter->GetWindow1() == this->ass_editor)
+		this->splitter->SplitVertically(this->lua_editor, this->ass_editor);
+	else
+		this->editviewMenu->Check(ID_MENU_VIEW_LUA, true);
 }
 void GUI::OnViewASS(wxCommandEvent& event){
-
+	if(this->splitter->IsSplit())
+		this->splitter->Unsplit(this->ass_editor);
+	else if(this->splitter->GetWindow1() == this->lua_editor)
+		this->splitter->SplitVertically(this->lua_editor, this->ass_editor);
+	else
+		this->editviewMenu->Check(ID_MENU_VIEW_ASS, true);
 }
 void GUI::OnGotoLine(wxCommandEvent& event){
 	if(this->lua_editor->editor->HasFocus()){

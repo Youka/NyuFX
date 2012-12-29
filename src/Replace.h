@@ -7,11 +7,8 @@
 class Replace : public wxFindReplaceDialog{
 	public:
 		// Window initialization
-		Replace(wxWindow *wnd, wxStyledTextCtrl *textctrl, wxMenuItem *item);
-
+		Replace(wxWindow *wnd, wxFindReplaceData *data, wxStyledTextCtrl *textctrl, wxMenuItem *item);
 	private:
-		// Data transfer container
-		wxFindReplaceData finder_data;
 		// Object references
 		wxStyledTextCtrl *editor;
 		wxMenuItem *item;

@@ -54,7 +54,7 @@ void OutputCtrl::CreateElements(){
 	this->input_panel->SetToolTip(_("Output options"));
 	//Inputs
 	this->out_file = new wxTextCtrl(this->input_panel, wxID_ANY, wxEmptyString, wxPoint(5,5), wxSize(width-95,25),
-							  wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxTE_RICH | wxSUNKEN_BORDER);
+							  wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxSUNKEN_BORDER);
 	this->out_file->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
 	this->out_file->SetBackgroundColour(wxColor(240,240,240));
 	this->out_file->SetCursor(wxCURSOR_IBEAM);
@@ -73,7 +73,7 @@ void OutputCtrl::CreateElements(){
 	this->after_proc = new wxStaticText(this->input_panel, wxID_ANY, _("After process command"), wxPoint(8,65));
 	this->after_proc->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
 	this->cmd = new wxTextCtrl(this->input_panel, wxID_ANY, wxEmptyString, wxPoint(5,80), wxSize(width-15,20),
-						 wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxTE_RICH | wxDOUBLE_BORDER);
+						 wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxDOUBLE_BORDER);
 	this->cmd->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
 	this->cmd->SetBackgroundColour(wxColor(0,0,0));
 	this->cmd->SetForegroundColour(wxColor(0,196,0));

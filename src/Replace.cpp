@@ -1,9 +1,10 @@
 #include "replace.h"
 
-Replace::Replace(wxWindow *wnd, wxStyledTextCtrl *textctrl, wxMenuItem *item) : wxFindReplaceDialog(wnd, &this->finder_data, wxT(""), wxFR_REPLACEDIALOG) , editor(textctrl),item(item){
+Replace::Replace(wxWindow *wnd, wxFindReplaceData *data, wxStyledTextCtrl *textctrl, wxMenuItem *item)
+: wxFindReplaceDialog(wnd, data, wxEmptyString, wxFR_REPLACEDIALOG) , editor(textctrl),item(item){
 	// Disable actions on menu item while this dialog is shown
 	this->item->Enable(false);
-	// Decide for a dialog title, depending on editor target
+	// Set title depending on target editor
 	if(this->editor->GetProperty(wxT("fold")) == wxT("1"))
 		this->SetTitle(_("Search and replace - Lua editor"));
 	else

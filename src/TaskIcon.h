@@ -14,6 +14,7 @@ class TaskIcon : public wxTaskBarIcon{
 		// Event handlers
         DECLARE_EVENT_TABLE()
         void OnTaskLDBClick(wxTaskBarIconEvent& event);
+		void OnOpen(wxCommandEvent& event);
         void OnClose(wxCommandEvent& event);
     protected:
 		// Override of menu creation
