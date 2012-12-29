@@ -9,6 +9,7 @@
 #include "HelpWindow.h"
 #include "About.h"
 #include "Replace.h"
+#include "Options.h"
 
 // Bind event IDs to event handlers
 BEGIN_EVENT_TABLE(GUI, wxFrame)
@@ -456,7 +457,7 @@ void GUI::OnOpenTools(wxCommandEvent& event){
 	wxLaunchDefaultApplication( wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\") );
 }
 void GUI::OnOpenOptions(wxCommandEvent& event){
-
+	Options(this).ShowModal();
 }
 
 void GUI::OnClearLog(wxCommandEvent& event){

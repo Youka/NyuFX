@@ -38,7 +38,8 @@ class GUI : public wxFrame{
 		void ReadConfig();
         // Event IDs
 		enum{
-			ID_MENU_NEW = 100,
+			ID_MENU_ACTIVE = 100,
+			ID_MENU_NEW,
 			ID_MENU_OPEN,
 			ID_MENU_RELOAD,
 			ID_MENU_SAVE,

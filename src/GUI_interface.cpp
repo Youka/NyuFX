@@ -56,7 +56,7 @@ void GUI::SetMeta(){
 void GUI::CreateMenu(){
 	// Create file menu
 	this->fileMenu = new wxMenu;
-	this->fileMenu->AppendCheckItem(wxID_NONE, _("NONE"))->Enable(false);
+	this->fileMenu->AppendCheckItem(ID_MENU_ACTIVE, _("NONE"), _("Active editor"))->Enable(false);
 	this->fileMenu->AppendSeparator();
 	this->fileMenu->Append(ID_MENU_NEW, _("New") + wxT("\tCTRL+F1"), _("Clear file of focused editor"));
 	this->fileMenu->Append(ID_MENU_OPEN, _("Open") + wxT("\tCTRL+F2"), _("Open file for focused editor"));
@@ -108,7 +108,7 @@ void GUI::CreateMenu(){
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &this->tools, wxT("*.exe"), wxDIR_FILES);
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &this->tools, wxT("*.lnk"), wxDIR_FILES);
 	for(unsigned int i = 0; i < this->tools.GetCount() && i < 30; i++){
-		this->toolMenu->Append(ID_MENU_TOOL+i, this->tools[i].AfterLast('\\').BeforeLast('.'));
+		this->toolMenu->Append(ID_MENU_TOOL+i, this->tools[i].AfterLast('\\').BeforeLast('.'), this->tools[i]);
 		this->Connect(ID_MENU_TOOL+i, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUI::OnTool));
 	}
 	// Create help menu

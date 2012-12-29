@@ -176,6 +176,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Options.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Options.h"
+				>
+			</File>
+			<File
 				RelativePath=".\OutputCtrl.cpp"
 				>
 			</File>
