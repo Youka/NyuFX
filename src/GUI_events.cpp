@@ -286,7 +286,7 @@ void GUI::OnReplace(wxCommandEvent& event){
 	// One instance each running
 	static Replace *replace = 0;
 	if(replace)
-		delete replace;
+		replace->Destroy();
 	static wxFindReplaceData data;
 	// Create dialog
 	if(this->lua_editor->editor->HasFocus()){
@@ -457,7 +457,8 @@ void GUI::OnOpenTools(wxCommandEvent& event){
 	wxLaunchDefaultApplication( wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\") );
 }
 void GUI::OnOpenOptions(wxCommandEvent& event){
-	Options(this).ShowModal();
+	if(Options(this).ShowModal() == 0)
+		wxMessageBox(_("Attributes changed which require a program restart!"), _("Options"), wxOK | wxICON_WARNING);
 }
 
 void GUI::OnClearLog(wxCommandEvent& event){

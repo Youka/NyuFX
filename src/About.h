@@ -2,7 +2,6 @@
 
 #include <wx/dialog.h>
 #include <wx/sizer.h>
-#include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/statbmp.h>
@@ -11,9 +10,9 @@ class About : public wxDialog{
 	public:
 		// Window initialization
 		About(wxWindow *wnd);
-		// Subwindow handles
-		wxPanel *panel;
+		// Layout
 		wxBoxSizer *v_box;
+		// Subwindow handles
 		wxStaticBitmap *pic;
 		wxTextCtrl *text;
 		wxButton *ok;

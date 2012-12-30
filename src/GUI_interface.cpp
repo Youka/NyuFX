@@ -25,7 +25,7 @@ GUI::GUI() : wxFrame(0, wxID_ANY, wxT("NyuFX"), wxDefaultPosition, wxDefaultSize
 GUI::~GUI(){
 	// Remove system tray
 	if(this->taskicon)
-		delete this->taskicon;
+		this->taskicon->Destroy();
 	// Save current configuration settings
 	*Config::LuaInput() = this->lua_editor->title->GetValue();
 	*Config::ASSInput() = this->ass_editor->title->GetValue();
@@ -45,6 +45,8 @@ void GUI::SetMeta(){
 		SetLanguage(wxLANGUAGE_JAPANESE);
 	else if(*language == wxT("arabic"))
 		SetLanguage(wxLANGUAGE_ARABIC);
+	else if(*language == wxT("chinese"))
+		SetLanguage(wxLANGUAGE_CHINESE);
 	else
 		SetLanguage(wxLANGUAGE_ENGLISH);
 	// Enable tooltips
