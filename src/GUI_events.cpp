@@ -457,8 +457,7 @@ void GUI::OnOpenTools(wxCommandEvent& event){
 	wxLaunchDefaultApplication( wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\") );
 }
 void GUI::OnOpenOptions(wxCommandEvent& event){
-	if(Options(this).ShowModal() == 0)
-		wxMessageBox(_("Attributes changed which require a program restart!"), _("Options"), wxOK | wxICON_WARNING);
+	Options(this).ShowModal();
 }
 
 void GUI::OnClearLog(wxCommandEvent& event){
