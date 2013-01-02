@@ -6,4 +6,6 @@ class ASSEditor : public EditorBase{
 	public:
 		// Panel initialization
 		ASSEditor(wxWindow *wnd);
+		// Style loading
+		void LoadStyle();
 };

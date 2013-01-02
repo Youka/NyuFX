@@ -25,7 +25,7 @@ class Options : public wxDialog{
 		wxCheckBox *minimize2icon;
 		wxSpinCtrl *fontsize;
 		wxStaticLine *line;
-		wxButton *close;
+		wxButton *accept;
 	private:
 		// Event handlers
 		DECLARE_EVENT_TABLE()

@@ -6,6 +6,11 @@ ASSEditor::ASSEditor(wxWindow *wnd) : EditorBase(wnd){
 	this->title->SetToolTip(_("ASS editor"));
 	this->title->SetBackgroundColour(wxColor(255, 0, 0));
 	this->check->BackgroundColor(wxColor(255, 0, 0));
+	// Style
+	this->LoadStyle();
+}
+
+void ASSEditor::LoadStyle(){
    // INI style
 	EditorBase::SetDefaultStyle();
 	this->editor->SetLexer(wxSTC_LEX_PROPERTIES);

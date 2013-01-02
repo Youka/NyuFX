@@ -61,13 +61,13 @@ Options::Options(wxWindow *wnd) : wxDialog(wnd, wxID_ANY, _("Options"), wxDefaul
 	this->info_label->SetFont(wxFont(6, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
 	this->v_box->Add(this->info_label, 0, wxALIGN_CENTER | wxBOTTOM, 5);
 	// Close button
-	this->close = new wxButton(this, wxID_CLOSE, _("Close"), wxDefaultPosition, wxSize(-1,22));
-	this->v_box->Add(this->close, 1, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 8);
+	this->accept = new wxButton(this, wxID_CLOSE, _("Accept"), wxDefaultPosition, wxSize(-1,22));
+	this->v_box->Add(this->accept, 1, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 8);
 	// Place everything
 	this->SetSizer(this->v_box);
 	this->v_box->SetSizeHints(this);
 	// Focus window
-	this->close->SetFocus();
+	this->accept->SetFocus();
 }
 
 // Bind event IDs to event handlers
@@ -78,14 +78,11 @@ END_EVENT_TABLE()
 
 // Define event handlers
 void Options::OnButton(wxCommandEvent& event){
-	this->ProcessEvent( wxCloseEvent(wxEVT_CLOSE_WINDOW) );
-}
-void Options::OnClose(wxCloseEvent& event){
 	// Save settings, ...
-	*Config::Language() = this->languages->GetString(this->languages->GetSelection());
+	*Config::Language() = this->languages->GetValue();
 	*Config::Sound() = this->sound_file->GetValue();
 	*Config::Minimize2Icon() = this->minimize2icon->IsChecked();
-	*Config::Font() = this->fontface->GetString(this->fontface->GetSelection());
+	*Config::Font() = this->fontface->GetValue();
 	*Config::FontSize() = this->fontsize->GetValue();
 	// ...update taskicon immediatly and...
 	if(GET_GUI->taskicon == 0 && this->minimize2icon->GetValue() == true)
@@ -94,6 +91,15 @@ void Options::OnClose(wxCloseEvent& event){
 		GET_GUI->taskicon->Destroy();
 		GET_GUI->taskicon = 0;
 	}
+	GET_GUI->lua_editor->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, this->fontsize->GetValue());
+	GET_GUI->lua_editor->editor->StyleSetFaceName(wxSTC_STYLE_DEFAULT, this->fontface->GetValue());
+	GET_GUI->lua_editor->LoadStyle();
+	GET_GUI->ass_editor->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, this->fontsize->GetValue());
+	GET_GUI->ass_editor->editor->StyleSetFaceName(wxSTC_STYLE_DEFAULT, this->fontface->GetValue());
+	GET_GUI->ass_editor->LoadStyle();
 	// ...destroy dialog
+	this->ProcessEvent( wxCloseEvent(wxEVT_CLOSE_WINDOW) );
+}
+void Options::OnClose(wxCloseEvent& event){
 	this->Destroy();
 }

@@ -5,12 +5,14 @@ LuaEditor::LuaEditor(wxWindow *wnd) : EditorBase(wnd){
 	this->title->SetToolTip(_("Lua editor"));
 	this->title->SetBackgroundColour(wxColor(0, 0, 255));
 	this->check->BackgroundColor(wxColor(0, 0, 255));
-	// Margin (folding)
-	this->editor->SetMarginType(MARGIN_FOLD, wxSTC_MARGIN_SYMBOL);
-	this->editor->SetMarginWidth(MARGIN_FOLD, 15);
-	this->editor->SetMarginMask(MARGIN_FOLD, wxSTC_MASK_FOLDERS);
-	this->editor->SetMarginSensitive(MARGIN_FOLD, true);
-	this->editor->StyleSetBackground(MARGIN_FOLD, wxColor(200, 200, 200) );
+	// Style
+	this->LoadStyle();
+	// Bind event handlers for folding & brace highlighting
+	this->Connect(wxID_ANY, wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(LuaEditor::OnMarginClick));
+	this->Connect(wxID_ANY, wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(LuaEditor::OnBrace));
+}
+
+void LuaEditor::LoadStyle(){
 	// Lua style
 	EditorBase::SetDefaultStyle();
 	this->editor->SetLexer(wxSTC_LEX_LUA);
@@ -45,6 +47,11 @@ LuaEditor::LuaEditor(wxWindow *wnd) : EditorBase(wnd){
 	this->editor->StyleSetBackground(wxSTC_STYLE_BRACELIGHT, wxColour(128,0,196));
 	this->editor->StyleSetForeground(wxSTC_STYLE_BRACEBAD, wxColour(255,255,255));
 	this->editor->StyleSetBackground(wxSTC_STYLE_BRACEBAD, wxColour(255,0,0));
+	// Margin (folding)
+	this->editor->SetMarginType(MARGIN_FOLD, wxSTC_MARGIN_SYMBOL);
+	this->editor->SetMarginWidth(MARGIN_FOLD, 15);
+	this->editor->SetMarginMask(MARGIN_FOLD, wxSTC_MASK_FOLDERS);
+	this->editor->SetMarginSensitive(MARGIN_FOLD, true);
 	// Folding
 	this->editor->SetProperty(wxT("fold"),		 wxT("1") );
 	this->editor->SetProperty(wxT("fold.comment"), wxT("1") );
@@ -57,9 +64,6 @@ LuaEditor::LuaEditor(wxWindow *wnd) : EditorBase(wnd){
 	this->editor->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_EMPTY);
 	this->editor->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_EMPTY);
 	this->editor->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
-	// Bind event handlers for folding & brace highlighting
-	this->Connect(wxID_ANY, wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(LuaEditor::OnMarginClick));
-	this->Connect(wxID_ANY, wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(LuaEditor::OnBrace));
 }
 
 void LuaEditor::OnMarginClick(wxStyledTextEvent& event){

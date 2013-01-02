@@ -7,7 +7,7 @@
 // Configuration attributes
 wxString in_lua, in_ass, out_ass, cmd, language, sound, font;
 bool auto_run = false;
-unsigned long fontsize = 11;
+unsigned long fontsize = 9;
 bool minimize2icon = false;
 
 namespace Config{

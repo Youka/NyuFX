@@ -48,9 +48,8 @@ void EditorBase::CreateElements(){
 	// Editor
 	this->editor = new wxStyledTextCtrl(this, wxID_ANY);
 	if(!Config::Font()->IsEmpty()){
-		wxFont editor_font(*Config::FontSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, *Config::Font());
-		if(editor_font.IsOk())
-			this->editor->StyleSetFont(wxSTC_STYLE_DEFAULT, editor_font);
+		this->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, *Config::FontSize());
+		this->editor->StyleSetFaceName(wxSTC_STYLE_DEFAULT, *Config::Font());
 	}
 	// Drop target
 	this->editor->SetDropTarget(new DropEditorFile(this->title, this->editor));
