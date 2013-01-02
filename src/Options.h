@@ -6,7 +6,8 @@
 #include <wx/combobox.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
-#include <wx/fontpicker.h>
+#include <wx/fontenum.h>
+#include <wx/spinctrl.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 
@@ -15,14 +16,14 @@ class Options : public wxDialog{
 		// Window initialization
 		Options(wxWindow *wnd);
 		// Layout
-		wxBoxSizer *v_box;
+		wxBoxSizer *v_box, *font_box;
 		wxFlexGridSizer *flex;
 		// Subwindows
 		wxStaticText *language_label, *sound_label, *m2i_label, *font_label, *info_label;
-		wxComboBox *languages;
+		wxComboBox *languages, *fontface;
 		wxTextCtrl *sound_file;
 		wxCheckBox *minimize2icon;
-		wxFontPickerCtrl *font;
+		wxSpinCtrl *fontsize;
 		wxStaticLine *line;
 		wxButton *close;
 	private:
