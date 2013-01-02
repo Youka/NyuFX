@@ -27,6 +27,9 @@ class Options : public wxDialog{
 		wxStaticLine *line;
 		wxButton *accept;
 	private:
+		// Interface construction
+		void CreateElements();
+		void PlaceElements();
 		// Event handlers
 		DECLARE_EVENT_TABLE()
 		void OnButton(wxCommandEvent& event);

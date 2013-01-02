@@ -17,6 +17,9 @@ class About : public wxDialog{
 		wxTextCtrl *text;
 		wxButton *ok;
 	private:
+		// Interface construction
+		void CreateElements();
+		void PlaceElements();
 		// Event IDs
 		enum{ID_URL_CLICK = 100};
 		// Event handlers

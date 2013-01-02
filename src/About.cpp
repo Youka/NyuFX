@@ -1,13 +1,18 @@
 #include "About.h"
 
 About::About(wxWindow *wnd) : wxDialog(wnd, wxID_ANY, _("About"), wxDefaultPosition, wxDefaultSize, 0){
-	// Window
+	// Window background
 	this->SetBackgroundColour(wxColor(225,225,225));
-	this->v_box = new wxBoxSizer(wxVERTICAL);
+	// Create subwindows
+	this->CreateElements();
+	// Set layout
+	this->PlaceElements();
+}
+
+void About::CreateElements(){
 	// Logo
 	wxBitmap bmp = wxBITMAP(logo_bmp);
 	this->pic = new wxStaticBitmap(this, wxID_ANY, bmp);
-	this->v_box->Add(this->pic, 0, wxEXPAND | wxALL, 5);
 	// Description
 	this->text = new wxTextCtrl(this, ID_URL_CLICK, wxEmptyString, wxDefaultPosition, wxSize(bmp.GetWidth(),220),
 						wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_BESTWRAP | wxTE_READONLY | wxTE_MULTILINE | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL | wxSUNKEN_BORDER);
@@ -45,14 +50,22 @@ About::About(wxWindow *wnd) : wxDialog(wnd, wxID_ANY, _("About"), wxDefaultPosit
 	this->text->SetDefaultStyle(attrib);
 	this->text->AppendText(wxT("  www.gnu.org/copyleft/gpl.html"));
 	this->text->SetInsertionPoint(0);
-	this->v_box->Add(this->text, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
 	// Button
 	this->ok = new wxButton(this, wxID_OK, _("Close"));
 	this->ok->SetCursor(wxCURSOR_HAND);
+}
+
+void About::PlaceElements(){
+	this->v_box = new wxBoxSizer(wxVERTICAL);
+
+	this->v_box->Add(this->pic, 0, wxEXPAND | wxALL, 5);
+	this->v_box->Add(this->text, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
 	this->v_box->Add(this->ok, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 5);
+
 	// Place everything
 	this->SetSizer(this->v_box);
 	this->v_box->SetSizeHints(this);
+
 	// Focus window
 	this->Center();
 	this->ok->SetFocus();
