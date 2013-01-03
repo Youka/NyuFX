@@ -461,10 +461,18 @@ void GUI::OnOpenOptions(wxCommandEvent& event){
 }
 
 void GUI::OnClearLog(wxCommandEvent& event){
-
+	// TODO: lock for progress
+	if(this->output_panel->gencanc->GetLabelText() == _("Generate"))
+		this->output_panel->log->Clear();
+	else
+		wxMessageBox(_("Not possible while a process is running!"), _("Access error"), wxOK | wxCENTRE | wxICON_ERROR);
 }
 void GUI::OnResetProgressbar(wxCommandEvent& event){
-
+	// TODO: lock for progress
+	if(this->output_panel->gencanc->GetLabelText() == _("Generate"))
+		this->output_panel->progressbar->SetValue(0);
+	else
+		wxMessageBox(_("Not possible while a process is running!"), _("Access error"), wxOK | wxCENTRE | wxICON_ERROR);
 }
 
 void GUI::OnTool(wxCommandEvent& event){

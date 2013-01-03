@@ -229,6 +229,14 @@
 			Name="Progress"
 			>
 			<File
+				RelativePath=".\Generator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Generator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Lua.cpp"
 				>
 			</File>

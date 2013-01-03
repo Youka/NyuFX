@@ -36,5 +36,4 @@ class OutputCtrl : public wxPanel{
 		void OnChooseFile(wxCommandEvent& event);
 		void OnGenerateCancel(wxCommandEvent& event);
 		void OnOpen(wxCommandEvent& event);
-		void OnAfterProcess(wxThreadEvent& event);
 };

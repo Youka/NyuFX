@@ -104,7 +104,6 @@ BEGIN_EVENT_TABLE(OutputCtrl, wxPanel)
 	EVT_BUTTON(ID_OUT_CHOOSE_FILE, OutputCtrl::OnChooseFile)
 	EVT_BUTTON(ID_OUT_GENCANC, OutputCtrl::OnGenerateCancel)
 	EVT_BUTTON(ID_OUT_OPEN, OutputCtrl::OnOpen)
-	EVT_THREAD(wxID_ANY, OutputCtrl::OnAfterProcess)
 END_EVENT_TABLE()
 
 // Define event handlers
@@ -148,10 +147,4 @@ void OutputCtrl::OnGenerateCancel(wxCommandEvent& event){
 void OutputCtrl::OnOpen(wxCommandEvent& event){
 	if(!this->out_file->GetValue().IsEmpty() && !wxLaunchDefaultApplication(this->out_file->GetValue()))
 		wxMessageBox(_("File not exists!"), _("File error"), wxOK | wxCENTRE | wxICON_ERROR);
-}
-
-void OutputCtrl::OnAfterProcess(wxThreadEvent& event){
-	wxString cmd_str = this->cmd->GetValue();
-	if(!cmd_str.IsEmpty())
-		wxExecute(cmd_str);
 }
