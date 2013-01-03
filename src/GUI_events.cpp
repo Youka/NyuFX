@@ -486,6 +486,8 @@ void GUI::OnTool(wxCommandEvent& event){
 void GUI::OnHelp(wxCommandEvent& event){
 	static HelpWindow *help = new HelpWindow(this);
 	help->Show();
+	if(help->IsIconized())
+		help->Iconize(false);
 }
 void GUI::OnAbout(wxCommandEvent& event){
 	this->SetTransparent(127);
