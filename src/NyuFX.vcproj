@@ -240,6 +240,14 @@
 				RelativePath=".\Lua.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Scripting.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Scripting.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

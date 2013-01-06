@@ -151,5 +151,5 @@ void OutputCtrl::OnGenerateCancel(wxCommandEvent& event){
 
 void OutputCtrl::OnOpen(wxCommandEvent& event){
 	if(!this->out_file->GetValue().IsEmpty() && !wxLaunchDefaultApplication(this->out_file->GetValue()))
-		wxMessageBox(_("File not exists!"), _("File error"), wxOK | wxCENTRE | wxICON_ERROR);
+		wxMessageBox(_("File not exists!"), _("Output file error"), wxOK | wxCENTRE | wxICON_ERROR);
 }

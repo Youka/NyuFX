@@ -145,7 +145,7 @@ int l_ ## func (lua_State *L){ \
 #define DEF_HEAD_2ARG(func, param_n1, param_n2) \
 int l_ ## func (lua_State *L){ \
 	if(lua_gettop(L) == param_n1 || lua_gettop(L) == param_n2){
-#define DEF_HEAD_!ARG(func, param_n) \
+#define DEF_HEAD_NARG(func, param_n) \
 int l_ ## func (lua_State *L){ \
 	if(lua_gettop(L) != param_n){
 #define DEF_TAIL \
