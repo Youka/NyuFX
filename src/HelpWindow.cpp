@@ -89,6 +89,7 @@ void HelpWindow::PlaceElements(){
 
 void HelpWindow::SetContent(){
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\docs\\"), &this->files, wxT("*.html"), wxDIR_FILES);
+	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\docs\\"), &this->files, wxT("*.pdf"), wxDIR_FILES);
 	for(unsigned int i = 0; i < this->files.GetCount(); i++)
 		this->entries->Append( this->files[i].BeforeLast('.').AfterLast('\\') );
 }

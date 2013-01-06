@@ -237,10 +237,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Lua.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Lua.h"
 				>
 			</File>

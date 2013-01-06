@@ -15,11 +15,9 @@ Generator::~Generator(){
 }
 
 wxThread::ExitCode Generator::Entry(){
-	// TODO: create temporary file & lua process
+	// TODO: create Lua process & register filenames + functions
 
 	// TODO: execute Lua scripts
-
-	// TODO: on success, save temporary file
 
 	// Success sound
 	{
