@@ -173,5 +173,6 @@ void GUI::ReadConfig(){
 	this->output_panel->cmd->SetValue(*Config::Command());
 	this->output_panel->cmd->SetInsertionPointEnd();
 	// Run immediately?
-	this->output_panel->GetEventHandler()->ProcessEvent( wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, output_panel->gencanc->GetId()) );
+	if(Config::AutoRun())
+		this->output_panel->GetEventHandler()->ProcessEvent( wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, this->output_panel->gencanc->GetId()) );
 }

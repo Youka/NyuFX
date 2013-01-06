@@ -21,6 +21,8 @@ class DropOutputFile : public wxFileDropTarget{
 //Output panel
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
+#include "Generator.h"
+#include "Config.h"
 
 OutputCtrl::OutputCtrl(wxWindow *wnd) : wxPanel(wnd){
 	this->SetBackgroundColour( this->GetParent()->GetBackgroundColour() );
@@ -117,31 +119,34 @@ void OutputCtrl::OnChooseFile(wxCommandEvent& event){
 }
 
 void OutputCtrl::OnGenerateCancel(wxCommandEvent& event){
-
-	// TODO: Generation process
-
-	/*static GenerationThread *gen_thread;
-	LOCK_OUTPUT
-	if(gencanc->GetLabelText() == "Generate"){
-		//THIS->GUI->Splitter->editor->title->Label
-		wxString lua_title = ( (wxTextCtrl*)this->GetParent()->FindWindow(wxT("splitter"))->GetChildren()[0]->FindWindow(wxTextCtrlNameStr) )->GetValue();
-		wxString ass_title = ( (wxTextCtrl*)this->GetParent()->FindWindow(wxT("splitter"))->GetChildren()[1]->FindWindow(wxTextCtrlNameStr) )->GetValue();
-		gen_thread = new GenerationThread(lua_title, ass_title, out_file->GetValue(), log, progressbar, gencanc, this->GetEventHandler());
+	// Process thread handle
+	static Generator *gen_thread;
+	// Start new process
+	if(this->gencanc->GetLabelText() == _("Generate")){
+		gen_thread = new Generator(
+			reinterpret_cast<wxTextCtrl*>(this->GetParent()->FindWindow(wxT("splitter"))->GetChildren()[0]->FindWindow(wxTextCtrlNameStr))->GetValue(),	// Lua editor title
+			reinterpret_cast<wxTextCtrl*>(this->GetParent()->FindWindow(wxT("splitter"))->GetChildren()[1]->FindWindow(wxTextCtrlNameStr))->GetValue(),	// ASS editor title
+			this->out_file->GetValue(),
+			this->cmd->GetValue(),
+			*Config::Sound(),
+			this->log,
+			this->progressbar,
+			this->gencanc
+		);
 		if(gen_thread->Create() != wxTHREAD_NO_ERROR){
-			delete gen_thread;
+			gen_thread->Delete();
 			wxMessageBox(_("Couldn't create thread!"), _("Process error"), wxOK | wxCENTRE | wxICON_ERROR);
-		}else{
-			if(gen_thread->Run() != wxTHREAD_NO_ERROR){
-				delete gen_thread;
-				wxMessageBox(_("Couldn't run thread!"), _("Process error"), wxOK | wxCENTRE | wxICON_ERROR);
-			}
+		}else if(gen_thread->Run() != wxTHREAD_NO_ERROR){
+			gen_thread->Delete();
+			wxMessageBox(_("Couldn't run thread!"), _("Process error"), wxOK | wxCENTRE | wxICON_ERROR);
 		}
-	}else if(gencanc->GetLabelText() == "Cancel"){
-		gencanc->Enable(false);
-		gencanc->SetLabelText(wxT("..."));
-		gencanc->SetToolTip(_("Currently terminating process!"));
+	// Cancel current process
+	}else if(this->gencanc->GetLabelText() == _("Cancel")){
+		this->gencanc->Enable(false);
+		this->gencanc->SetLabelText(wxT("..."));
+		this->gencanc->SetToolTip(_("Currently terminating process!"));
 		gen_thread->Delete();
-	}*/
+	}
 }
 
 void OutputCtrl::OnOpen(wxCommandEvent& event){

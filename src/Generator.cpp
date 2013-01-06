@@ -8,7 +8,7 @@ Generator::Generator(wxString lua_file, wxString ass_file, wxString output_file,
 }
 
 Generator::~Generator(){
-	// TODO: lock for progress
+	wxMutexGuiLocker gui_locker;
 	this->gencanc->Enable(true);	// Disabled in case of cancel operation
 	this->gencanc->SetLabelText(_("Generate"));
 	this->gencanc->SetToolTip(_("Start process!"));
