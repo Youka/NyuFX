@@ -21,14 +21,15 @@ void Options::CreateElements(){
 		this->languages->SetValue(supported_langs[0]);
 	else
 		this->languages->SetValue(*Config::Language());
+	this->languages->SetCursor(wxCURSOR_HAND);
 	// Sound
 	this->sound_label = new wxStaticText(this, wxID_ANY, _("Sound"));
 	this->sound_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
 	this->sound_label->SetToolTip(_("Sound file to play after generation"));
-	this->sound_file = new wxTextCtrl(this, wxID_ANY, *Config::Sound(), wxDefaultPosition, wxDefaultSize,
-								wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxSUNKEN_BORDER);
-	this->sound_file->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
-	this->sound_file->SetCursor(wxCURSOR_IBEAM);
+	this->sound_file = new wxFilePickerCtrl(this, wxID_ANY, *Config::Sound(), _("Choose sound file"), wxT("Waveform audio file (*.wav)|*.wav"));
+	this->sound_file->GetTextCtrl()->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
+	this->sound_file->GetPickerCtrl()->SetLabelText(_("Choose"));
+	this->sound_file->GetPickerCtrl()->SetCursor(wxCURSOR_HAND);
 	// Minimize to icon?
 	this->m2i_label = new wxStaticText(this, wxID_ANY, _("Taskicon?"));
 	this->m2i_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
@@ -44,6 +45,7 @@ void Options::CreateElements(){
 		this->fontface->SetValue(GET_GUI->lua_editor->editor->StyleGetFaceName(wxSTC_STYLE_DEFAULT));
 	else
 		this->fontface->SetValue(*Config::Font());
+	this->fontface->SetCursor(wxCURSOR_HAND);
 	this->fontsize = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(50, -1), wxSP_ARROW_KEYS | wxSP_WRAP | wxALIGN_RIGHT, 4, 50, *Config::FontSize());
 	// Separation line
 	this->line = new wxStaticLine(this);
@@ -52,6 +54,7 @@ void Options::CreateElements(){
 	this->info_label->SetFont(wxFont(6, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
 	// Close button
 	this->accept = new wxButton(this, wxID_CLOSE, _("Accept"), wxDefaultPosition, wxSize(-1,22));
+	this->accept->SetCursor(wxCURSOR_HAND);
 }
 
 void Options::PlaceElements(){
@@ -91,7 +94,7 @@ END_EVENT_TABLE()
 void Options::OnButton(wxCommandEvent& event){
 	// Save settings, ...
 	*Config::Language() = this->languages->GetValue();
-	*Config::Sound() = this->sound_file->GetValue();
+	*Config::Sound() = this->sound_file->GetTextCtrl()->GetValue();
 	*Config::Minimize2Icon() = this->minimize2icon->IsChecked();
 	*Config::Font() = this->fontface->GetValue();
 	*Config::FontSize() = this->fontsize->GetValue();

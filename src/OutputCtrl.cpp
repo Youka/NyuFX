@@ -57,29 +57,27 @@ void OutputCtrl::CreateElements(){
 	//Inputs
 	this->out_file = new wxTextCtrl(this->input_panel, wxID_ANY, wxEmptyString, wxPoint(5,5), wxSize(width-95,25),
 							  wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxSUNKEN_BORDER);
-	this->out_file->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
+	this->out_file->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
 	this->out_file->SetBackgroundColour(wxColor(240,240,240));
-	this->out_file->SetCursor(wxCURSOR_IBEAM);
 	this->out_file->SetDropTarget(new DropOutputFile(out_file));
 	this->choose = new wxButton(this->input_panel, ID_OUT_CHOOSE_FILE, _("Choose"), wxPoint(width-90,5), wxSize(80,25));
-	this->choose->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
+	this->choose->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
 	this->choose->SetCursor(wxCURSOR_HAND);
 	this->choose->SetToolTip(_("Choose an output file"));
 	this->gencanc = new wxButton(this->input_panel, ID_OUT_GENCANC, _("Generate"), wxPoint(5,35), wxSize(80,25));
-	this->gencanc->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
+	this->gencanc->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
 	this->gencanc->SetCursor(wxCURSOR_HAND);
 	this->gencanc->SetToolTip(_("Start process!"));
 	this->open = new wxButton(this->input_panel, ID_OUT_OPEN, _("Open"), wxPoint(90,35), wxSize(80,25));
 	this->open->SetCursor(wxCURSOR_HAND);
 	this->open->SetToolTip(_("Open output file"));
 	this->after_proc = new wxStaticText(this->input_panel, wxID_ANY, _("After process command"), wxPoint(8,65));
-	this->after_proc->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
+	this->after_proc->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
 	this->cmd = new wxTextCtrl(this->input_panel, wxID_ANY, wxEmptyString, wxPoint(5,80), wxSize(width-15,20),
 						 wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxDOUBLE_BORDER);
-	this->cmd->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"), wxFONTENCODING_DEFAULT));
+	this->cmd->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
 	this->cmd->SetBackgroundColour(wxColor(0,0,0));
 	this->cmd->SetForegroundColour(wxColor(0,196,0));
-	this->cmd->SetCursor(wxCURSOR_IBEAM);
 }
 
 void OutputCtrl::PlaceElements(){

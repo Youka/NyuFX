@@ -30,7 +30,6 @@ void HelpWindow::CreateElements(){
 	// Create browser title
 	this->title = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
 								wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxTE_RICH | wxTE_PROCESS_ENTER | wxDOUBLE_BORDER);
-	this->title->SetCursor(wxCURSOR_IBEAM);
 	this->title->SetToolTip(_("Current URL"));
 	this->title->Connect(wxID_ANY, wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(HelpWindow::OnEnter), 0, this);
 	this->title->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);

@@ -4,7 +4,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/combobox.h>
-#include <wx/textctrl.h>
+#include <wx/filepicker.h>
 #include <wx/checkbox.h>
 #include <wx/fontenum.h>
 #include <wx/spinctrl.h>
@@ -21,7 +21,7 @@ class Options : public wxDialog{
 		// Subwindows
 		wxStaticText *language_label, *sound_label, *m2i_label, *font_label, *info_label;
 		wxComboBox *languages, *fontface;
-		wxTextCtrl *sound_file;
+		wxFilePickerCtrl *sound_file;
 		wxCheckBox *minimize2icon;
 		wxSpinCtrl *fontsize;
 		wxStaticLine *line;

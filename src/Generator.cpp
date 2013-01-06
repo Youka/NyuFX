@@ -20,8 +20,10 @@ wxThread::ExitCode Generator::Entry(){
 	// TODO: execute Lua scripts
 
 	// Success sound
-	if(!wxSound::Play(this->sound))
+	if(this->sound.Trim().IsEmpty())
 		wxSound(wxT("nyu_sound"), true).Play();
+	else
+		wxSound::Play(this->sound);
 	// Execute after process command
 	if(!this->command.IsEmpty())
 		wxExecute(this->command);
