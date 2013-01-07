@@ -25,18 +25,13 @@ Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 }
 
 bool Scripting::DoFile(wxString file){
-
-	// TODO: call Lua script with unicode name
-
-	/*if( luaL_dofile(L, filename.ToUTF8()) ){
-		wxMessageBox( wxString::FromUTF8(lua_tostring(L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
+	if( luaL_dofile(this->L, file.ToUTF8()) ){
+		wxMessageBox( wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 		return false;
-	}else if(lua_status(L) == LUA_YIELD)
+	}else if(lua_status(this->L) == LUA_YIELD)
 		return false;
 	else
-		return true;*/
-
-	return true;
+		return true;
 }
 
 bool Scripting::CallInit(unsigned int arg_n, ...){
@@ -52,15 +47,15 @@ bool Scripting::CallInit(unsigned int arg_n, ...){
 		va_end(va_l);
 		// Call function
 		if(lua_pcall(this->L, arg_n, 0, 0)){
-			wxMessageBox( wxT("Init: ") + wxString::FromUTF8(lua_tostring(L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
+			wxMessageBox( wxT("Init: ") + wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 			return false;
-		}else if(lua_status(L) == LUA_YIELD)
+		}else if(lua_status(this->L) == LUA_YIELD)
 			return false;
 		else
 			return true;
 	// Wasn't a function -> clean & error
 	}else{
-		lua_pop(L,1);
+		lua_pop(this->L,1);
 		wxMessageBox( _("'Init' function is missing!"), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 		return false;
 	}
@@ -73,15 +68,15 @@ bool Scripting::CallExit(){
 	if(lua_isfunction(this->L,-1)){
 		// Call function
 		if(lua_pcall(this->L, 0, 0, 0)){
-			wxMessageBox( wxT("Exit: ") + wxString::FromUTF8(lua_tostring(L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
+			wxMessageBox( wxT("Exit: ") + wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 			return false;
-		}else if(lua_status(L) == LUA_YIELD)
+		}else if(lua_status(this->L) == LUA_YIELD)
 			return false;
 		else
 			return true;
 	// Wasn't a function -> clean & error
 	}else{
-		lua_pop(L,1);
+		lua_pop(this->L,1);
 		wxMessageBox( _("'Exit' function is missing!"), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 		return false;
 	}

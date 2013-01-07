@@ -46,7 +46,7 @@ void Options::CreateElements(){
 	else
 		this->fontface->SetValue(*Config::Font());
 	this->fontface->SetCursor(wxCURSOR_HAND);
-	this->fontsize = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(50, -1), wxSP_ARROW_KEYS | wxSP_WRAP | wxALIGN_RIGHT, 4, 50, *Config::FontSize());
+	this->fontsize = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(50, -1), wxSP_ARROW_KEYS | wxALIGN_RIGHT, 4, 50, *Config::FontSize());
 	// Separation line
 	this->line = new wxStaticLine(this);
 	// Information
@@ -87,7 +87,6 @@ void Options::PlaceElements(){
 // Bind event IDs to event handlers
 BEGIN_EVENT_TABLE(Options, wxDialog)
 	EVT_BUTTON(wxID_CLOSE, Options::OnButton)
-	EVT_CLOSE(Options::OnClose)
 END_EVENT_TABLE()
 
 // Define event handlers
@@ -113,7 +112,4 @@ void Options::OnButton(wxCommandEvent& event){
 	GET_GUI->ass_editor->LoadStyle();
 	// ...destroy dialog
 	this->ProcessEvent( wxCloseEvent(wxEVT_CLOSE_WINDOW) );
-}
-void Options::OnClose(wxCloseEvent& event){
-	this->Destroy();
 }

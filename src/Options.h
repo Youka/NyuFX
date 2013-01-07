@@ -33,5 +33,4 @@ class Options : public wxDialog{
 		// Event handlers
 		DECLARE_EVENT_TABLE()
 		void OnButton(wxCommandEvent& event);
-		void OnClose(wxCloseEvent& event);
 };

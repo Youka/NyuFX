@@ -3,8 +3,8 @@ src/NyuFX.ncb
 src/NyuFX.suo
 src/NyuFX.vcproj.YOUKA.ASUS.user
 
-tools/*.*
+tools/
+test/
 
 config.ini
 NyuFX.exe
-*.wav
