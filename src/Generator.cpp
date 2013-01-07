@@ -1,5 +1,8 @@
 #include "Generator.h"
 #include <wx/sound.h>
+#include <wx/dir.h>
+#include <wx/stdpaths.h>
+#include "Scripting.h"
 
 Generator::Generator(wxString lua_file, wxString ass_file, wxString output_file, wxString command, wxString sound, wxTextCtrl *log, wxGauge *progressbar, wxButton *gencanc)
 : lua_file(lua_file), ass_file(ass_file), output_file(output_file), command(command), sound(sound), log(log), progressbar(progressbar), gencanc(gencanc){
@@ -15,10 +18,20 @@ Generator::~Generator(){
 }
 
 wxThread::ExitCode Generator::Entry(){
-	// TODO: create Lua process & register filenames + functions
-
-	// TODO: execute Lua scripts
-
+	// Create Lua environment process
+	Scripting env(this->log, this->progressbar);
+	// Load & execute Lua scripts
+	wxArrayString inc_files;
+	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\include\\"), &inc_files, wxT("*.lua"), wxDIR_FILES);
+	for(unsigned int i = 0; i < inc_files.GetCount() && i<100; i++)
+		if( !env.DoFile(inc_files[i]) )
+			return 0;
+	if( !env.CallInit(2, this->ass_file, this->output_file) )
+		return 0;
+	if( !env.DoFile(this->lua_file) )
+		return 0;
+	if( !env.CallExit() )
+		return 0;
 	// Success sound
 	if(this->sound.Trim().IsEmpty())
 		wxSound(wxT("nyu_sound"), true).Play();
