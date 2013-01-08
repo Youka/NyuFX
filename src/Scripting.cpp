@@ -9,7 +9,60 @@ void YieldLua(lua_State *L, lua_Debug *ar){
 }
 
 wxTextCtrl *print_target;
+DEF_HEAD_NARG(print, 0)
+	// Output buffer
+	wxString output;
+	// Through function parameters
+	for(int i = 1; i <= lua_gettop(L); i++)
+		switch(lua_type(L, i)){
+			case LUA_TNIL:
+				output << wxT("nil\n");
+				break;
+			case LUA_TBOOLEAN:
+				output << ( lua_toboolean(L, i) ? wxT("true\n") : wxT("false\n") );
+				break;
+			case LUA_TLIGHTUSERDATA:
+				output << wxString::Format( wxT("Lightuserdata: %d\n"), reinterpret_cast<unsigned int>(lua_touserdata(L, i)) );
+				break;
+			case LUA_TNUMBER:
+				output << wxString::Format( wxT("%f\n"),  lua_tonumber(L, i) );
+				break;
+			case LUA_TSTRING:
+				output << wxString::FromUTF8(lua_tostring(L, i)) << wxT("\n");
+				break;
+			case LUA_TTABLE:
+				output << wxString::Format( wxT("Table: %d\n"), reinterpret_cast<unsigned int>(lua_topointer(L, i)) );
+				break;
+			case LUA_TFUNCTION:
+				output << wxString::Format( wxT("Function: %d\n"), reinterpret_cast<unsigned int>(lua_topointer(L, i)) );
+				break;
+			case LUA_TUSERDATA:
+				output << wxString::Format( wxT("Userdata: %d\n"), reinterpret_cast<unsigned int>(lua_touserdata(L, i)) );
+				break;
+			case LUA_TTHREAD:
+				output << wxString::Format( wxT("Thread: %d\n"), reinterpret_cast<unsigned int>(lua_topointer(L, i)) );
+				break;
+			default:
+				output << wxT("Unknown value!\n");
+				break;
+		}
+	// Send buffer to log
+	wxMutexGuiLocker gui_locker;
+	print_target->AppendText( output );
+DEF_TAIL
+
 wxGauge *progress_target;
+DEF_HEAD_1ARG(progressbar, 1)
+	if(lua_isnumber(L, 1)){
+		double n = lua_tonumber(L, 1);
+		if(n >= 0 && n <= 100){
+			wxMutexGuiLocker gui_locker;
+			progress_target->SetValue(n);
+		}else
+			luaL_error2(L, "invalid number");
+	}else
+		luaL_error2(L, "number expected");
+DEF_TAIL
 
 // Scripting definition
 Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
@@ -17,11 +70,13 @@ Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 	print_target = log;
 	progress_target = progressbar;
 	// Extend Lua
-	luaL_openlibs(this->L);
 	lua_sethook(this->L, YieldLua, LUA_MASKCALL, 1);
-
-	// TODO: add functions
-
+	luaL_openlibs(this->L);
+	lua_register(L, "print", l_print);
+	lua_getglobal(L, "io");
+	lua_pushcfunction(L, l_progressbar);
+	lua_setfield(L, -2, "progressbar");
+	lua_pop(L, 1);
 }
 
 bool Scripting::DoFile(wxString file){
