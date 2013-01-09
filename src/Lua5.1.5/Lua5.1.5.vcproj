@@ -262,6 +262,10 @@
 				RelativePath=".\lzio.c"
 				>
 			</File>
+			<File
+				RelativePath=".\WinIO.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
