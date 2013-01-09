@@ -1,7 +1,6 @@
 #include "Scripting.h"
 #include <wx/thread.h>
 #include <wx/msgdlg.h>
-#include "System.h"
 
 // Lua functions
 wxTextCtrl *print_target;
@@ -60,18 +59,6 @@ DEF_HEAD_1ARG(progressbar, 1)
 		luaL_error2(L, "number expected");
 DEF_TAIL
 
-DEF_HEAD_1ARG(getshortpath, 1)
-	if(lua_isstring(L, 1)){
-		wxString output;
-		if( wxGetShortPathName(wxString::FromUTF8(lua_tostring(L, 1)), &output) ){
-			lua_pushstring(L, output.ToAscii());
-			return 1;
-		}else
-			luaL_error2(L, "invalid pathname");
-	}else
-		luaL_error2(L, "string expected");
-DEF_TAIL
-
 void YieldLua(lua_State *L, lua_Debug *ar){
     if(wxThread::This()->TestDestroy())
         lua_yield(L, 0);
@@ -89,22 +76,11 @@ Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 	lua_pushcfunction(this->L, l_progressbar);
 	lua_setfield(this->L, -2, "progressbar");
 	lua_pop(this->L, 1);
-	lua_getglobal(this->L, "os");
-	lua_pushcfunction(this->L, l_getshortpath);
-	lua_setfield(this->L, -2, "getshortpath");
-	lua_pop(this->L, 1);
 	lua_sethook(this->L, YieldLua, LUA_MASKCALL, 1);
 }
 
 bool Scripting::DoFile(wxString file){
-	// Convert long filepath to ascii-only short filepath for Lua
-	wxString sfile;
-	if( !wxGetShortPathName(file, &sfile) ){
-		wxMessageBox(wxString::Format(wxT("Invalid file: \"%s\""), file), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
-		return false;
-	}
-	// Call file
-	if( luaL_dofile(this->L, sfile.ToAscii()) ){
+	if( luaL_dofile(this->L, file.ToUTF8()) ){
 		wxMessageBox( wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 		return false;
 	}else if(lua_status(this->L) == LUA_YIELD)
