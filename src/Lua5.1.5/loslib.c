@@ -11,6 +11,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "WinIO.h"
+
 #define loslib_c
 #define LUA_LIB
 
@@ -36,21 +38,21 @@ static int os_pushresult (lua_State *L, int i, const char *filename) {
 
 
 static int os_execute (lua_State *L) {
-  lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
+  lua_pushinteger(L, _utf8system(luaL_optstring(L, 1, NULL)));
   return 1;
 }
 
 
 static int os_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
-  return os_pushresult(L, remove(filename) == 0, filename);
+  return os_pushresult(L, _utf8remove(filename) == 0, filename);
 }
 
 
 static int os_rename (lua_State *L) {
   const char *fromname = luaL_checkstring(L, 1);
   const char *toname = luaL_checkstring(L, 2);
-  return os_pushresult(L, rename(fromname, toname) == 0, fromname);
+  return os_pushresult(L, _utf8rename(fromname, toname) == 0, fromname);
 }
 
 
