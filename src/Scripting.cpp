@@ -1,13 +1,9 @@
 #include "Scripting.h"
 #include <wx/thread.h>
 #include <wx/msgdlg.h>
+#include <windows.h>
 
 // Lua functions
-void YieldLua(lua_State *L, lua_Debug *ar){
-    if(wxThread::This()->TestDestroy())
-        lua_yield(L, 0);
-}
-
 wxTextCtrl *print_target;
 DEF_HEAD_NARG(print, 0)
 	// Output buffer
@@ -64,19 +60,49 @@ DEF_HEAD_1ARG(progressbar, 1)
 		luaL_error2(L, "number expected");
 DEF_TAIL
 
+DEF_HEAD_1ARG(getspathname, 1)
+	if(lua_isstring(L, 1)){
+		// Get path
+		wxString wxpath = wxString::FromUTF8( lua_tostring(L, 1) );
+		const wchar_t *wpath = wxpath.wc_str();
+		// Convert path
+		DWORD len = GetShortPathNameW(wpath, NULL, 0);
+		if(len > 0){
+			wxScopedPtr<wchar_t> buffer(new wchar_t[len]);
+			if(GetShortPathNameW(wpath, buffer.get(), len) > 0){
+				// Return short path (will be ascii)
+				lua_pushstring(L, wxString(buffer.get()).ToAscii());
+				return 1;
+			}else
+				luaL_error2(L, "conversion not possible");
+		}else
+			luaL_error2(L, "invalid pathname");
+	}else
+		luaL_error2(L, "string expected");
+DEF_TAIL
+
+void YieldLua(lua_State *L, lua_Debug *ar){
+    if(wxThread::This()->TestDestroy())
+        lua_yield(L, 0);
+}
+
 // Scripting definition
 Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 	// Set Lua output function targets
 	print_target = log;
 	progress_target = progressbar;
 	// Extend Lua
-	lua_sethook(this->L, YieldLua, LUA_MASKCALL, 1);
 	luaL_openlibs(this->L);
-	lua_register(L, "print", l_print);
-	lua_getglobal(L, "io");
-	lua_pushcfunction(L, l_progressbar);
-	lua_setfield(L, -2, "progressbar");
-	lua_pop(L, 1);
+	lua_register(this->L, "print", l_print);
+	lua_getglobal(this->L, "io");
+	lua_pushcfunction(this->L, l_progressbar);
+	lua_setfield(this->L, -2, "progressbar");
+	lua_pop(this->L, 1);
+	lua_getglobal(this->L, "os");
+	lua_pushcfunction(this->L, l_getspathname);
+	lua_setfield(this->L, -2, "getspathname");
+	lua_pop(this->L, 1);
+	lua_sethook(this->L, YieldLua, LUA_MASKCALL, 1);
 }
 
 bool Scripting::DoFile(wxString file){

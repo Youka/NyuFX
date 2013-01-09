@@ -43,7 +43,7 @@ void EditorBase::CreateElements(){
 	// Opened file
 	this-> title = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
 						   wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_CHARWRAP | wxTE_READONLY | wxTE_RICH | wxNO_BORDER);
-	this->title->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
+	this->title->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL));
 	// Editor
 	this->editor = new wxStyledTextCtrl(this, wxID_ANY);
 	if(!Config::Font()->IsEmpty()){

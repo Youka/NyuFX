@@ -1,6 +1,7 @@
 #include "Options.h"
 #include "Config.h"
 #include "GUI.h"
+
 #define GET_GUI reinterpret_cast<GUI*>(this->GetParent())
 
 Options::Options(wxWindow *wnd) : wxDialog(wnd, wxID_ANY, _("Options"), wxDefaultPosition, wxDefaultSize,  wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX){
@@ -13,7 +14,7 @@ Options::Options(wxWindow *wnd) : wxDialog(wnd, wxID_ANY, _("Options"), wxDefaul
 void Options::CreateElements(){
 	// Language
 	this->language_label = new wxStaticText(this, wxID_ANY, _("Language"));
-	this->language_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
+	this->language_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	this->language_label->SetToolTip(_("GUI language"));
 	const wxString supported_langs[] = {wxT("english"), wxT("german"), wxT("arabic"), wxT("japanese"), wxT("chinese")};
 	this->languages = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, sizeof(supported_langs) / sizeof(wxString), supported_langs, wxCB_READONLY);
@@ -24,21 +25,21 @@ void Options::CreateElements(){
 	this->languages->SetCursor(wxCURSOR_HAND);
 	// Sound
 	this->sound_label = new wxStaticText(this, wxID_ANY, _("Sound"));
-	this->sound_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
+	this->sound_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	this->sound_label->SetToolTip(_("Sound file to play after generation"));
 	this->sound_file = new wxFilePickerCtrl(this, wxID_ANY, *Config::Sound(), _("Choose sound file"), wxT("Waveform audio file (*.wav)|*.wav"));
-	this->sound_file->GetTextCtrl()->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
+	this->sound_file->GetTextCtrl()->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 	this->sound_file->GetPickerCtrl()->SetLabelText(_("Choose"));
 	this->sound_file->GetPickerCtrl()->SetCursor(wxCURSOR_HAND);
 	// Minimize to icon?
 	this->m2i_label = new wxStaticText(this, wxID_ANY, _("Taskicon?"));
-	this->m2i_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
+	this->m2i_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	this->m2i_label->SetToolTip(_("Minimize program to taskicon? (otherwise to taskbar)"));
 	this->minimize2icon = new wxCheckBox(this, wxID_ANY, wxEmptyString);
 	this->minimize2icon->SetValue(*Config::Minimize2Icon());
 	// Font
 	this->font_label = new wxStaticText(this, wxID_ANY, _("Font"));
-	this->font_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
+	this->font_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	this->font_label->SetToolTip(_("Default font of both editors"));
 	this->fontface = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(150, -1), wxFontEnumerator::GetFacenames(), wxCB_DROPDOWN | wxCB_SORT);
 	if( this->fontface->FindString(*Config::Font(), true) == wxNOT_FOUND )
@@ -51,7 +52,7 @@ void Options::CreateElements(){
 	this->line = new wxStaticLine(this);
 	// Information
 	this->info_label = new wxStaticText(this, wxID_ANY, _("Language change requires a program restart"));
-	this->info_label->SetFont(wxFont(6, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, wxT("Arial")));
+	this->info_label->SetFont(wxFont(6, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL));
 	// Close button
 	this->accept = new wxButton(this, wxID_CLOSE, _("Accept"), wxDefaultPosition, wxSize(-1,22));
 	this->accept->SetCursor(wxCURSOR_HAND);

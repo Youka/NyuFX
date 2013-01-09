@@ -44,7 +44,7 @@ namespace Config{
 
 	void Load(){
 		// Evaluate config file
-		wxFileInputStream stream(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + "\\config.ini");
+		wxFileInputStream stream(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\config.ini"));
 		if(stream.IsOk()){
 			wxFileConfig conf(stream, wxMBConvUTF8());
 			conf.SetPath(wxT("/Input"));
@@ -100,7 +100,7 @@ namespace Config{
 	void Save(){
 		wxFileConfig conf(wxEmptyString,	// application name
 										wxEmptyString,	// vendor name
-										wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + "\\config.ini",	// local file
+										wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\config.ini"),	// local file
 										wxEmptyString,	// global file
 										wxCONFIG_USE_LOCAL_FILE,	// content target
 										wxMBConvUTF8());	// format
