@@ -3,8 +3,13 @@ src/NyuFX.ncb
 src/NyuFX.suo
 src/NyuFX.vcproj.YOUKA.ASUS.user
 
-tools/
+src/Lua5.1.5/Release
+src/Lua5.1.5/Lua5.1.5.ncb
+src/Lua5.1.5/Lua5.1.5.suo
+src/Lua5.1.5/Lua5.1.5.vcproj.YOUKA.ASUS.user
+
 test/
+tools/
 
 config.ini
 NyuFX.exe
