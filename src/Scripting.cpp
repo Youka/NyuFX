@@ -26,7 +26,7 @@ DEF_HEAD_NARG(print, 0)
 				output << wxString::Format( wxT("Lightuserdata: %d\n"), reinterpret_cast<unsigned int>(lua_touserdata(L, i)) );
 				break;
 			case LUA_TNUMBER:
-				output << wxString::Format( wxT("%f\n"),  lua_tonumber(L, i) );
+				output << lua_tonumber(L, i) << wxT("\n");
 				break;
 			case LUA_TSTRING:
 				output << wxString::FromUTF8(lua_tostring(L, i)) << wxT("\n");
@@ -45,7 +45,6 @@ DEF_HEAD_NARG(print, 0)
 				break;
 			default:
 				output << wxT("Unknown value!\n");
-				break;
 		}
 	// Send buffer to log
 	wxMutexGuiLocker gui_locker;

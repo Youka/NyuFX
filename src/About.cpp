@@ -14,7 +14,7 @@ void About::CreateElements(){
 	wxBitmap bmp = wxBITMAP(logo_bmp);
 	this->pic = new wxStaticBitmap(this, wxID_ANY, bmp);
 	// Description
-	this->text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(bmp.GetWidth(),220),
+	this->text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(bmp.GetWidth(),230),
 						wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_BESTWRAP | wxTE_READONLY | wxTE_MULTILINE | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL | wxSUNKEN_BORDER);
 	wxTextAttr attrib;
 	attrib.SetFontSize(10);
@@ -24,14 +24,14 @@ void About::CreateElements(){
 	this->text->AppendText(wxT("NyuFX v1.6.0\n"));
 	attrib.SetFontUnderlined(false);
 	this->text->SetDefaultStyle(attrib);
-	this->text->AppendText(_("Karaoke effect creation with pixel & vector utilities.\n\n"));
-	this->text->AppendText(_("Programmer:\n"));
+	this->text->AppendText(_("Karaoke effect creation with pixel & vector utilities.") + wxT("\n\n"));
+	this->text->AppendText(_("Programmer:") + wxT("\n"));
 	attrib.SetFontWeight(wxFONTWEIGHT_NORMAL);
 	this->text->SetDefaultStyle(attrib);
 	this->text->AppendText(wxT("  Youka\n"));
 	attrib.SetFontWeight(wxFONTWEIGHT_BOLD);
 	this->text->SetDefaultStyle(attrib);
-	this->text->AppendText(_("Thanks to:\n"));
+	this->text->AppendText(_("Thanks to:") + wxT("\n"));
 	attrib.SetFontWeight(wxFONTWEIGHT_NORMAL);
 	this->text->SetDefaultStyle(attrib);
 	this->text->AppendText(wxT("  wxWidgets - Copyright \u00A9 Robert Roebling & Co.\n"));
@@ -39,7 +39,7 @@ void About::CreateElements(){
 	this->text->AppendText(wxT("  Lua - Copyright \u00A9 PUC-Rio.\n"));
 	attrib.SetFontWeight(wxFONTWEIGHT_BOLD);
 	this->text->SetDefaultStyle(attrib);
-	this->text->AppendText(_("Website:\n"));
+	this->text->AppendText(_("Website:") + wxT("\n"));
 	attrib.SetFontWeight(wxFONTWEIGHT_NORMAL);
 	this->text->SetDefaultStyle(attrib);
 	this->text->AppendText(wxT("  http://forum.youka.de\n"));
@@ -58,8 +58,8 @@ void About::CreateElements(){
 void About::PlaceElements(){
 	this->v_box = new wxBoxSizer(wxVERTICAL);
 
-	this->v_box->Add(this->pic, 0, wxEXPAND | wxALL, 5);
-	this->v_box->Add(this->text, 1, wxEXPAND | wxLEFT | wxRIGHT, 5);
+	this->v_box->Add(this->pic, 0, wxALL, 5);
+	this->v_box->Add(this->text, 0, wxLEFT | wxRIGHT, 5);
 	this->v_box->Add(this->ok, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 5);
 
 	// Place everything

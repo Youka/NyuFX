@@ -1,31 +1,404 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: NyuFX 1.6\n"
+"Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language-Team: Youka\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Deutsch\n"
 "X-Generator: Poedit 1.5.4\n"
-"X-Poedit-SourceCharset: UTF-8\n"
 
-msgid "File"
-msgstr "Datei"
+msgid "Lua editor"
+msgstr "Lua Editor"
 
-msgid "Edit"
-msgstr "Bearbeiten"
+msgid "Choose sound file"
+msgstr "Wähle Audiodatei"
+
+msgid "Select all text in focus"
+msgstr "Wähle gesamten Editortext aus"
+
+msgid "Help"
+msgstr "Hilfe"
+
+msgid "Open file for focused editor"
+msgstr "Öffne Datei für fokussierten Editor"
+
+msgid "Set progressbar to 0%"
+msgstr "Setze Fortschrittsbalken auf 0%"
+
+msgid "Zooms one level nearer to editor content"
+msgstr "Vergrößere Sichtfeld zum Editorinhalt um eine Stufe"
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "Unfolds all lines in Lua editor"
+msgstr ""
+
+msgid "Paste"
+msgstr "Einfügen"
+
+msgid "Open Lua file"
+msgstr "Öffne Lua Datei"
+
+msgid "Toggle editors visibility"
+msgstr "Schalte Editorsichtbarkeit um"
+
+msgid "Copy"
+msgstr "Kopieren"
+
+msgid "Search and replace text"
+msgstr "Suchen und ersetzen"
+
+msgid "Copy selection to clipboard"
+msgstr ""
+
+msgid "Taskicon?"
+msgstr "Tasksymbol?"
+
+msgid "Options"
+msgstr "Optionen"
+
+msgid "Generate"
+msgstr "Generieren"
+
+msgid "Reload"
+msgstr "Neu laden"
+
+msgid "Font"
+msgstr "Schrift"
+
+msgid "Application options"
+msgstr ""
 
 msgid "View"
 msgstr "Ansicht"
 
+msgid "Paste clipboard"
+msgstr "Füge Zwischenablage ein"
+
+msgid "Reload opened file for focused editor"
+msgstr ""
+
+msgid "Not possible while a process is running!"
+msgstr ""
+
+msgid "Zooms one level farther to editor content"
+msgstr ""
+
+msgid "Open include folder"
+msgstr ""
+
+msgid "Process error"
+msgstr ""
+
+msgid "Templates"
+msgstr ""
+
+msgid "Replace"
+msgstr "Ersetzen"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Redo"
+msgstr "Wiederherstellen"
+
+msgid "Auto-Style"
+msgstr "Auto-Style"
+
+msgid "Show/Hide"
+msgstr "Zeigen/Verstecken"
+
+msgid "Forward in history"
+msgstr ""
+
+msgid "NONE"
+msgstr "NICHTS"
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Go to line..."
+msgstr "Springe zu Zeile..."
+
+msgid "Stop page loading"
+msgstr ""
+
+msgid "File not exists!"
+msgstr "Datei existiert nicht!"
+
+msgid "Zoom out"
+msgstr ""
+
+msgid "Current URL"
+msgstr ""
+
+msgid "Output options"
+msgstr ""
+
+msgid "Cut selection to clipboard"
+msgstr ""
+
 msgid "Reset"
-msgstr "ZurÃ¼cksetzen"
+msgstr "Zurücksetzen"
+
+msgid "ASS editor"
+msgstr ""
+
+msgid "Clear log text"
+msgstr ""
+
+msgid "Abort"
+msgstr "Abbrechen"
+
+msgid "Toggle view for ASS editor"
+msgstr ""
+
+msgid "Quit"
+msgstr "Verlassen"
+
+msgid "Editor view"
+msgstr "Editor Ansicht"
 
 msgid "Tools"
-msgstr "Hilfsmittel"
+msgstr "Werkzeuge"
 
-msgid "Help"
-msgstr "Hilfe"
+msgid "Lua error"
+msgstr "Lua Fehler"
+
+msgid "Clear file of focused editor"
+msgstr ""
+
+msgid "Start process!"
+msgstr ""
+
+msgid "Choose line number"
+msgstr ""
+
+msgid "Moves caret to line"
+msgstr ""
+
+msgid "Go to Lua line..."
+msgstr "Springe zu Lua Zeile..."
+
+msgid "Undo"
+msgstr "Rückgängig machen"
+
+msgid "Log"
+msgstr ""
+
+msgid "Help for NyuFX usage"
+msgstr ""
+
+msgid "After process command"
+msgstr ""
+
+msgid "Minimize program to taskicon? (otherwise to taskbar)"
+msgstr ""
+
+msgid "Load page"
+msgstr "Lade Seite"
+
+msgid "Do you really want to abort process?"
+msgstr ""
+
+msgid "Open folders of NyuFX"
+msgstr ""
+
+msgid "Back in history"
+msgstr ""
+
+msgid "File saved?"
+msgstr ""
+
+msgid "HTML documents in 'docs' folder"
+msgstr ""
+
+msgid "Toggle view for Lua editor"
+msgstr ""
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Search and replace - Lua editor"
+msgstr ""
+
+msgid "Search and replace - ASS editor"
+msgstr ""
+
+msgid "'Exit' function is missing!"
+msgstr ""
+
+msgid "Undo action"
+msgstr "Mache Aktion rückgängig"
+
+msgid "Delete selection"
+msgstr ""
+
+msgid "Choose output file"
+msgstr ""
+
+msgid "Redo action"
+msgstr ""
+
+msgid "Couldn't run thread!"
+msgstr ""
+
+msgid "Includes"
+msgstr ""
+
+msgid "Go to ASS line..."
+msgstr "Springe zu ASS Zeile..."
+
+msgid "Output by 'print' function"
+msgstr ""
+
+msgid "Folds all lines in Lua editor"
+msgstr ""
+
+msgid "New"
+msgstr "Neu"
+
+msgid "'Init' function is missing!"
+msgstr ""
+
+msgid "Programmer:"
+msgstr ""
+
+msgid "Thanks to:"
+msgstr ""
+
+msgid "Open tools folder"
+msgstr ""
+
+msgid "Language change requires a program restart"
+msgstr ""
+
+msgid "Save ASS file"
+msgstr "Speichere ASS Datei"
+
+msgid "GUI language"
+msgstr "GUI Sprache"
+
+msgid "About"
+msgstr "Info"
+
+msgid "Style text"
+msgstr ""
+
+msgid "Output"
+msgstr "Ausgabe"
+
+msgid "Informations about NyuFX"
+msgstr ""
+
+msgid "Unfold all"
+msgstr ""
+
+msgid "Output file error"
+msgstr ""
+
+msgid "Save file of focused editor"
+msgstr ""
+
+msgid "Folders"
+msgstr "Ordner"
+
+msgid "Currently terminating process!"
+msgstr ""
+
+msgid "Active editor"
+msgstr "Aktiver Editor"
+
+msgid "Save Lua file"
+msgstr "Speichere Lua Datei"
+
+msgid "Progress"
+msgstr "Prozess"
+
+msgid "Sound file to play after generation"
+msgstr ""
+
+msgid "Couldn't create thread!"
+msgstr ""
+
+msgid "Cut"
+msgstr "Ausschneiden"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Default font of both editors"
+msgstr ""
+
+msgid "Open templates folder"
+msgstr ""
+
+msgid "Choose an output file"
+msgstr ""
+
+msgid "Save file with specific target of focused editor"
+msgstr ""
+
+msgid "Open output file"
+msgstr ""
+
+msgid "Website:"
+msgstr ""
+
+msgid "Access error"
+msgstr ""
+
+msgid "Set by 'io.progressbar' function"
+msgstr ""
+
+msgid "Zoom in"
+msgstr ""
+
+msgid "Fold all"
+msgstr ""
+
+msgid "Accept"
+msgstr "Akzeptieren"
+
+msgid "Open ASS file"
+msgstr "Öffne ASS Datei"
+
+msgid "Karaoke effect creation with pixel & vector utilities."
+msgstr "Karaoke Effekt Erstellung mit Pixel & Vektor Werkzeugen."
+
+msgid "Choose"
+msgstr "Wähle"
+
+msgid "Select all"
+msgstr "Alles auswählen"
+
+msgid "Sound"
+msgstr "Audio"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Help browser"
+msgstr "Hilfsbrowser"
+
+msgid "Save as..."
+msgstr "Speichern als..."
+
+msgid "File"
+msgstr "Datei"
+
+msgid "Close NyuFX"
+msgstr "Schließe NyuFX"
+
+msgid "Progressbar"
+msgstr "Fortschrittsbalken"
+
+msgid "Stop process!"
+msgstr "Stoppe Prozess!"
