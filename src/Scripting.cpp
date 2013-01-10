@@ -1,8 +1,14 @@
 #include "Scripting.h"
+#include "libs.h"
 #include <wx/thread.h>
 #include <wx/msgdlg.h>
 
-// Lua functions
+// LUA FUNCTIONS
+void YieldLua(lua_State *L, lua_Debug *ar){
+    if(wxThread::This()->TestDestroy())
+        lua_yield(L, 0);
+}
+
 wxTextCtrl *print_target;
 DEF_HEAD_NARG(print, 0)
 	// Output buffer
@@ -59,24 +65,23 @@ DEF_HEAD_1ARG(progressbar, 1)
 		luaL_error2(L, "number expected");
 DEF_TAIL
 
-void YieldLua(lua_State *L, lua_Debug *ar){
-    if(wxThread::This()->TestDestroy())
-        lua_yield(L, 0);
-}
-
-// Scripting definition
+// SCRIPTING DEFINITION
 Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
-	// Set Lua output function targets
+	// Set Lua hook function
+	lua_sethook(this->L, YieldLua, LUA_MASKCALL, 1);
+	// Register Lua standard functions
+	luaL_openlibs(this->L);
+	// Register Lua output functions
 	print_target = log;
 	progress_target = progressbar;
-	// Extend Lua
-	luaL_openlibs(this->L);
 	lua_register(this->L, "print", l_print);
 	lua_getglobal(this->L, "io");
 	lua_pushcfunction(this->L, l_progressbar);
 	lua_setfield(this->L, -2, "progressbar");
 	lua_pop(this->L, 1);
-	lua_sethook(this->L, YieldLua, LUA_MASKCALL, 1);
+	// Register Lua utility functions
+	luaopen_tgdi(this->L);
+	luaopen_va(this->L);
 }
 
 bool Scripting::DoFile(wxString file){

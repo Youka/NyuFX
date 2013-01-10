@@ -51,7 +51,6 @@ static void *luaL_checkuserdata(lua_State *L, int i, const char* type){
 
 template <class T> static T *lua_createuserdata(lua_State *L, const char* meta_name){
 		T *ud = reinterpret_cast<T*>(lua_newuserdata(L, sizeof(T)));
-		luaL_getmetatable(L, meta_name);
 		luaL_newmetatable(L, meta_name);
 		lua_setmetatable(L, -2);
 		return ud;

@@ -18,4 +18,6 @@ function gettext(path)
 	return po_content
 end
 
-print(gettext("..\\src"))
+local f = io.open("nyufx.po", "w")
+f:write(gettext("..\\src"))
+f:close()
