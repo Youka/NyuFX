@@ -48,7 +48,7 @@ void About::CreateElements(){
 	this->text->AppendText(wxT("Copyright:\n"));
 	attrib.SetFontWeight(wxFONTWEIGHT_NORMAL);
 	this->text->SetDefaultStyle(attrib);
-	this->text->AppendText(wxT("  www.gnu.org/copyleft/gpl.html"));
+	this->text->AppendText(wxT("  www.gnu.org/copyleft/lesser.html"));
 	this->text->SetInsertionPoint(0);
 	// Button
 	this->ok = new wxButton(this, wxID_OK, _("Close"));

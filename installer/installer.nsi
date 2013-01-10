@@ -46,7 +46,7 @@ ShowUnInstDetails show
 
 ;Pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "${SOURCEDIR}\license.txt"
+!insertmacro MUI_PAGE_LICENSE "${SOURCEDIR}\LICENSE"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -66,10 +66,13 @@ Section ""
   File /r "${SOURCEDIR}\docs\*.*"
   SetOutPath "$INSTDIR\include"
   File /r "${SOURCEDIR}\include\*.*"
+  SetOutPath "$INSTDIR\lang"
+  File /r "${SOURCEDIR}\lang\*.*"
   CreateDirectory "$INSTDIR\templates"
   CreateDirectory "$INSTDIR\tools"
   SetOutPath "$INSTDIR"
-  File "${SOURCEDIR}\*.*"
+  File "${SOURCEDIR}\LICENSE"
+  File "${SOURCEDIR}\NyuFX.exe"
   WriteUninstaller "$INSTDIR\uninstall.exe"
   ;Links
   CreateShortCut "$SENDTO\NyuFX.lnk" "$INSTDIR\NyuFX.exe"
