@@ -14,7 +14,7 @@ void About::CreateElements(){
 	wxBitmap bmp = wxBITMAP(logo_bmp);
 	this->pic = new wxStaticBitmap(this, wxID_ANY, bmp);
 	// Description
-	this->text = new wxTextCtrl(this, ID_URL_CLICK, wxEmptyString, wxDefaultPosition, wxSize(bmp.GetWidth(),220),
+	this->text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(bmp.GetWidth(),220),
 						wxTE_NO_VSCROLL | wxTE_LEFT | wxTE_BESTWRAP | wxTE_READONLY | wxTE_MULTILINE | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL | wxSUNKEN_BORDER);
 	wxTextAttr attrib;
 	attrib.SetFontSize(10);
@@ -73,7 +73,7 @@ void About::PlaceElements(){
 
 // Bind event IDs to event handlers
 BEGIN_EVENT_TABLE(About, wxDialog)
-	EVT_TEXT_URL(ID_URL_CLICK, About::OnURLClick)
+	EVT_TEXT_URL(wxID_ANY, About::OnURLClick)
 END_EVENT_TABLE()
 
 // Define event handlers

@@ -134,8 +134,7 @@ void GUI::OnClose(wxCloseEvent &event){
 	// Abort running generation?
 	if(this->output_panel->gencanc->GetLabelText() != _("Generate") && wxMessageBox(_("Do you really want to abort process?"), _("Abort"), wxYES_NO | wxCENTRE | wxICON_WARNING) != wxYES)
 		return;
-	// Save config & close program
-	Config::Save();
+	// Close program
 	this->Destroy();
 }
 

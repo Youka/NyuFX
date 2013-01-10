@@ -1,4 +1,7 @@
 #include "WinIO.h"
+
+#ifdef _WIN32
+
 #include <windows.h>
 
 wchar_t* utf8_to_utf16(const char *s){
@@ -85,3 +88,5 @@ int _utf8rename(const char *filename, const char *filename2){
 	free(wfilename2);
 	return result;
 }
+
+#endif

@@ -2,9 +2,9 @@
 
 #include <wx/dialog.h>
 #include <wx/sizer.h>
+#include <wx/statbmp.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
-#include <wx/statbmp.h>
 
 class About : public wxDialog{
 	public:
@@ -20,8 +20,6 @@ class About : public wxDialog{
 		// Interface construction
 		void CreateElements();
 		void PlaceElements();
-		// Event IDs
-		enum{ID_URL_CLICK = 100};
 		// Event handlers
 		DECLARE_EVENT_TABLE();
 		void OnURLClick(wxTextUrlEvent &url);

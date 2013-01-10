@@ -13,9 +13,9 @@ class EditorBase : public wxPanel{
 		// Clear editor
 		void Clear();
 		// Load file into editor
-		void LoadFile(wxString filename);
+		bool LoadFile(wxString filename);
 		// Save editor to file
-		void SaveFile(wxString filename);
+		bool SaveFile(wxString filename);
 		// Layout
 		wxBoxSizer *v_box, *h_box;
 		// Subwindows

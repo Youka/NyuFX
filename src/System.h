@@ -21,7 +21,7 @@ static void SetLanguage(wxLanguage language){
 	}
 }
 
-static void ConfigTooltips(long wait_before, long duration, long wait_between, int max_width){
+inline void ConfigTooltips(long wait_before, long duration, long wait_between, int max_width){
 	if(duration > 0){	// Tooltips have a duration?
 		wxToolTip::Enable(true);	// Enable tooltips
 		wxToolTip::SetDelay(wait_before);	// Duration before tooltip shows

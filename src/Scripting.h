@@ -10,7 +10,7 @@ class Scripting{
 		Scripting(wxTextCtrl *log, wxGauge *progressbar);
 		// File actions
 		bool DoFile(wxString file);
-		bool CallInit(unsigned int arg_n, ...);
+		bool CallInit(unsigned int arg_n, ...);	// Arguments have to be of type wxString
 		bool CallExit();
 	private:
 		// Lua instance

@@ -100,7 +100,7 @@ void EditorBase::Clear(){
 	this->title->Clear();
 }
 
-void EditorBase::LoadFile(wxString filename){
+bool EditorBase::LoadFile(wxString filename){
 	wxFFile file;
 	if(file.Open(filename, "r")){
 		wxString content;
@@ -109,16 +109,20 @@ void EditorBase::LoadFile(wxString filename){
 		this->editor->DocumentStart();
 		this->editor->EmptyUndoBuffer();
 		this->title->SetValue(filename);
-	}
+		return true;
+	}else
+		return false;
 }
 
-void EditorBase::SaveFile(wxString filename){
+bool EditorBase::SaveFile(wxString filename){
 	wxFFile file;
 	if(file.Open(filename, "w")){
 		file.Write(this->editor->GetText(), wxMBConvUTF8());
 		this->title->SetValue(filename);
 		this->check->Set(true);
-	}
+		return true;
+	}else
+		return false;
 }
 
 void EditorBase::SetDefaultStyle(){
