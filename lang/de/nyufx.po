@@ -218,7 +218,7 @@ msgid "HTML & PDF documents in 'docs' folder"
 msgstr "HTML & PDF Dokumente im 'docs' Ordner"
 
 msgid "Toggle view for Lua editor"
-msgstr "Schalte Sicht des Lua Editors um"
+msgstr "Schalte Lua Editorsichtbarkeit um"
 
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -350,7 +350,7 @@ msgid "Access error"
 msgstr "Zugriffsfehler"
 
 msgid "Set by 'io.progressbar' function"
-msgstr "Gesetzt bei Funktion 'io.progressbar'"
+msgstr "Gesetzt durch 'io.progressbar' Funktion"
 
 msgid "Zoom in"
 msgstr "Verkleinere Sichtfeld"
