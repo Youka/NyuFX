@@ -71,7 +71,7 @@ msgid "Font"
 msgstr "Schrift"
 
 msgid "Application options"
-msgstr ""
+msgstr "Anwendungsoptionen"
 
 msgid "View"
 msgstr "Ansicht"
@@ -92,7 +92,7 @@ msgid "Open include folder"
 msgstr ""
 
 msgid "Process error"
-msgstr ""
+msgstr "Prozessfehler"
 
 msgid "Templates"
 msgstr ""
@@ -140,7 +140,7 @@ msgid "Current URL"
 msgstr ""
 
 msgid "Output options"
-msgstr ""
+msgstr "Ausgabeoptionen"
 
 msgid "Cut selection to clipboard"
 msgstr ""
@@ -149,16 +149,16 @@ msgid "Reset"
 msgstr "Zurücksetzen"
 
 msgid "ASS editor"
-msgstr ""
+msgstr "ASS Editor"
 
 msgid "Clear log text"
-msgstr ""
+msgstr "Leere Protokoll"
 
 msgid "Abort"
 msgstr "Abbrechen"
 
 msgid "Toggle view for ASS editor"
-msgstr ""
+msgstr "Schalte ASS Editorsichtbarkeit um"
 
 msgid "Quit"
 msgstr "Verlassen"
@@ -176,10 +176,10 @@ msgid "Clear file of focused editor"
 msgstr ""
 
 msgid "Start process!"
-msgstr ""
+msgstr "Starte Prozess!"
 
 msgid "Choose line number"
-msgstr ""
+msgstr "Wähle Zeile"
 
 msgid "Moves caret to line"
 msgstr ""
@@ -191,10 +191,10 @@ msgid "Undo"
 msgstr "Rückgängig machen"
 
 msgid "Log"
-msgstr ""
+msgstr "Protokoll"
 
 msgid "Help for NyuFX usage"
-msgstr ""
+msgstr "NyuFX Nutzungshilfe"
 
 msgid "After process command"
 msgstr ""
@@ -215,7 +215,7 @@ msgid "Back in history"
 msgstr ""
 
 msgid "File saved?"
-msgstr ""
+msgstr "Datei gespeichert?"
 
 msgid "HTML documents in 'docs' folder"
 msgstr ""
@@ -245,7 +245,7 @@ msgid "Choose output file"
 msgstr ""
 
 msgid "Redo action"
-msgstr ""
+msgstr "Wiederhole Aktion"
 
 msgid "Couldn't run thread!"
 msgstr ""
@@ -266,10 +266,10 @@ msgid "New"
 msgstr "Neu"
 
 msgid "'Init' function is missing!"
-msgstr ""
+msgstr "'Init' Funktion fehlt!"
 
 msgid "Programmer:"
-msgstr ""
+msgstr "Programmierer:"
 
 msgid "Thanks to:"
 msgstr ""
@@ -278,7 +278,7 @@ msgid "Open tools folder"
 msgstr ""
 
 msgid "Language change requires a program restart"
-msgstr ""
+msgstr "Sprachänderung erfordert einen Programm Neustart"
 
 msgid "Save ASS file"
 msgstr "Speichere ASS Datei"
@@ -296,13 +296,13 @@ msgid "Output"
 msgstr "Ausgabe"
 
 msgid "Informations about NyuFX"
-msgstr ""
+msgstr "Informationen über NyuFX"
 
 msgid "Unfold all"
 msgstr ""
 
 msgid "Output file error"
-msgstr ""
+msgstr "Ausgabedatei Fehler"
 
 msgid "Save file of focused editor"
 msgstr ""
@@ -341,19 +341,19 @@ msgid "Open templates folder"
 msgstr ""
 
 msgid "Choose an output file"
-msgstr ""
+msgstr "Wähle Ausgabedatei"
 
 msgid "Save file with specific target of focused editor"
 msgstr ""
 
 msgid "Open output file"
-msgstr ""
+msgstr "Öffne Ausgabedatei"
 
 msgid "Website:"
-msgstr ""
+msgstr "Internetpräsenz:"
 
 msgid "Access error"
-msgstr ""
+msgstr "Zugriffsfehler"
 
 msgid "Set by 'io.progressbar' function"
 msgstr ""

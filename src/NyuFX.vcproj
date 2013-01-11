@@ -253,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\table2.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\tgdi.cpp"
 				>
 			</File>

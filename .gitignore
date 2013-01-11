@@ -8,7 +8,7 @@ src/Lua5.1.5/Lua5.1.5.ncb
 src/Lua5.1.5/Lua5.1.5.suo
 src/Lua5.1.5/Lua5.1.5.vcproj.YOUKA.ASUS.user
 
-test/
+testの/
 tools/
 
 config.ini

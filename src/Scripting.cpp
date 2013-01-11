@@ -79,6 +79,7 @@ Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 	lua_setfield(this->L, -2, "progressbar");
 	lua_pop(this->L, 1);
 	// Register Lua utility functions
+	luaopen_table2(this->L);
 	luaopen_tgdi(this->L);
 	luaopen_va(this->L);
 }
