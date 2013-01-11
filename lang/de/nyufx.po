@@ -29,13 +29,13 @@ msgid "Set progressbar to 0%"
 msgstr "Setze Fortschrittsbalken auf 0%"
 
 msgid "Zooms one level nearer to editor content"
-msgstr "Vergrößere Sichtfeld zum Editorinhalt um eine Stufe"
+msgstr "Verkleinere Sichtfeld zum Editorinhalt um eine Stufe"
 
 msgid "Open"
 msgstr "Öffnen"
 
 msgid "Unfolds all lines in Lua editor"
-msgstr ""
+msgstr "Entfalte alle Zeilen im Lua Editor"
 
 msgid "Paste"
 msgstr "Einfügen"
@@ -50,10 +50,10 @@ msgid "Copy"
 msgstr "Kopieren"
 
 msgid "Search and replace text"
-msgstr "Suchen und ersetzen"
+msgstr "Suchen und Ersetzen"
 
 msgid "Copy selection to clipboard"
-msgstr ""
+msgstr "Kopiere Auswahl zur Zwischenablage"
 
 msgid "Taskicon?"
 msgstr "Tasksymbol?"
@@ -80,22 +80,19 @@ msgid "Paste clipboard"
 msgstr "Füge Zwischenablage ein"
 
 msgid "Reload opened file for focused editor"
-msgstr ""
+msgstr "Lade geöffnete Datei des fokussierten Editors neu"
 
 msgid "Not possible while a process is running!"
-msgstr ""
+msgstr "Nicht möglich während laufendem Prozess!"
 
 msgid "Zooms one level farther to editor content"
-msgstr ""
+msgstr "Vergrößere Sichtfeld zum Editorinhalt um eine Stufe"
 
 msgid "Open include folder"
-msgstr ""
+msgstr "Öffne include Ordner"
 
 msgid "Process error"
 msgstr "Prozessfehler"
-
-msgid "Templates"
-msgstr ""
 
 msgid "Replace"
 msgstr "Ersetzen"
@@ -113,7 +110,7 @@ msgid "Show/Hide"
 msgstr "Zeigen/Verstecken"
 
 msgid "Forward in history"
-msgstr ""
+msgstr "Vorwärts im Verlauf"
 
 msgid "NONE"
 msgstr "NICHTS"
@@ -128,22 +125,22 @@ msgid "Go to line..."
 msgstr "Springe zu Zeile..."
 
 msgid "Stop page loading"
-msgstr ""
+msgstr "Stoppe Laden der Seite"
 
 msgid "File not exists!"
 msgstr "Datei existiert nicht!"
 
 msgid "Zoom out"
-msgstr ""
+msgstr "Vergrößere Sichtfeld"
 
 msgid "Current URL"
-msgstr ""
+msgstr "Momentane URL"
 
 msgid "Output options"
 msgstr "Ausgabeoptionen"
 
 msgid "Cut selection to clipboard"
-msgstr ""
+msgstr "Schneide Auswahl aus zur Zwischenablage"
 
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -173,7 +170,7 @@ msgid "Lua error"
 msgstr "Lua Fehler"
 
 msgid "Clear file of focused editor"
-msgstr ""
+msgstr "Leere Datei im fokussierten Editor"
 
 msgid "Start process!"
 msgstr "Starte Prozess!"
@@ -182,7 +179,7 @@ msgid "Choose line number"
 msgstr "Wähle Zeile"
 
 msgid "Moves caret to line"
-msgstr ""
+msgstr "Bewege Textmarke zu Zeile"
 
 msgid "Go to Lua line..."
 msgstr "Springe zu Lua Zeile..."
@@ -197,70 +194,67 @@ msgid "Help for NyuFX usage"
 msgstr "NyuFX Nutzungshilfe"
 
 msgid "After process command"
-msgstr ""
+msgstr "Kommando nach Prozess"
 
 msgid "Minimize program to taskicon? (otherwise to taskbar)"
-msgstr ""
+msgstr "Minimiere Programm zu Tasksymbol? (andernfalls zu Taskleiste)"
 
 msgid "Load page"
 msgstr "Lade Seite"
 
 msgid "Do you really want to abort process?"
-msgstr ""
+msgstr "Möchten sie wirklich den Prozess abbrechen?"
 
 msgid "Open folders of NyuFX"
-msgstr ""
+msgstr "Öffne Ordner von NyuFX"
 
 msgid "Back in history"
-msgstr ""
+msgstr "Zurück im Verlauf"
 
 msgid "File saved?"
 msgstr "Datei gespeichert?"
 
-msgid "HTML documents in 'docs' folder"
-msgstr ""
+msgid "HTML & PDF documents in 'docs' folder"
+msgstr "HTML & PDF Dokumente im 'docs' Ordner"
 
 msgid "Toggle view for Lua editor"
-msgstr ""
+msgstr "Schalte Sicht des Lua Editors um"
 
 msgid "Edit"
 msgstr "Bearbeiten"
 
 msgid "Search and replace - Lua editor"
-msgstr ""
+msgstr "Suchen und Ersetzen - Lua Editor"
 
 msgid "Search and replace - ASS editor"
-msgstr ""
+msgstr "Suchen und Ersetzen - ASS Editor"
 
 msgid "'Exit' function is missing!"
-msgstr ""
+msgstr "'Exit' Funktion fehlt!"
 
 msgid "Undo action"
 msgstr "Mache Aktion rückgängig"
 
 msgid "Delete selection"
-msgstr ""
+msgstr "Lösche Auswahl"
 
 msgid "Choose output file"
-msgstr ""
+msgstr "Wähle Ausgabedatei"
 
 msgid "Redo action"
 msgstr "Wiederhole Aktion"
 
 msgid "Couldn't run thread!"
-msgstr ""
-
-msgid "Includes"
-msgstr ""
+msgstr "Konnte Thread nicht laufen lassen!"
 
 msgid "Go to ASS line..."
 msgstr "Springe zu ASS Zeile..."
 
 msgid "Output by 'print' function"
-msgstr ""
+msgstr "Ausgabe durch 'print' Funktion"
 
 msgid "Folds all lines in Lua editor"
-msgstr ""
+msgstr "Falte alle Zeilen im Lua Editor"
 
 msgid "New"
 msgstr "Neu"
@@ -272,10 +266,10 @@ msgid "Programmer:"
 msgstr "Programmierer:"
 
 msgid "Thanks to:"
-msgstr ""
+msgstr "Dank an:"
 
 msgid "Open tools folder"
-msgstr ""
+msgstr "Öffne tools Ordner"
 
 msgid "Language change requires a program restart"
 msgstr "Sprachänderung erfordert einen Programm Neustart"
@@ -290,7 +284,7 @@ msgid "About"
 msgstr "Info"
 
 msgid "Style text"
-msgstr ""
+msgstr "Gestalte text"
 
 msgid "Output"
 msgstr "Ausgabe"
@@ -299,19 +293,19 @@ msgid "Informations about NyuFX"
 msgstr "Informationen über NyuFX"
 
 msgid "Unfold all"
-msgstr ""
+msgstr "Entfalte alles"
 
 msgid "Output file error"
 msgstr "Ausgabedatei Fehler"
 
 msgid "Save file of focused editor"
-msgstr ""
+msgstr "Speichere Datei des fokussierten Editors"
 
 msgid "Folders"
 msgstr "Ordner"
 
 msgid "Currently terminating process!"
-msgstr ""
+msgstr "Derzeit wird der Prozess beendet!"
 
 msgid "Active editor"
 msgstr "Aktiver Editor"
@@ -323,10 +317,10 @@ msgid "Progress"
 msgstr "Prozess"
 
 msgid "Sound file to play after generation"
-msgstr ""
+msgstr "Audiodatei zum Abspielen nach der Generierung"
 
 msgid "Couldn't create thread!"
-msgstr ""
+msgstr "Konnte Thread nicht erstellen!"
 
 msgid "Cut"
 msgstr "Ausschneiden"
@@ -335,16 +329,16 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 msgid "Default font of both editors"
-msgstr ""
+msgstr "Standard Schrift von beiden Editoren"
 
 msgid "Open templates folder"
-msgstr ""
+msgstr "Öffne templates Ordner"
 
 msgid "Choose an output file"
 msgstr "Wähle Ausgabedatei"
 
 msgid "Save file with specific target of focused editor"
-msgstr ""
+msgstr "Speichere Datei mit ausgewähltem Ziel vom fokussierten Editor"
 
 msgid "Open output file"
 msgstr "Öffne Ausgabedatei"
@@ -356,13 +350,13 @@ msgid "Access error"
 msgstr "Zugriffsfehler"
 
 msgid "Set by 'io.progressbar' function"
-msgstr ""
+msgstr "Gesetzt bei Funktion 'io.progressbar'"
 
 msgid "Zoom in"
-msgstr ""
+msgstr "Verkleinere Sichtfeld"
 
 msgid "Fold all"
-msgstr ""
+msgstr "Falte alles"
 
 msgid "Accept"
 msgstr "Akzeptieren"

@@ -24,7 +24,7 @@ void HelpWindow::CreateElements(){
 	this->entries = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(150,-1), 0, reinterpret_cast<wxString*>(NULL), wxLB_HSCROLL);
 	this->entries->SetBackgroundColour(wxColor(225, 225, 225));
 	this->entries->SetCursor(wxCURSOR_RIGHT_ARROW);
-	this->entries->SetToolTip(_("HTML documents in 'docs' folder"));
+	this->entries->SetToolTip(_("HTML & PDF documents in 'docs' folder"));
 	this->entries->Connect(wxID_ANY, wxEVT_AUX1_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux1Down), 0, this);
 	this->entries->Connect(wxID_ANY, wxEVT_AUX2_DOWN, wxMouseEventHandler(HelpWindow::OnMouseAux2Down), 0, this);
 	// Create browser title
