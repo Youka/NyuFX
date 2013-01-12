@@ -121,6 +121,34 @@ DEF_HEAD_1ARG(delete_context, 1)
 	DeleteDC( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
 DEF_TAIL
 
+DEF_HEAD_1ARG(flatten_path, 1)
+	FlattenPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
+DEF_TAIL
+
+DEF_HEAD_1ARG(abort_path, 1)
+	AbortPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
+DEF_TAIL
+
+DEF_HEAD_1ARG(path_box, 1)
+	// Get region
+	HRGN region = PathToRegion( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
+	if(!region)
+		luaL_error2(L, "couldn't convert path to region");
+	// Get bounding box
+	RECT rect;
+	if( !GetRgnBox(region, &rect) ){
+		DeleteObject(region);
+		luaL_error2(L, "couldn't get region size");
+	}
+	DeleteObject(region);
+	// Return size
+	lua_pushnumber(L, rect.left);
+	lua_pushnumber(L, rect.top);
+	lua_pushnumber(L, rect.right);
+	lua_pushnumber(L, rect.bottom);
+	return 4;
+DEF_TAIL
+
 // REGISTER
 void luaopen_tgdi(lua_State *L){
 	// Initialize image handlers
@@ -141,9 +169,15 @@ void luaopen_tgdi(lua_State *L){
 	luaL_register(L, "tgdi", tgdi);
 	// Register meta methods
 	luaL_newmetatable(L, TGDI);
-	lua_pushcfunction(L, l_delete_context);
-	lua_setfield(L, -2, "__gc");
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
+	lua_pushcfunction(L, l_delete_context);
+	lua_setfield(L, -2, "__gc");
+	lua_pushcfunction(L, l_flatten_path);
+	lua_setfield(L, -2, "flatten_path");
+	lua_pushcfunction(L, l_abort_path);
+	lua_setfield(L, -2, "abort_path");
+	lua_pushcfunction(L, l_path_box);
+	lua_setfield(L, -2, "path_box");
 	lua_pop(L, 2);
 }

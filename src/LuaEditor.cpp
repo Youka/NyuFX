@@ -75,16 +75,24 @@ void LuaEditor::OnMarginClick(wxStyledTextEvent& event){
 }
 
 void LuaEditor::OnBrace(wxStyledTextEvent& event){
-	int pos = this->editor->GetCurrentPos()-1;
-	char key = static_cast<char>(editor->GetCharAt( pos ));
-	if( key == ')' || key == '(' ||
-		key == '{' || key == '}' ||
-		key == '[' || key == ']'){
-		int match = this->editor->BraceMatch( pos );
+	// Caret position
+	int pos = this->editor->GetCurrentPos();
+	// Keys at position
+	char pre_key = static_cast<char>(this->editor->GetCharAt( pos-1 ));
+	char key = static_cast<char>(this->editor->GetCharAt( pos ));
+	// Brace search
+	int hit = wxSTC_INVALID_POSITION;
+	if( pre_key == '(' || pre_key == '{' || pre_key == '[' )
+		hit = pos - 1;
+	else if( key == ')' || key == '}' || key == ']')
+		hit = pos;
+	// Brace action
+	if(hit != wxSTC_INVALID_POSITION){
+		int match = this->editor->BraceMatch( hit );
 		if(match != wxSTC_INVALID_POSITION)
-			this->editor->BraceHighlight(match, pos);
+			this->editor->BraceHighlight(match, hit);
 		else
-			this->editor->BraceBadLight(pos);
+			this->editor->BraceBadLight(hit);
 	}else
-		this->editor->BraceBadLight(wxSTC_INVALID_POSITION);	// Remove any brace highlight
+		this->editor->BraceBadLight(wxSTC_INVALID_POSITION);		// Remove any brace highlight
 }
