@@ -122,15 +122,17 @@ DEF_HEAD_1ARG(delete_context, 1)
 DEF_TAIL
 
 DEF_HEAD_1ARG(flatten_path, 1)
-	FlattenPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
+	if( !FlattenPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) ) )
+		luaL_error2(L, "path flattening failed");
 DEF_TAIL
 
 DEF_HEAD_1ARG(abort_path, 1)
-	AbortPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
+	if( !AbortPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) ) )
+		luaL_error2(L, "path abortion failed");
 DEF_TAIL
 
 DEF_HEAD_1ARG(path_box, 1)
-	// Get region
+	// Get region of path
 	HRGN region = PathToRegion( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
 	if(!region)
 		luaL_error2(L, "couldn't convert path to region");
@@ -149,8 +151,26 @@ DEF_HEAD_1ARG(path_box, 1)
 	return 4;
 DEF_TAIL
 
+DEF_HEAD_1ARG(widen_path, 1)
+	// Get context
+	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
+	// Set pen for widening
+	HPEN pen = CreatePen(PS_SOLID, luaL_checknumber(L, 1), RGB(255, 255, 255));
+	if(!pen)
+		luaL_error2(L, "couldn't create pen");
+	HGDIOBJ old_pen = SelectObject(*dc, pen);
+	// Widen path
+	if( !WidenPath(*dc) ){
+		SelectObject(*dc, old_pen);
+		DeleteObject(pen);
+		luaL_error2(L, "couldn't widen path");
+	}
+	SelectObject(*dc, old_pen);
+	DeleteObject(pen);
+DEF_TAIL
+
 // REGISTER
-void luaopen_tgdi(lua_State *L){
+inline void register_tgdi_meta(lua_State *L){
 	// Initialize image handlers
 	if( wxImage::FindHandler(wxBITMAP_TYPE_PNG) == NULL ){
 		// BMP pre-installed
@@ -159,15 +179,7 @@ void luaopen_tgdi(lua_State *L){
 		wxImage::AddHandler(new wxTGAHandler);
 		wxImage::AddHandler(new wxICOHandler);
 	}
-	// Register library
-	const luaL_Reg tgdi[] = {
-		{"load_image", l_load_image},
-		{"save_png", l_save_png},
-		{"create_context", l_create_context},
-		{0, 0}
-	};
-	luaL_register(L, "tgdi", tgdi);
-	// Register meta methods
+	// Meta methods
 	luaL_newmetatable(L, TGDI);
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
@@ -179,5 +191,23 @@ void luaopen_tgdi(lua_State *L){
 	lua_setfield(L, -2, "abort_path");
 	lua_pushcfunction(L, l_path_box);
 	lua_setfield(L, -2, "path_box");
-	lua_pop(L, 2);
+	lua_pushcfunction(L, l_widen_path);
+	lua_setfield(L, -2, "widen_path");
+	lua_pop(L, 1);
+}
+
+inline void register_tgdi_lib(lua_State *L){
+	const luaL_Reg tgdi[] = {
+		{"load_image", l_load_image},
+		{"save_png", l_save_png},
+		{"create_context", l_create_context},
+		{0, 0}
+	};
+	luaL_register(L, "tgdi", tgdi);
+	lua_pop(L, 1);
+}
+
+void luaopen_tgdi(lua_State *L){
+	register_tgdi_meta(L);
+	register_tgdi_lib(L);
 }
