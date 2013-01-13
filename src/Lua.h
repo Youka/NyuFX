@@ -42,6 +42,13 @@ static int luaL_checkboolean(lua_State *L, int i){
 	return lua_toboolean(L,i);
 }
 
+static int luaL_optboolean(lua_State *L, int i, int d){
+	if(lua_type(L, i) < 1)
+		return d;
+	else
+		return luaL_checkboolean(L, i);
+}
+
 // Lua userdata functions
 static void *luaL_checkuserdata(lua_State *L, int i, const char* type){
 	void *ud = luaL_checkudata(L, i, type);

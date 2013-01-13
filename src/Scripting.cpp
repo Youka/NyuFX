@@ -53,15 +53,12 @@ DEF_TAIL
 
 wxGauge *progress_target;
 DEF_HEAD_1ARG(progressbar, 1)
-	if(lua_isnumber(L, 1)){
-		double n = lua_tonumber(L, 1);
-		if(n >= 0 && n <= 100){
-			wxMutexGuiLocker gui_locker;
-			progress_target->SetValue(n);
-		}else
-			luaL_error2(L, "invalid number");
+	double n = luaL_checknumber(L, 1);
+	if(n >= 0 && n <= 100){
+		wxMutexGuiLocker gui_locker;
+		progress_target->SetValue(n);
 	}else
-		luaL_error2(L, "number expected");
+		luaL_error2(L, "invalid number");
 DEF_TAIL
 
 // SCRIPTING DEFINITION

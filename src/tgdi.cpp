@@ -1,6 +1,6 @@
 #include "libs.h"
-#include <windows.h>
 #include <wx/image.h>
+#include <windows.h>
 
 // FUNCTIONS
 DEF_HEAD_1ARG(load_image, 1)
@@ -63,16 +63,16 @@ DEF_HEAD_1ARG(save_png, 2)
 	// Get meta
 	if( !lua_istable(L, 1) ) luaL_error2(L, "image table expected");
 	lua_getfield(L, 1, "width");
-	if( !lua_isnumber(L, -1) ) luaL_error2(L, "invalid width");
+	if( !lua_isnumber(L, -1) || lua_tonumber(L, -1) < 1 ) luaL_error2(L, "invalid width");
 	lua_getfield(L, 1, "height");
-	if( !lua_isnumber(L, -1) ) luaL_error2(L, "invalid height");
+	if( !lua_isnumber(L, -1) || lua_tonumber(L, -1) < 1 ) luaL_error2(L, "invalid height");
 	lua_getfield(L, 1, "has_alpha");
 	if( !lua_isboolean(L, -1) ) luaL_error2(L, "invalid alpha identifier");
 	int width = lua_tonumber(L, -3), height = lua_tonumber(L, -2);
 	bool alpha = lua_toboolean(L, -1);
 	lua_pop(L, 3);
 	unsigned int pixels = alpha ? lua_objlen(L, 1) >> 2 : lua_objlen(L, 1) / 3;
-	if( pixels != width * height ) luaL_error2(L, "invalid data size");
+	if(width * height != pixels) luaL_error2(L, "invalid data size");
 	// Create image
 	wxImage img(width, height);
 	unsigned char *rgb = img.GetData();
@@ -143,7 +143,7 @@ DEF_HEAD_1ARG(path_box, 1)
 		luaL_error2(L, "couldn't get region size");
 	}
 	DeleteObject(region);
-	// Return size
+	// Return bounding box
 	lua_pushnumber(L, rect.left);
 	lua_pushnumber(L, rect.top);
 	lua_pushnumber(L, rect.right);
@@ -151,11 +151,17 @@ DEF_HEAD_1ARG(path_box, 1)
 	return 4;
 DEF_TAIL
 
-DEF_HEAD_1ARG(widen_path, 1)
+DEF_HEAD_1ARG(widen_path, 2)
 	// Get context
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
 	// Set pen for widening
-	HPEN pen = CreatePen(PS_SOLID, luaL_checknumber(L, 1), RGB(255, 255, 255));
+	const LOGBRUSH logbrush = {BS_SOLID, RGB(255, 255, 255), 0};
+	HPEN pen = ExtCreatePen(
+		PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND,
+		luaL_checknumber(L, 2),
+		&logbrush,
+		0, NULL
+	);
 	if(!pen)
 		luaL_error2(L, "couldn't create pen");
 	HGDIOBJ old_pen = SelectObject(*dc, pen);
@@ -167,6 +173,103 @@ DEF_HEAD_1ARG(widen_path, 1)
 	}
 	SelectObject(*dc, old_pen);
 	DeleteObject(pen);
+DEF_TAIL
+
+DEF_HEAD_1ARG(get_path, 1)
+	// Get context
+	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
+	// Get path size
+	int n_points = GetPath(*dc, NULL, NULL, 0);
+	// Create path buffers
+	POINT *points = new POINT[n_points];
+	BYTE *types = new BYTE[n_points];
+	// Get path
+	GetPath(*dc, points, types, n_points);
+	// Path to string
+	wxString path;
+	BYTE type, last_type = 0x08;	// invalid type at start
+	POINT point;
+	for(int pi = 0; pi < n_points; pi++){
+		type = types[pi];
+		point = points[pi];
+		if(type != last_type)
+			switch(type){
+				case PT_MOVETO:
+					path << wxT("m ");
+					break;
+				case PT_LINETO:
+				case PT_LINETO | PT_CLOSEFIGURE:
+					path << wxT("l ");
+					break;
+				case PT_BEZIERTO:
+				case PT_BEZIERTO | PT_CLOSEFIGURE:
+					path << wxT("b ");
+					break;
+			}
+		last_type = type;
+		path << wxString::Format(wxT("%d %d "), point.x, point.y);
+	}
+	// Free path buffers
+	delete[] points;
+	delete[] types;
+	// Path string to Lua
+	lua_pushstring(L, path.Trim().To8BitData());
+	return 1;
+DEF_TAIL
+
+DEF_HEAD_2ARG(text_extents, 4, 9)
+	// Get parameters
+	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));	// context
+	wxString text = wxString::FromUTF8(luaL_checkstring(L, 2));	// text
+	const wchar_t *wtext = text.wc_str();
+	wxString face = wxString::FromUTF8(luaL_checkstring(L, 3));	// font face
+	const wchar_t *wface = text.wc_str();
+	int size = luaL_checknumber(L, 4);	// font size
+	bool bold = luaL_optboolean(L, 5, false);	// bold?
+	bool italic = luaL_optboolean(L, 6, false);	// italic?
+	bool underline = luaL_optboolean(L, 7, false);	// underlined?
+	bool strikeout = luaL_optboolean(L, 8, false);	// strikeouted?
+	BYTE charset = luaL_optnumber(L, 9, DEFAULT_CHARSET);	// charset
+	// Create font
+	LOGFONTW lf = {0};
+	lf.lfHeight = size;
+	lf.lfWeight = bold ? FW_BOLD : FW_NORMAL;
+	lf.lfItalic = italic;
+	lf.lfUnderline = underline;
+	lf.lfStrikeOut = strikeout;
+	lf.lfCharSet = charset;
+	lf.lfOutPrecision = OUT_TT_PRECIS;
+	lf.lfQuality = ANTIALIASED_QUALITY;
+	lf.lfFaceName[31] = L'\0';
+	wcsncpy(lf.lfFaceName, wface, 31);
+	HFONT font = CreateFontIndirectW(&lf);
+	HGDIOBJ old_font = SelectObject(*dc, font);
+	// Get text extents
+	SIZE sz;
+	if( !GetTextExtentPoint32W(*dc, wtext, wcslen(wtext), &sz) ){
+		SelectObject(*dc, old_font);
+		DeleteObject(font);
+		luaL_error2(L, "couldn't get text extents");
+	}
+	int width = sz.cx, height = sz.cy;
+	// Get font metrics
+	TEXTMETRICW tm;
+	if( !GetTextMetricsW(*dc, &tm) ){
+		SelectObject(*dc, old_font);
+		DeleteObject(font);
+		luaL_error2(L, "couldn't get font metrics");
+	}
+	int ascent = tm.tmAscent, descent = tm.tmDescent, internal_leading = tm.tmInternalLeading, external_leading = tm.tmExternalLeading;
+	SelectObject(*dc, old_font);
+	DeleteObject(font);
+	// Return extents & metrics
+	lua_pushnumber(L, width);
+	lua_pushnumber(L, height);
+	lua_pushnumber(L, ascent);
+	lua_pushnumber(L, descent);
+	lua_pushnumber(L, internal_leading);
+	lua_pushnumber(L, external_leading);
+	return 6;
 DEF_TAIL
 
 // REGISTER
@@ -193,6 +296,10 @@ inline void register_tgdi_meta(lua_State *L){
 	lua_setfield(L, -2, "path_box");
 	lua_pushcfunction(L, l_widen_path);
 	lua_setfield(L, -2, "widen_path");
+	lua_pushcfunction(L, l_get_path);
+	lua_setfield(L, -2, "get_path");
+	lua_pushcfunction(L, l_text_extents);
+	lua_setfield(L, -2, "text_extents");
 	lua_pop(L, 1);
 }
 
