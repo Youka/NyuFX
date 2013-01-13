@@ -134,16 +134,25 @@ DEF_HEAD_1ARG(abort_path, 1)
 DEF_TAIL
 
 DEF_HEAD_1ARG(path_box, 1)
+	// Get context
+	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
+	// Save context (path)
+	if(!SaveDC(*dc))
+		luaL_error2(L, "couldn't save path on stack");
 	// Get region of path
-	HRGN region = PathToRegion( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) );
-	if(!region)
+	HRGN region = PathToRegion(*dc);
+	if(!region){
+		RestoreDC(*dc, -1);
 		luaL_error2(L, "couldn't convert path to region");
+	}
 	// Get bounding box
 	RECT rect;
 	if( !GetRgnBox(region, &rect) ){
+		RestoreDC(*dc, -1);
 		DeleteObject(region);
 		luaL_error2(L, "couldn't get region size");
 	}
+	RestoreDC(*dc, -1);
 	DeleteObject(region);
 	// Return bounding box
 	lua_pushnumber(L, rect.left);
@@ -182,40 +191,43 @@ DEF_HEAD_1ARG(get_path, 1)
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
 	// Get path size
 	int n_points = GetPath(*dc, NULL, NULL, 0);
-	// Create path buffers
-	POINT *points = new POINT[n_points];	// allocating zero-sized array is allowed in c++
-	BYTE *types = new BYTE[n_points];
-	// Get path
-	GetPath(*dc, points, types, n_points);
-	// Path to string
-	wxString path;
-	BYTE type, last_type = 0x08;	// invalid type at start
-	POINT point;
-	for(int pi = 0; pi < n_points; pi++){
-		type = types[pi];
-		point = points[pi];
-		if(type != last_type)
-			switch(type){
-				case PT_MOVETO:
-					path << wxT("m ");
-					break;
-				case PT_LINETO:
-				case PT_LINETO | PT_CLOSEFIGURE:
-					path << wxT("l ");
-					break;
-				case PT_BEZIERTO:
-				case PT_BEZIERTO | PT_CLOSEFIGURE:
-					path << wxT("b ");
-					break;
-			}
-		last_type = type;
-		path << wxString::Format(wxT("%d %d "), point.x, point.y);
-	}
-	// Free path buffers
-	delete[] points;
-	delete[] types;
-	// Path string to Lua
-	lua_pushstring(L, path.Trim().ToAscii());
+	if(n_points > 0){
+		// Create path buffers
+		POINT *points = new POINT[n_points];
+		BYTE *types = new BYTE[n_points];
+		// Get path
+		GetPath(*dc, points, types, n_points);
+		// Path to string
+		wxString path;
+		BYTE type, last_type = 0x08;	// invalid type at start
+		POINT point;
+		for(int pi = 0; pi < n_points; pi++){
+			type = types[pi];
+			point = points[pi];
+			if(type != last_type)
+				switch(type){
+					case PT_MOVETO:
+						path << wxT("m ");
+						break;
+					case PT_LINETO:
+					case PT_LINETO | PT_CLOSEFIGURE:
+						path << wxT("l ");
+						break;
+					case PT_BEZIERTO:
+					case PT_BEZIERTO | PT_CLOSEFIGURE:
+						path << wxT("b ");
+						break;
+				}
+			last_type = type;
+			path << wxString::Format(wxT("%d %d "), point.x, point.y);
+		}
+		// Free path buffers
+		delete[] points;
+		delete[] types;
+		// Path string to Lua
+		lua_pushstring(L, path.Trim().ToAscii());
+	}else
+		lua_pushstring(L, "");
 	return 1;
 DEF_TAIL
 
