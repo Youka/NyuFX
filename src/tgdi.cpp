@@ -114,6 +114,8 @@ DEF_HEAD_1ARG(create_context, 0)
 	HDC *pdc = lua_createuserdata<HDC>(L, TGDI);
 	*pdc = CreateCompatibleDC(0);
 	SetMapMode(*pdc, MM_TEXT);
+	SetBkMode(*pdc, TRANSPARENT);
+	SetPolyFillMode(*pdc, WINDING);
 	return 1;
 DEF_TAIL
 
@@ -181,7 +183,7 @@ DEF_HEAD_1ARG(get_path, 1)
 	// Get path size
 	int n_points = GetPath(*dc, NULL, NULL, 0);
 	// Create path buffers
-	POINT *points = new POINT[n_points];
+	POINT *points = new POINT[n_points];	// allocating zero-sized array is allowed in c++
 	BYTE *types = new BYTE[n_points];
 	// Get path
 	GetPath(*dc, points, types, n_points);
@@ -213,7 +215,7 @@ DEF_HEAD_1ARG(get_path, 1)
 	delete[] points;
 	delete[] types;
 	// Path string to Lua
-	lua_pushstring(L, path.Trim().To8BitData());
+	lua_pushstring(L, path.Trim().ToAscii());
 	return 1;
 DEF_TAIL
 
@@ -243,6 +245,8 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 	lf.lfFaceName[31] = L'\0';
 	wcsncpy(lf.lfFaceName, wface, 31);
 	HFONT font = CreateFontIndirectW(&lf);
+	if(!font)
+		luaL_error2(L, "couldn't create font");
 	HGDIOBJ old_font = SelectObject(*dc, font);
 	// Get text extents
 	SIZE sz;
@@ -251,7 +255,6 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 		DeleteObject(font);
 		luaL_error2(L, "couldn't get text extents");
 	}
-	int width = sz.cx, height = sz.cy;
 	// Get font metrics
 	TEXTMETRICW tm;
 	if( !GetTextMetricsW(*dc, &tm) ){
@@ -259,17 +262,70 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 		DeleteObject(font);
 		luaL_error2(L, "couldn't get font metrics");
 	}
-	int ascent = tm.tmAscent, descent = tm.tmDescent, internal_leading = tm.tmInternalLeading, external_leading = tm.tmExternalLeading;
 	SelectObject(*dc, old_font);
 	DeleteObject(font);
 	// Return extents & metrics
-	lua_pushnumber(L, width);
-	lua_pushnumber(L, height);
-	lua_pushnumber(L, ascent);
-	lua_pushnumber(L, descent);
-	lua_pushnumber(L, internal_leading);
-	lua_pushnumber(L, external_leading);
+	lua_pushnumber(L, sz.cx);
+	lua_pushnumber(L, sz.cy);
+	lua_pushnumber(L, tm.tmAscent);
+	lua_pushnumber(L, tm.tmDescent);
+	lua_pushnumber(L, tm.tmInternalLeading);
+	lua_pushnumber(L, tm.tmExternalLeading);
 	return 6;
+DEF_TAIL
+
+DEF_HEAD_3ARG(add_path, 1, 4, 9)
+	// Shape mode
+	if(lua_gettop(L) == 1){
+
+		// TODO: insert shape path
+
+	// Text mode
+	}else{
+		// Get parameters (same as in l_text_extents)
+		HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));	// context
+		wxString text = wxString::FromUTF8(luaL_checkstring(L, 2));	// text
+		const wchar_t *wtext = text.wc_str();
+		wxString face = wxString::FromUTF8(luaL_checkstring(L, 3));	// font face
+		const wchar_t *wface = text.wc_str();
+		int size = luaL_checknumber(L, 4);	// font size
+		bool bold = luaL_optboolean(L, 5, false);	// bold?
+		bool italic = luaL_optboolean(L, 6, false);	// italic?
+		bool underline = luaL_optboolean(L, 7, false);	// underlined?
+		bool strikeout = luaL_optboolean(L, 8, false);	// strikeouted?
+		BYTE charset = luaL_optnumber(L, 9, DEFAULT_CHARSET);	// charset
+		// Create font (same as in l_text_extents)
+		LOGFONTW lf = {0};
+		lf.lfHeight = size;
+		lf.lfWeight = bold ? FW_BOLD : FW_NORMAL;
+		lf.lfItalic = italic;
+		lf.lfUnderline = underline;
+		lf.lfStrikeOut = strikeout;
+		lf.lfCharSet = charset;
+		lf.lfOutPrecision = OUT_TT_PRECIS;
+		lf.lfQuality = ANTIALIASED_QUALITY;
+		lf.lfFaceName[31] = L'\0';
+		wcsncpy(lf.lfFaceName, wface, 31);
+		HFONT font = CreateFontIndirectW(&lf);
+		if(!font)
+			luaL_error2(L, "couldn't create font");
+		HGDIOBJ old_font = SelectObject(*dc, font);
+		// Draw text
+		if( !BeginPath(*dc) ){
+			SelectObject(*dc, old_font);
+			DeleteObject(font);
+			luaL_error2(L, "couldn't begin path creation");
+		}
+		if( !ExtTextOutW(*dc, 0, 0, ETO_RTLREADING, NULL, wtext, wcslen(wtext), NULL) ){
+			EndPath(*dc);
+			SelectObject(*dc, old_font);
+			DeleteObject(font);
+			luaL_error2(L, "couldn't draw text path");
+		}
+		EndPath(*dc);
+		SelectObject(*dc, old_font);
+		DeleteObject(font);
+	}
 DEF_TAIL
 
 // REGISTER
@@ -284,10 +340,10 @@ inline void register_tgdi_meta(lua_State *L){
 	}
 	// Meta methods
 	luaL_newmetatable(L, TGDI);
-	lua_pushvalue(L, -1);
-	lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_context);
 	lua_setfield(L, -2, "__gc");
+	lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_flatten_path);
 	lua_setfield(L, -2, "flatten_path");
 	lua_pushcfunction(L, l_abort_path);
@@ -300,6 +356,8 @@ inline void register_tgdi_meta(lua_State *L){
 	lua_setfield(L, -2, "get_path");
 	lua_pushcfunction(L, l_text_extents);
 	lua_setfield(L, -2, "text_extents");
+	lua_pushcfunction(L, l_add_path);
+	lua_setfield(L, -2, "add_path");
 	lua_pop(L, 1);
 }
 
