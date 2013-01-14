@@ -383,7 +383,7 @@ DEF_HEAD_1ARG(get_pixels, 1)
 	RECT rect;
 	if( !GetRgnBox(region, &rect) )
 		luaL_error2(L, "couldn't get region size");
-	long width = rect.right + 1, height = rect.bottom + 1;
+	long width = rect.right + 1, height = rect.bottom + 1, pixels = width * height;
 	// Create bitmap
 	const BITMAPINFO bmp_info = {
 		{
@@ -406,11 +406,13 @@ DEF_HEAD_1ARG(get_pixels, 1)
 	if( !FillRgn(*dc, region, reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH))) )
 		luaL_error2(L, "couldn't draw region");
 	// Pixels to Lua
-	lua_createtable(L, width * height, 0);
-	for(long y = 0; y < height; y++)
-		for(long x = 0; x < width; x++){
-			;
-		}
+	lua_createtable(L, pixels, 0);
+	for(long pi = 0, i = 1; pi < pixels; pi++){
+		// Insert pixel
+		lua_pushboolean(L, *bmp_data); lua_rawseti(L, -2, i++);
+		// Next pixel
+		bmp_data += 3;
+	}
 	return 1;
 DEF_TAIL
 
