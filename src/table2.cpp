@@ -11,8 +11,7 @@ void luaopen_table2(lua_State *L){
 	// Add function
 	lua_getglobal(L, "table");
 	if(lua_istable(L, -1)){
-		lua_pushcfunction(L, l_table_create);
-		lua_setfield(L, -2, "create");
+		lua_pushcfunction(L, l_table_create); lua_setfield(L, -2, "create");
 	}
 	lua_pop(L, 1);
 }

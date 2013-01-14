@@ -1,9 +1,39 @@
 #include "libs.h"
 #include <wx/image.h>
 #include <windows.h>
+#include <wx/scopedptr.h>
+#include <wx/tokenzr.h>
+
+// UTILITIES
+#define TGDI "tgdi"
+
+template<class T>
+class GDIOBJ{
+	private:
+		T obj;
+	public:
+		GDIOBJ(T obj) : obj(obj){}
+		~GDIOBJ(){if(obj != NULL) DeleteObject(obj);}
+		operator T(){return obj;}
+		bool IsOk(){return obj != NULL;}
+};
+
+inline LOGFONTW CreateLogfont(int size, bool bold, bool italic, bool underline, bool strikeout, BYTE charset, const wchar_t *wface){
+	LOGFONTW lf = {0};
+	lf.lfHeight = size;
+	lf.lfWeight = bold ? FW_BOLD : FW_NORMAL;
+	lf.lfItalic = italic;
+	lf.lfUnderline = underline;
+	lf.lfStrikeOut = strikeout;
+	lf.lfCharSet = charset;
+	lf.lfOutPrecision = OUT_TT_PRECIS;
+	lf.lfQuality = ANTIALIASED_QUALITY;
+	lf.lfFaceName[31] = L'\0';
+	wcsncpy(lf.lfFaceName, wface, 31);
+	return lf;
+}
 
 // FUNCTIONS
-// Image
 DEF_HEAD_1ARG(load_image, 1)
 	// Get image
 	wxImage img( wxString::FromUTF8(luaL_checkstring(L, 1)) );
@@ -19,42 +49,29 @@ DEF_HEAD_1ARG(load_image, 1)
 		// Lua data
 		lua_createtable(L, pixels << 2, 3);
 		// Meta
-		lua_pushnumber(L, width);
-		lua_setfield(L, -2, "width");
-		lua_pushnumber(L, height);
-		lua_setfield(L, -2, "height");
-		lua_pushboolean(L, true);
-		lua_setfield(L, -2, "has_alpha");
+		lua_pushnumber(L, width); lua_setfield(L, -2, "width");
+		lua_pushnumber(L, height); lua_setfield(L, -2, "height");
+		lua_pushboolean(L, true); lua_setfield(L, -2, "has_alpha");
 		// Pixels
 		for(int pi = 0, i = 1; pi < pixels; pi++){
-			lua_pushnumber(L, *rgb++);	// R
-			lua_rawseti(L, -2, i++);
-			lua_pushnumber(L, *rgb++);	// G
-			lua_rawseti(L, -2, i++);
-			lua_pushnumber(L, *rgb++);	// B
-			lua_rawseti(L, -2, i++);
-			lua_pushnumber(L, *alpha++);	// A
-			lua_rawseti(L, -2, i++);
+			lua_pushnumber(L, *rgb++);	lua_rawseti(L, -2, i++);	// R
+			lua_pushnumber(L, *rgb++); lua_rawseti(L, -2, i++);	// G
+			lua_pushnumber(L, *rgb++); lua_rawseti(L, -2, i++);	// B
+			lua_pushnumber(L, *alpha++); lua_rawseti(L, -2, i++);	// A
 		}
 	// Without alpha
 	}else{
 		// Lua data
 		lua_createtable(L, pixels * 3, 3);
 		// Meta
-		lua_pushnumber(L, width);
-		lua_setfield(L, -2, "width");
-		lua_pushnumber(L, height);
-		lua_setfield(L, -2, "height");
-		lua_pushboolean(L, false);
-		lua_setfield(L, -2, "has_alpha");
+		lua_pushnumber(L, width); lua_setfield(L, -2, "width");
+		lua_pushnumber(L, height); lua_setfield(L, -2, "height");
+		lua_pushboolean(L, false); lua_setfield(L, -2, "has_alpha");
 		// Pixels
 		for(int pi = 0, i = 1; pi < pixels; pi++){
-			lua_pushnumber(L, *rgb++);	// R
-			lua_rawseti(L, -2, i++);
-			lua_pushnumber(L, *rgb++);	// G
-			lua_rawseti(L, -2, i++);
-			lua_pushnumber(L, *rgb++);	// B
-			lua_rawseti(L, -2, i++);
+			lua_pushnumber(L, *rgb++); lua_rawseti(L, -2, i++);	// R
+			lua_pushnumber(L, *rgb++); lua_rawseti(L, -2, i++);	// G
+			lua_pushnumber(L, *rgb++); lua_rawseti(L, -2, i++);	// B
 		}
 	}
 	return 1;
@@ -110,21 +127,6 @@ DEF_HEAD_1ARG(save_png, 2)
 		luaL_error2(L, "invalid image name");
 DEF_TAIL
 
-// DC utilities
-#define TGDI "tgdi"
-#include <wx/scopedptr.h>
-template<class T>
-class GDIOBJ{
-	private:
-		T obj;
-	public:
-		GDIOBJ(T obj) : obj(obj){}
-		~GDIOBJ(){if(obj != NULL) DeleteObject(obj);}
-		operator T(){return obj;}
-		bool IsOk(){return obj != NULL;}
-};
-
-// DC
 DEF_HEAD_1ARG(create_context, 0)
 	HDC *pdc = lua_createuserdata<HDC>(L, TGDI);
 	*pdc = CreateCompatibleDC(0);
@@ -242,17 +244,7 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 	bool strikeout = luaL_optboolean(L, 8, false);	// strikeouted?
 	BYTE charset = luaL_optnumber(L, 9, DEFAULT_CHARSET);	// charset
 	// Create font
-	LOGFONTW lf = {0};
-	lf.lfHeight = size;
-	lf.lfWeight = bold ? FW_BOLD : FW_NORMAL;
-	lf.lfItalic = italic;
-	lf.lfUnderline = underline;
-	lf.lfStrikeOut = strikeout;
-	lf.lfCharSet = charset;
-	lf.lfOutPrecision = OUT_TT_PRECIS;
-	lf.lfQuality = ANTIALIASED_QUALITY;
-	lf.lfFaceName[31] = L'\0';
-	wcsncpy(lf.lfFaceName, wface, 31);
+	LOGFONTW lf = CreateLogfont(size, bold, italic, underline, strikeout, charset, wface);
 	GDIOBJ<HFONT> font( CreateFontIndirectW(&lf) );
 	if(!font.IsOk())
 		luaL_error2(L, "couldn't create font");
@@ -289,12 +281,16 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 	}
 	// Shape mode
 	if(lua_gettop(L) == 2){
+		// Get parameters (except context)
+		wxString command = wxString::FromUTF8(luaL_checkstring(L, 2));	// shape command
+		// Split command
+		wxStringTokenizer tokens(command, wxT(" "), wxTOKEN_STRTOK);
 
-		// TODO: insert shape path
+		// TODO
 
 	// Text mode
 	}else{
-		// Get parameters (same as in l_text_extents, except context parameter)
+		// Get parameters (same as in l_text_extents, except context)
 		wxString text = wxString::FromUTF8(luaL_checkstring(L, 2));	// text
 		const wchar_t *wtext = text.wc_str();
 		wxString face = wxString::FromUTF8(luaL_checkstring(L, 3));	// font face
@@ -306,17 +302,7 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 		bool strikeout = luaL_optboolean(L, 8, false);	// strikeouted?
 		BYTE charset = luaL_optnumber(L, 9, DEFAULT_CHARSET);	// charset
 		// Create font (same as in l_text_extents)
-		LOGFONTW lf = {0};
-		lf.lfHeight = size;
-		lf.lfWeight = bold ? FW_BOLD : FW_NORMAL;
-		lf.lfItalic = italic;
-		lf.lfUnderline = underline;
-		lf.lfStrikeOut = strikeout;
-		lf.lfCharSet = charset;
-		lf.lfOutPrecision = OUT_TT_PRECIS;
-		lf.lfQuality = ANTIALIASED_QUALITY;
-		lf.lfFaceName[31] = L'\0';
-		wcsncpy(lf.lfFaceName, wface, 31);
+		LOGFONTW lf = CreateLogfont(size, bold, italic, underline, strikeout, charset, wface);
 		GDIOBJ<HFONT> font( CreateFontIndirectW(&lf) );
 		if(!font.IsOk())
 			luaL_error2(L, "couldn't create font");
@@ -347,24 +333,15 @@ inline void register_tgdi_meta(lua_State *L){
 	}
 	// Meta methods
 	luaL_newmetatable(L, TGDI);
-	lua_pushcfunction(L, l_delete_context);
-	lua_setfield(L, -2, "__gc");
-	lua_pushvalue(L, -1);
-	lua_setfield(L, -2, "__index");
-	lua_pushcfunction(L, l_flatten_path);
-	lua_setfield(L, -2, "flatten_path");
-	lua_pushcfunction(L, l_abort_path);
-	lua_setfield(L, -2, "abort_path");
-	lua_pushcfunction(L, l_path_box);
-	lua_setfield(L, -2, "path_box");
-	lua_pushcfunction(L, l_widen_path);
-	lua_setfield(L, -2, "widen_path");
-	lua_pushcfunction(L, l_get_path);
-	lua_setfield(L, -2, "get_path");
-	lua_pushcfunction(L, l_text_extents);
-	lua_setfield(L, -2, "text_extents");
-	lua_pushcfunction(L, l_add_path);
-	lua_setfield(L, -2, "add_path");
+	lua_pushcfunction(L, l_delete_context); lua_setfield(L, -2, "__gc");
+	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
+	lua_pushcfunction(L, l_flatten_path); lua_setfield(L, -2, "flatten_path");
+	lua_pushcfunction(L, l_abort_path); lua_setfield(L, -2, "abort_path");
+	lua_pushcfunction(L, l_path_box); lua_setfield(L, -2, "path_box");
+	lua_pushcfunction(L, l_widen_path); lua_setfield(L, -2, "widen_path");
+	lua_pushcfunction(L, l_get_path); lua_setfield(L, -2, "get_path");
+	lua_pushcfunction(L, l_text_extents); lua_setfield(L, -2, "text_extents");
+	lua_pushcfunction(L, l_add_path); lua_setfield(L, -2, "add_path");
 	lua_pop(L, 1);
 }
 
