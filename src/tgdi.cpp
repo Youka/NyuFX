@@ -271,23 +271,69 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 	// Get context
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
 	// Retrieve old path
-	wxScopedPtr<POINT> o_points;
-	wxScopedPtr<BYTE> o_types;
-	int n_points = GetPath(*dc, NULL, NULL, 0);
-	if(n_points > 0){
-		o_points.reset(new POINT[n_points]);
-		o_types.reset(new BYTE[n_points]);
-		GetPath(*dc, o_points.get(), o_types.get(), n_points);
+	wxScopedPtr<POINT> o_old_points;
+	wxScopedPtr<BYTE> o_old_types;
+	int n_old_points = GetPath(*dc, NULL, NULL, 0);
+	if(n_old_points > 0){
+		o_old_points.reset(new POINT[n_old_points]);
+		o_old_types.reset(new BYTE[n_old_points]);
+		GetPath(*dc, o_old_points.get(), o_old_types.get(), n_old_points);
 	}
 	// Shape mode
 	if(lua_gettop(L) == 2){
-		// Get parameters (except context)
-		wxString command = wxString::FromUTF8(luaL_checkstring(L, 2));	// shape command
-		// Split command
-		wxStringTokenizer tokens(command, wxT(" "), wxTOKEN_STRTOK);
-
-		// TODO
-
+		// Create parse buffers
+		wxStringTokenizer tokens(wxString::FromUTF8(luaL_checkstring(L, 2)), wxT(" "), wxTOKEN_STRTOK);
+		size_t expected_hits = tokens.CountTokens() >> 1;	// one point is two tokens, so half of all tokens is the maximum number of points
+		if(expected_hits > 0){
+			wxScopedPtr<POINT> o_points(new POINT[expected_hits]);
+			wxScopedPtr<BYTE> o_types(new BYTE[expected_hits]);
+			POINT *points = o_points.get();
+			BYTE *types = o_types.get();
+			// Iterate through tokens & collect points
+			int n_points = 0;
+			long x, y;
+			BYTE current_type = PT_MOVETO;
+			wxString token;
+			while(tokens.HasMoreTokens()){
+				token = tokens.GetNextToken();
+				// Catch type
+				if(token == wxT("m"))
+					current_type = PT_MOVETO;
+				else if(token == wxT("l"))
+					current_type = PT_LINETO;
+				else if(token == wxT("b"))
+					current_type = PT_BEZIERTO;
+				// Catch point
+				else if(token.ToLong(&x)){
+					if(tokens.HasMoreTokens()){
+						token = tokens.GetNextToken();
+						if(token.ToLong(&y)){
+							points[n_points].x = x;
+							points[n_points].y = y;
+							types[n_points] = current_type;
+							n_points++;
+						}else
+							luaL_error2(L, "couldn't parse the second part of a point");
+					}else
+						luaL_error2(L, "couldn't parse a point completely");
+				}
+			}
+			// Draw shape
+			if(n_points > 0){
+				if( !BeginPath(*dc) )
+					luaL_error2(L, "couldn't begin path creation");
+				if(n_old_points > 0)
+					if( !PolyDraw(*dc, o_old_points.get(), o_old_types.get(), n_old_points) ){
+						EndPath(*dc);
+						luaL_error2(L, "couldn't restore old path");
+					}
+				if( !PolyDraw(*dc, points, types, n_points) ){
+						EndPath(*dc);
+					luaL_error2(L, "couldn't draw shape");
+				}
+				EndPath(*dc);
+			}
+		}
 	// Text mode
 	}else{
 		// Get parameters (same as in l_text_extents, except context)
@@ -310,9 +356,11 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 		// Draw text
 		if( !BeginPath(*dc) )
 			luaL_error2(L, "couldn't begin path creation");
-		if(o_types.get() != NULL)
-			if( !PolyDraw(*dc, o_points.get(), o_types.get(), n_points) )
+		if(n_old_points > 0)
+			if( !PolyDraw(*dc, o_old_points.get(), o_old_types.get(), n_old_points) ){
+				EndPath(*dc);
 				luaL_error2(L, "couldn't restore old path");
+			}
 		if( !ExtTextOutW(*dc, 0, 0, ETO_RTLREADING, NULL, wtext, wcslen(wtext), NULL) ){
 			EndPath(*dc);
 			luaL_error2(L, "couldn't draw text path");

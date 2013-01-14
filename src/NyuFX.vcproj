@@ -260,10 +260,6 @@
 				RelativePath=".\tgdi.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\va.cpp"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
