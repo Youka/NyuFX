@@ -369,6 +369,51 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 	}
 DEF_TAIL
 
+DEF_HEAD_1ARG(get_pixels, 1)
+	// Get context
+	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
+	// Get region of path
+	if(!SaveDC(*dc))
+		luaL_error2(L, "couldn't save path on stack");
+	GDIOBJ<HRGN> region(PathToRegion(*dc));
+	RestoreDC(*dc, -1);
+	if(!region.IsOk())
+		luaL_error2(L, "couldn't convert path to region");
+	// Get dimension
+	RECT rect;
+	if( !GetRgnBox(region, &rect) )
+		luaL_error2(L, "couldn't get region size");
+	long width = rect.right + 1, height = rect.bottom + 1;
+	// Create bitmap
+	const BITMAPINFO bmp_info = {
+		{
+			sizeof(BITMAPINFO),	// biSize
+			width,	// biWidth
+			height,	// biHeight
+			1,	// biPlanes
+			24,	// biBitCount
+			BI_RGB,	// biCompression
+			0	// biSizeImage / biXPelsPerMeter / biYPelsPerMeter / biClrUsed / biClrImportant
+		},
+		NULL
+	};
+	BYTE *bmp_data;
+	GDIOBJ<HBITMAP> bmp( CreateDIBSection(*dc, &bmp_info, DIB_RGB_COLORS, reinterpret_cast<void**>(&bmp_data), NULL, 0) );
+	if(!bmp.IsOk())
+		luaL_error2(L, "couldn't create bitmap");
+	SelectObject(*dc, bmp);
+	// Draw region
+	if( !FillRgn(*dc, region, reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH))) )
+		luaL_error2(L, "couldn't draw region");
+	// Pixels to Lua
+	lua_createtable(L, width * height, 0);
+	for(long y = 0; y < height; y++)
+		for(long x = 0; x < width; x++){
+			;
+		}
+	return 1;
+DEF_TAIL
+
 // REGISTER
 inline void register_tgdi_meta(lua_State *L){
 	// Initialize image handlers
@@ -390,6 +435,7 @@ inline void register_tgdi_meta(lua_State *L){
 	lua_pushcfunction(L, l_get_path); lua_setfield(L, -2, "get_path");
 	lua_pushcfunction(L, l_text_extents); lua_setfield(L, -2, "text_extents");
 	lua_pushcfunction(L, l_add_path); lua_setfield(L, -2, "add_path");
+	lua_pushcfunction(L, l_get_pixels); lua_setfield(L, -2, "get_pixels");
 	lua_pop(L, 1);
 }
 
