@@ -3,6 +3,7 @@
 #include <windows.h>
 
 // FUNCTIONS
+// Image
 DEF_HEAD_1ARG(load_image, 1)
 	// Get image
 	wxImage img( wxString::FromUTF8(luaL_checkstring(L, 1)) );
@@ -109,7 +110,21 @@ DEF_HEAD_1ARG(save_png, 2)
 		luaL_error2(L, "invalid image name");
 DEF_TAIL
 
+// DC utilities
 #define TGDI "tgdi"
+#include <wx/scopedptr.h>
+template<class T>
+class GDIOBJ{
+	private:
+		T obj;
+	public:
+		GDIOBJ(T obj) : obj(obj){}
+		~GDIOBJ(){if(obj != NULL) DeleteObject(obj);}
+		operator T(){return obj;}
+		bool IsOk(){return obj != NULL;}
+};
+
+// DC
 DEF_HEAD_1ARG(create_context, 0)
 	HDC *pdc = lua_createuserdata<HDC>(L, TGDI);
 	*pdc = CreateCompatibleDC(0);
@@ -136,24 +151,17 @@ DEF_TAIL
 DEF_HEAD_1ARG(path_box, 1)
 	// Get context
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
-	// Save context (path)
+	// Get region of path
 	if(!SaveDC(*dc))
 		luaL_error2(L, "couldn't save path on stack");
-	// Get region of path
-	HRGN region = PathToRegion(*dc);
-	if(!region){
-		RestoreDC(*dc, -1);
+	GDIOBJ<HRGN> region(PathToRegion(*dc));
+	RestoreDC(*dc, -1);
+	if(!region.IsOk())
 		luaL_error2(L, "couldn't convert path to region");
-	}
 	// Get bounding box
 	RECT rect;
-	if( !GetRgnBox(region, &rect) ){
-		RestoreDC(*dc, -1);
-		DeleteObject(region);
+	if( !GetRgnBox(region, &rect) )
 		luaL_error2(L, "couldn't get region size");
-	}
-	RestoreDC(*dc, -1);
-	DeleteObject(region);
 	// Return bounding box
 	lua_pushnumber(L, rect.left);
 	lua_pushnumber(L, rect.top);
@@ -167,23 +175,13 @@ DEF_HEAD_1ARG(widen_path, 2)
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
 	// Set pen for widening
 	const LOGBRUSH logbrush = {BS_SOLID, RGB(255, 255, 255), 0};
-	HPEN pen = ExtCreatePen(
-		PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND,
-		luaL_checknumber(L, 2),
-		&logbrush,
-		0, NULL
-	);
-	if(!pen)
+	GDIOBJ<HPEN> pen( ExtCreatePen(PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND, luaL_checknumber(L, 2), &logbrush, 0, NULL) );
+	if(!pen.IsOk())
 		luaL_error2(L, "couldn't create pen");
-	HGDIOBJ old_pen = SelectObject(*dc, pen);
+	SelectObject(*dc, pen);
 	// Widen path
-	if( !WidenPath(*dc) ){
-		SelectObject(*dc, old_pen);
-		DeleteObject(pen);
+	if( !WidenPath(*dc) )
 		luaL_error2(L, "couldn't widen path");
-	}
-	SelectObject(*dc, old_pen);
-	DeleteObject(pen);
 DEF_TAIL
 
 DEF_HEAD_1ARG(get_path, 1)
@@ -193,8 +191,10 @@ DEF_HEAD_1ARG(get_path, 1)
 	int n_points = GetPath(*dc, NULL, NULL, 0);
 	if(n_points > 0){
 		// Create path buffers
-		POINT *points = new POINT[n_points];
-		BYTE *types = new BYTE[n_points];
+		wxScopedPtr<POINT> o_points(new POINT[n_points]);
+		wxScopedPtr<BYTE> o_types(new BYTE[n_points]);
+		POINT *points = o_points.get();
+		BYTE *types = o_types.get();
 		// Get path
 		GetPath(*dc, points, types, n_points);
 		// Path to string
@@ -221,9 +221,6 @@ DEF_HEAD_1ARG(get_path, 1)
 			last_type = type;
 			path << wxString::Format(wxT("%d %d "), point.x, point.y);
 		}
-		// Free path buffers
-		delete[] points;
-		delete[] types;
 		// Path string to Lua
 		lua_pushstring(L, path.Trim().ToAscii());
 	}else
@@ -256,26 +253,18 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 	lf.lfQuality = ANTIALIASED_QUALITY;
 	lf.lfFaceName[31] = L'\0';
 	wcsncpy(lf.lfFaceName, wface, 31);
-	HFONT font = CreateFontIndirectW(&lf);
-	if(!font)
+	GDIOBJ<HFONT> font( CreateFontIndirectW(&lf) );
+	if(!font.IsOk())
 		luaL_error2(L, "couldn't create font");
-	HGDIOBJ old_font = SelectObject(*dc, font);
+	SelectObject(*dc, font);
 	// Get text extents
 	SIZE sz;
-	if( !GetTextExtentPoint32W(*dc, wtext, wcslen(wtext), &sz) ){
-		SelectObject(*dc, old_font);
-		DeleteObject(font);
+	if( !GetTextExtentPoint32W(*dc, wtext, wcslen(wtext), &sz) )
 		luaL_error2(L, "couldn't get text extents");
-	}
 	// Get font metrics
 	TEXTMETRICW tm;
-	if( !GetTextMetricsW(*dc, &tm) ){
-		SelectObject(*dc, old_font);
-		DeleteObject(font);
+	if( !GetTextMetricsW(*dc, &tm) )
 		luaL_error2(L, "couldn't get font metrics");
-	}
-	SelectObject(*dc, old_font);
-	DeleteObject(font);
 	// Return extents & metrics
 	lua_pushnumber(L, sz.cx);
 	lua_pushnumber(L, sz.cy);
@@ -286,16 +275,26 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 	return 6;
 DEF_TAIL
 
-DEF_HEAD_3ARG(add_path, 1, 4, 9)
+DEF_HEAD_3ARG(add_path, 2, 4, 9)
+	// Get context
+	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
+	// Retrieve old path
+	wxScopedPtr<POINT> o_points;
+	wxScopedPtr<BYTE> o_types;
+	int n_points = GetPath(*dc, NULL, NULL, 0);
+	if(n_points > 0){
+		o_points.reset(new POINT[n_points]);
+		o_types.reset(new BYTE[n_points]);
+		GetPath(*dc, o_points.get(), o_types.get(), n_points);
+	}
 	// Shape mode
-	if(lua_gettop(L) == 1){
+	if(lua_gettop(L) == 2){
 
 		// TODO: insert shape path
 
 	// Text mode
 	}else{
-		// Get parameters (same as in l_text_extents)
-		HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));	// context
+		// Get parameters (same as in l_text_extents, except context parameter)
 		wxString text = wxString::FromUTF8(luaL_checkstring(L, 2));	// text
 		const wchar_t *wtext = text.wc_str();
 		wxString face = wxString::FromUTF8(luaL_checkstring(L, 3));	// font face
@@ -318,25 +317,21 @@ DEF_HEAD_3ARG(add_path, 1, 4, 9)
 		lf.lfQuality = ANTIALIASED_QUALITY;
 		lf.lfFaceName[31] = L'\0';
 		wcsncpy(lf.lfFaceName, wface, 31);
-		HFONT font = CreateFontIndirectW(&lf);
-		if(!font)
+		GDIOBJ<HFONT> font( CreateFontIndirectW(&lf) );
+		if(!font.IsOk())
 			luaL_error2(L, "couldn't create font");
-		HGDIOBJ old_font = SelectObject(*dc, font);
+		SelectObject(*dc, font);
 		// Draw text
-		if( !BeginPath(*dc) ){
-			SelectObject(*dc, old_font);
-			DeleteObject(font);
+		if( !BeginPath(*dc) )
 			luaL_error2(L, "couldn't begin path creation");
-		}
+		if(o_types.get() != NULL)
+			if( !PolyDraw(*dc, o_points.get(), o_types.get(), n_points) )
+				luaL_error2(L, "couldn't restore old path");
 		if( !ExtTextOutW(*dc, 0, 0, ETO_RTLREADING, NULL, wtext, wcslen(wtext), NULL) ){
 			EndPath(*dc);
-			SelectObject(*dc, old_font);
-			DeleteObject(font);
 			luaL_error2(L, "couldn't draw text path");
 		}
 		EndPath(*dc);
-		SelectObject(*dc, old_font);
-		DeleteObject(font);
 	}
 DEF_TAIL
 
