@@ -388,7 +388,7 @@ DEF_HEAD_2ARG(get_pixels, 1, 2)
 	RECT rect;
 	if( !GetRgnBox(region, &rect) )
 		luaL_error2(L, "couldn't get region size");
-	int width = (rect.right & 0x7) ? rect.right + 0x8 - (rect.right & 0x7) : rect.right, height = (rect.bottom & 0x7) ? rect.bottom + 0x8 - (rect.bottom & 0x7) : rect.bottom, pixels = width * height;	// Bitmap size have to be 8-fold
+	int width = rect.right + 0x8 - (rect.right & 0x7), height = rect.bottom + 0x8 - (rect.bottom & 0x7), pixels = width * height;	// Bitmap size have to be 8-fold
 	// Create bitmap
 	const BITMAPINFO bmp_info = {
 		{

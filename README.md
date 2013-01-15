@@ -13,7 +13,7 @@ It's recommend to learn Lua and ASS before usage, but even without it's possible
 ##Build
 NyuFX has a project file for MSVC++9 (see ***src/NyuFX.vcproj***).
 
-* Open it.
+* Open the project file.
 * Change the dependency to ***wxWidgets*** in the NyuFX project settings. Fix the *include*, *library* and *resources* path to your own wxWidgets 2.9.4 built.
 * Build the project map.
 

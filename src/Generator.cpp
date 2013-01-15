@@ -23,7 +23,7 @@ wxThread::ExitCode Generator::Entry(){
 	// Load & execute Lua scripts
 	wxArrayString inc_files;
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\include\\"), &inc_files, wxT("*.lua"), wxDIR_FILES);
-	for(unsigned int i = 0; i < inc_files.GetCount() && i<100; i++)
+	for(unsigned int i = 0; i < inc_files.GetCount(); i++)
 		if( !env.DoFile(inc_files[i]) )
 			return 0;
 	if( !env.CallInit(2, this->ass_file, this->output_file) )
