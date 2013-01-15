@@ -369,9 +369,10 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 	}
 DEF_TAIL
 
-DEF_HEAD_1ARG(get_pixels, 1)
-	// Get context
+DEF_HEAD_2ARG(get_pixels, 1, 2)
+	// Get parameters
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
+	bool div8 = luaL_optboolean(L, 2, false);
 	// Get region of path
 	if(!SaveDC(*dc))
 		luaL_error2(L, "couldn't save path on stack");
@@ -383,19 +384,19 @@ DEF_HEAD_1ARG(get_pixels, 1)
 	RECT rect;
 	if( !GetRgnBox(region, &rect) )
 		luaL_error2(L, "couldn't get region size");
-	long width = rect.right + 1, height = rect.bottom + 1, pixels = width * height;
+	int width = (rect.right & 0x7) ? rect.right + 0x8 - (rect.right & 0x7) : rect.right, height = (rect.bottom & 0x7) ? rect.bottom + 0x8 - (rect.bottom & 0x7) : rect.bottom, pixels = width * height;	// Bitmap size have to be 8-fold
 	// Create bitmap
 	const BITMAPINFO bmp_info = {
 		{
-			sizeof(BITMAPINFO),	// biSize
+			sizeof(BITMAPINFOHEADER),	// biSize
 			width,	// biWidth
-			height,	// biHeight
+			-height,	// biHeight
 			1,	// biPlanes
 			24,	// biBitCount
 			BI_RGB,	// biCompression
 			0	// biSizeImage / biXPelsPerMeter / biYPelsPerMeter / biClrUsed / biClrImportant
 		},
-		NULL
+		NULL	// bmiColors
 	};
 	BYTE *bmp_data;
 	GDIOBJ<HBITMAP> bmp( CreateDIBSection(*dc, &bmp_info, DIB_RGB_COLORS, reinterpret_cast<void**>(&bmp_data), NULL, 0) );
@@ -405,13 +406,31 @@ DEF_HEAD_1ARG(get_pixels, 1)
 	// Draw region
 	if( !FillRgn(*dc, region, reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH))) )
 		luaL_error2(L, "couldn't draw region");
+	if( !GdiFlush() )
+		luaL_error2(L, "couldn't flush batch");
 	// Pixels to Lua
-	lua_createtable(L, pixels, 0);
-	for(long pi = 0, i = 1; pi < pixels; pi++){
-		// Insert pixel
-		lua_pushboolean(L, *bmp_data); lua_rawseti(L, -2, i++);
-		// Next pixel
-		bmp_data += 3;
+	if(div8){
+		lua_createtable(L, pixels >> 6, 2);
+		lua_pushnumber(L, width >> 3); lua_setfield(L, -2, "width");
+		lua_pushnumber(L, height >> 3); lua_setfield(L, -2, "height");
+		for(int y = 0, i = 1, alpha; y < height; y+=8)
+			for(int x = 0; x < width; x+=8){
+				// Convert 8x8 pixel block to one transparent pixel
+				alpha = 0;
+				for(unsigned char yy = 0; yy < 8; yy++)
+					for(unsigned char xx = 0; xx < 8; xx++)
+						alpha += *(bmp_data + (y + yy) * width * 3 + (x + xx) * 3);
+				// Insert pixel
+				lua_pushnumber(L, alpha >> 6); lua_rawseti(L, -2, i++);
+			}
+	}else{
+		lua_createtable(L, pixels, 2);
+		lua_pushnumber(L, width); lua_setfield(L, -2, "width");
+		lua_pushnumber(L, height); lua_setfield(L, -2, "height");
+		for(int pi = 0, i = 1; pi < pixels; pi++, bmp_data+=3){
+			// Insert pixel
+			lua_pushboolean(L, *bmp_data); lua_rawseti(L, -2, i++);
+		}
 	}
 	return 1;
 DEF_TAIL
