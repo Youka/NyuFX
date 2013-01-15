@@ -173,17 +173,21 @@ DEF_HEAD_1ARG(path_box, 1)
 DEF_TAIL
 
 DEF_HEAD_1ARG(widen_path, 2)
-	// Get context
+	// Get parameters
 	HDC *dc = reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI));
-	// Set pen for widening
-	const LOGBRUSH logbrush = {BS_SOLID, RGB(255, 255, 255), 0};
-	GDIOBJ<HPEN> pen( ExtCreatePen(PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND, luaL_checknumber(L, 2), &logbrush, 0, NULL) );
-	if(!pen.IsOk())
-		luaL_error2(L, "couldn't create pen");
-	SelectObject(*dc, pen);
-	// Widen path
-	if( !WidenPath(*dc) )
-		luaL_error2(L, "couldn't widen path");
+	double width = luaL_checknumber(L, 2);
+	if(width >= 1){
+		// Set pen for widening
+		const LOGBRUSH logbrush = {BS_SOLID, RGB(255, 255, 255), 0};
+		GDIOBJ<HPEN> pen( ExtCreatePen(PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND, luaL_checknumber(L, 2), &logbrush, 0, NULL) );
+		if(!pen.IsOk())
+			luaL_error2(L, "couldn't create pen");
+		SelectObject(*dc, pen);
+		// Widen path
+		if( !WidenPath(*dc) )
+			luaL_error2(L, "couldn't widen path");
+	}else
+		luaL_error2(L, "invalid width");
 DEF_TAIL
 
 DEF_HEAD_1ARG(get_path, 1)

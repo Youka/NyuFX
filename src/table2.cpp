@@ -2,8 +2,12 @@
 
 // FUNCTIONS
 DEF_HEAD_1ARG(table_create, 2)
-	lua_createtable(L, luaL_checknumber(L, 1), luaL_checknumber(L, 2));
-	return 1;
+	double arraysize = luaL_checknumber(L, 1), mapsize = luaL_checknumber(L, 2);
+	if(arraysize >= 0 && mapsize >= 0){
+		lua_createtable(L, arraysize, mapsize);
+		return 1;
+	}else
+		luaL_error2(L, "sizes have to be bigger-equal zero");
 DEF_TAIL
 
 // REGISTER
