@@ -47,13 +47,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 Dialogue: 0,0:00:00.00,0:00:10.00,Default,,0000,0000,0000,,Test]]
 	end
 	-- Evaluate input
-	--[[LoadASS(content, function(text, styleref)
-		return tgdi.create_context().text_extents(text, styleref.fontname, styleref.fontsize, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
-	end)]]
 	if tmp_ofile then
 		local template = content:gsub("\nDialogue:", "\nComment:")
 		tmp_ofile:write(template)
 	end
+	LoadASS(content, utils.text_extents)
 end
 
 -- Execution exit function
@@ -65,7 +63,8 @@ function Exit()
 		if ofile then
 			tmp_ofile:seek("set")
 			for line in tmp_ofile:lines() do
-				ofile:write(line .. "\n")
+				ofile:write(line)
+				ofile:write("\n")
 			end
 			tmp_ofile:close()
 			ofile:close()
@@ -124,7 +123,7 @@ function io.write_line(line)
 								tostring(line.effect),
 								tostring(line.text)
 							)
-	--Write line
+	-- Write line
 	if tmp_ofile then
 		tmp_ofile:write(text)
 		produced_lines = produced_lines + 1
