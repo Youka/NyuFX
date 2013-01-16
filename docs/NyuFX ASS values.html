@@ -1,0 +1,176 @@
+<html>
+<head>
+<title>ASS values</title>
+</head>
+<body bgcolor="#F0F0F0">
+<u><b><font size=7>ASS values</font></b></u><br>
+<font size=4>Following Lua tables+elements/fields are describing the content of input ASS file (parsed with io.load_ass function).<br>
+They're immediately available at beginning of code execution.</font>
+<br>
+<table bgcolor="#FFFFFF" rules="cols" style="border-style:ridge;border-width:thick;border-color:#FF0000;">
+<tr><td><b>meta</b></td><td>Script meta data <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.comment</b></div></td><td>Script comments <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.title</b></div></td><td>Script title <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.script_type</b></div></td><td>Script version <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.wrap_style</b></div></td><td>Line wrap style <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.width</b></div></td><td>Video width <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.height</b></div></td><td>Video height <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.scaled_border_and_shadow</b></div></td><td>Border/shadow scaled by different real video and script resolution? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.ratio</b></div></td><td>Video ratio (seems to change nothing) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.zoom</b></div></td><td>Video zoom (just for editing) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.position</b></div></td><td>Current video frame for playback (just for editing) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.last_style</b></div></td><td>Last style storaged <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.audio</b></div></td><td>Loaded audio file <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>.video</b></div></td><td>Loaded video file <font color=#0000FF>string</font></td></tr>
+</table>
+<br>
+<table bgcolor="#FFFFFF" rules="cols" style="border-style:ridge;border-width:thick;border-color:#FF0000;">
+<tr><td><b>styles</b></td><td>Styles <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>[i]</b></div></td><td>Single style <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.name</b></div></td><td>Style name <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.fontname</b></div></td><td>Style font name <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.fontsize</b></div></td><td>Style font size <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.color1</b></div></td><td>Style fill color <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.alpha1</b></div></td><td>Style fill alpha <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.color2</b></div></td><td>Style karaoke color <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.alpha2</b></div></td><td>Style karaoke alpha <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.color3</b></div></td><td>Style outline color <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.alpha3</b></div></td><td>Style outline alpha <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.color4</b></div></td><td>Style shadow color <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.alpha4</b></div></td><td>Style shadow alpha <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.bold</b></div></td><td>Style font bold? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.italic</b></div></td><td>Style font italic? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.underline</b></div></td><td>Style font underlined? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.strikeout</b></div></td><td>Style font strikeouted? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.scale_x</b></div></td><td>Style horizontal scale <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.scale_y</b></div></td><td>Style vertical scale <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.spacing</b></div></td><td>Style text spacing <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.angle</b></div></td><td>Style text z rotation <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.borderstyle</b></div></td><td>Style border type -> opaque box (else rounded border)? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.outline</b></div></td><td>Style font border size <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.shadow</b></div></td><td>Style font shadow offset position (down-right) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.alignment</b></div></td><td>Style video alignment <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.margin_l</b></div></td><td>Style position offset from left video side <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.margin_r</b></div></td><td>Style position offset from right video side <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.margin_v</b></div></td><td>Style position offset from video top and bottom <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.encoding</b></div></td><td>Style font encoding <font color=#0000FF>number</font></td></tr>
+</table>
+<br>
+<table bgcolor="#FFFFFF" rules="cols" style="border-style:ridge;border-width:thick;border-color:#FF0000;">
+<tr><td><b>lines</b></td><td>Dialog lines <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:40px"><b>[i]</b></div></td><td>Single dialog line <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.comment</b></div></td><td>Line is a comment? <font color=#0000FF>boolean</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.layer</b></div></td><td>Line layer <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.start_time</b></div></td><td>Line start time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.end_time</b></div></td><td>Line end time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.mid_time</b></div></td><td>Line mid time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.duration</b></div></td><td>Line duration (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.infade</b></div></td><td>Line infade duration (in milliseconds; first line = 1000.1) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.outfade</b></div></td><td>Line outfade duration (in milliseconds, last line = 1000.1) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.style</b></div></td><td>Line style name <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.styleref</b></div></td><td>Line style table <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.actor</b></div></td><td>Line actor <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.margin_l</b></div></td><td>Line position offset from left video side <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.margin_r</b></div></td><td>Line position offset from right video side <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.margin_v</b></div></td><td>Line position offset from video top and bottom <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.effect</b></div></td><td>Line effect description <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.k_text</b></div></td><td>Line raw text <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.text</b></div></td><td>Line stripped text <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.i</b></div></td><td>Line index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.width</b></div></td><td>Line text width <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.height</b></div></td><td>Line text height <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.ascent</b></div></td><td>Line font ascent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.descent</b></div></td><td>Line font descent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.intlead</b></div></td><td>Line font internal lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.extlead</b></div></td><td>Line font external lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.x</b></div></td><td>Line text position horizontal (depends on alignment)  <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.y</b></div></td><td>Line text position vertical (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.left</b></div></td><td>Line text position left <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.center</b></div></td><td>Line text position center <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.right</b></div></td><td>Line text position right <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.top</b></div></td><td>Line text position top <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.middle</b></div></td><td>Line text position middle <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.bottom</b></div></td><td>Line text position bottom <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.syls</b></div></td><td>Line sylables <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:120px"><b>[i]</b></div></td><td>Single line sylable <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.i</b></div></td><td>Sylable index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.word_i</b></div></td><td>Sylable word index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.start_time</b></div></td><td>Sylable start time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.end_time</b></div></td><td>Sylable end time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.mid_time</b></div></td><td>Sylable mid time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.duration</b></div></td><td>Sylable duration (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.text</b></div></td><td>Sylable text <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.inline_fx</b></div></td><td>Sylable inline effect (marked as <font color=#808080>\\-EFFECT</font> in karaoke-time) <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.prespace</b></div></td><td>Sylable free space before text <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.postspace</b></div></td><td>Sylable free space after text <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.width</b></div></td><td>Sylable text width <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.height</b></div></td><td>Sylable text height <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.ascent</b></div></td><td>Sylable font ascent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.descent</b></div></td><td>Sylable font descent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.intlead</b></div></td><td>Sylable font internal lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.extlead</b></div></td><td>Sylable font external lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.x</b></div></td><td>Sylable text position horizontal (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.y</b></div></td><td>Sylable text position vertical (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.left</b></div></td><td>Sylable text position left <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.center</b></div></td><td>Sylable text position center <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.right</b></div></td><td>Sylable text position right <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.top</b></div></td><td>Sylable text position top <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.middle</b></div></td><td>Sylable text position middle <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.bottom</b></div></td><td>Sylable text position bottom <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.chars</b></div></td><td>Line characters <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:120px"><b>[i]</b></div></td><td>Single line character <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.i</b></div></td><td>Character index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.syl_i</b></div></td><td>Character sylable index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.word_i</b></div></td><td>Character word index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.start_time</b></div></td><td>Character start time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.end_time</b></div></td><td>Character end time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.mid_time</b></div></td><td>Character mid time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.duration</b></div></td><td>Character duration (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.text</b></div></td><td>Character text <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.width</b></div></td><td>Character text width <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.height</b></div></td><td>Character text height <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.ascent</b></div></td><td>Character font ascent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.descent</b></div></td><td>Character font descent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.intlead</b></div></td><td>Character font internal lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.extlead</b></div></td><td>Character font external lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.x</b></div></td><td>Character text position horizontal (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.y</b></div></td><td>Character text position vertical (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.left</b></div></td><td>Character text position left <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.center</b></div></td><td>Character text position center <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.right</b></div></td><td>Character text position right <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.top</b></div></td><td>Character text position top <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.middle</b></div></td><td>Character text position middle <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.bottom</b></div></td><td>Character text position bottom <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:80px"><b>.words</b></div></td><td>Line words <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:120px"><b>[i]</b></div></td><td>Single line word <font color=#0000FF>table</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.i</b></div></td><td>Word index <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.start_time</b></div></td><td>Word start time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.end_time</b></div></td><td>Word end time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.mid_time</b></div></td><td>Word mid time (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.duration</b></div></td><td>Word duration (in milliseconds) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.text</b></div></td><td>Word text <font color=#0000FF>string</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.prespace</b></div></td><td>Word free space before text <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.postspace</b></div></td><td>Word free space after text <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.width</b></div></td><td>Word text width <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.height</b></div></td><td>Word text height <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.ascent</b></div></td><td>Word font ascent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.descent</b></div></td><td>Word font descent <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.intlead</b></div></td><td>Word font internal lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.extlead</b></div></td><td>Word font external lead <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.x</b></div></td><td>Word text position horizontal (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.y</b></div></td><td>Word text position vertical (depends on alignment) <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.left</b></div></td><td>Word text position left <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.center</b></div></td><td>Word text position center <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.right</b></div></td><td>Word text position right <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.top</b></div></td><td>Word text position top <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.middle</b></div></td><td>Word text position middle <font color=#0000FF>number</font></td></tr>
+<tr><td><div style="margin-left:160px"><b>.bottom</b></div></td><td>Word text position bottom <font color=#0000FF>number</font></td></tr>
+</table>
+<br>
+<b><font size=6>Additional information</font></b>
+<table>
+<tr><td><img src="res/ASS_vals/text_extents.png"></td><td><img src="res/ASS_vals/text_align.jpg"></td><td><img src="res/ASS_vals/times.jpg"><br><br><img src="res/ASS_vals/text_sections.jpg"></td></tr>
+<tr><td colspan=3><img src="res/ASS_vals/ass_content.jpg"></td></tr>
+</table>
+</body>
+</html>
