@@ -5,10 +5,6 @@ local produced_lines, process_time
 
 -- Execution initialization function
 function Init(input_filename, output_filename)
-	-- Evaluate input
-
-	-- TODO: parse ASS
-
 	-- Prepare output
 	if output_filename:len() > 0 then
 		tmp_ofile = io.tmpfile()
@@ -16,6 +12,10 @@ function Init(input_filename, output_filename)
 		produced_lines = 0
 		process_time = os.clock()
 	end
+	-- Evaluate input
+
+	-- TODO: parse ASS
+
 end
 
 -- Execution exit function
@@ -25,6 +25,7 @@ function Exit()
 		-- Copy temporary buffer to output file
 		local ofile = io.open(ofilename, "w")
 		if ofile then
+			tmp_ofile:seek("set")
 			for line in tmp_ofile:lines() do
 				ofile:write(line .. "\n")
 			end
@@ -89,5 +90,7 @@ function io.write_line(line)
 	if tmp_ofile then
 		tmp_ofile:write(text)
 		produced_lines = produced_lines + 1
+	else
+		error("no output file specified", 2)
 	end
 end
