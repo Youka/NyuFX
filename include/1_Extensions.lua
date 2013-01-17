@@ -84,7 +84,27 @@ function convert.text_to_pixels(text, style)
 	return pixels
 end
 
---MATH
+-- TODO: convert.text_to_shape
+
+-- TODO: convert.shape_to_pixels
+
+-- TODO: convert.image_to_pixels
+
+-- IO
+function io.load_ass(filename)
+	if type(filename) ~= "string" then
+		error("string expected", 2)
+	end
+	local file, err = io.open(filename, "r")
+	if file then
+		LoadASS(file:read("*a"), utils.text_extents)
+		file:close()
+	else
+		error(err, 2)
+	end
+end
+
+-- MATH
 function math.bezier(pct, p)
 	if type(pct) ~= "number" or type(p) ~= "table" then
 		error("number and table expected", 2)
@@ -210,7 +230,36 @@ function math.trim(num, starts, ends)
 	return (num < starts and starts) or (num > ends and ends) or num
 end
 
---STRING
+-- SHAPE
+shape = {}
+
+-- TODO: shape.bounding
+
+-- TODO: shape.ellipse
+
+-- TODO: shape.filter
+
+-- TODO: shape.glance
+
+-- TODO: shape.heart
+
+-- TODO: shape.move
+
+-- TODO: shape.rectangle
+
+-- TODO: shape.ring
+
+-- TODO: shape.split
+
+-- TODO: shape.star
+
+-- TODO: shape.tooutline
+
+-- TODO: shape.triangle
+
+-- TODO: shape.transverter
+
+-- STRING
 --[[
 UTF16 -> UTF8
 --------------
@@ -271,7 +320,7 @@ function string.ulen(s)
 	return n
 end
 
---TABLE
+-- TABLE
 function table.append(t1, t2)
 	if type(t1) ~= "table" or type(t2) ~= "table" then
 		error("table and table expected", 2)
@@ -359,7 +408,9 @@ function utils.frames(starts, ends, frame_time)
 	if type(starts) ~= "number" or type(ends) ~= "number" or type(frame_time) ~= "number" or frame_time <= 0 then
 		error("number, number and valid number expected", 2)
 	end
+	-- Intermediate data
 	local cur_start_time, i, n = starts, 0, math.ceil((ends - starts) / frame_time)
+	-- Iterator function
 	local function next_frame()
 		if cur_start_time >= ends then
 			return nil
@@ -424,7 +475,6 @@ function utils.text_extents(text, style)
 	-- Calculation data
 	local ctx = tgdi.create_context()
 	local width, height, ascent, descent, internal_lead, external_lead
-	local scale_x, scale_y
 	-- Safe execution
 	local function text_extents()
 		-- Extents with spacing
@@ -441,27 +491,14 @@ function utils.text_extents(text, style)
 			width, height, ascent, descent, internal_lead, external_lead =
 				ctx:text_extents(text, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
 		end
-		-- Scale factor
-		scale_x, scale_y = style.scale_x / 100 / 64, style.scale_y / 100 / 64
+		-- Scale correctly
+		local scale_x, scale_y = style.scale_x / 100 / 64, style.scale_y / 100 / 64
+		width, height, ascent, descent, internal_lead, external_lead =
+			width * scale_x, height * scale_y, ascent * scale_y, descent * scale_y, internal_lead * scale_y, external_lead * scale_y
 	end
 	local success = pcall(text_extents)
 	if not success then
 		error("invalid style table", 2)
 	end
-	-- Scale correctly and return
-	return width * scale_x, height * scale_y, ascent * scale_y, descent * scale_y, internal_lead * scale_y, external_lead * scale_y
-end
-
--- IO
-function io.load_ass(filename)
-	if type(filename) ~= "string" then
-		error("string expected", 2)
-	end
-	local file, err = io.open(filename, "r")
-	if file then
-		LoadASS(file:read("*a"), utils.text_extents)
-		file:close()
-	else
-		error(err, 2)
-	end
+	return width, height, ascent, descent, internal_lead, external_lead
 end
