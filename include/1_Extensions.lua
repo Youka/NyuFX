@@ -91,20 +91,6 @@ end
 
 -- TODO: convert.image_to_pixels
 
--- IO
-function io.load_ass(filename)
-	if type(filename) ~= "string" then
-		error("string expected", 2)
-	end
-	local file, err = io.open(filename, "r")
-	if file then
-		LoadASS(file:read("*a"), utils.text_extents)
-		file:close()
-	else
-		error(err, 2)
-	end
-end
-
 -- MATH
 function math.bezier(pct, p)
 	if type(pct) ~= "number" or type(p) ~= "table" then
@@ -234,39 +220,28 @@ end
 -- SHAPE
 shape = {}
 
-function shape.bounding(shape, as_region)
+function shape.bounding(shape)
 	if type(shape) ~= "string" or (type(as_region) ~= "boolean" and as_region ~= nil) then
 		error("string and optional boolean expected", 2)
 	end
 	-- Calculation data
 	local min_x, min_y, max_x, max_y
-	-- Look for minimal and maximal shape point
-	if not as_region then
-		-- Iterate through points
-		local function point_finder(x, y)
-			min_x = min_x and math.min(min_x, x) or x
-			min_y = min_y and math.min(min_y, y) or y
-			max_x = max_x and math.max(max_x, x) or x
-			max_y = max_y and math.max(max_y, y) or y
+	-- Safe execution
+	local function bounding()
+		-- Graphic context
+		local ctx = tgdi.create_context()
+		-- Get bounding
+		local function scale8(x, y)
+			return string.format("%d %d", x * 8, y * 8)
 		end
-		shape:gsub("(%-?%d+)%s+(%-?%d+)", point_finder)
-		if not min_x then
-			error("invalid shape", 2)
-		end
-	-- Convert to region and calculate bounding rectangle
-	else
-		-- Safe execution
-		local function bounding()
-			-- Graphic context
-			local ctx = tgdi.create_context()
-			-- Get bounding
-			ctx:add_path(shape)
-			min_x, min_y, max_x, max_y = ctx:path_box()
-		end
-		local success = pcall(bounding)
-		if not success then
-			error("invalid shape", 2)
-		end
+		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", scale8)
+		ctx:add_path(shape)
+		min_x, min_y, max_x, max_y = ctx:path_box()
+		min_x, min_y, max_x, max_y = math.floor(min_x/8), math.floor(min_y/8), math.floor(max_x/8), math.floor(max_y/8)
+	end
+	local success = pcall(bounding)
+	if not success then
+		error("invalid shape", 2)
 	end
 	-- Return resulting data
 	return min_x, min_y, max_x, max_y
@@ -556,4 +531,18 @@ function utils.text_extents(text, style)
 		error("invalid style table", 2)
 	end
 	return width, height, ascent, descent, internal_lead, external_lead
+end
+
+-- IO
+function io.load_ass(filename)
+	if type(filename) ~= "string" then
+		error("string expected", 2)
+	end
+	local file, err = io.open(filename, "r")
+	if file then
+		LoadASS(file:read("*a"), utils.text_extents)
+		file:close()
+	else
+		error(err, 2)
+	end
 end
