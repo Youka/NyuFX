@@ -48,8 +48,172 @@ function convert.ass_to_rgb(str)
 	end
 end
 
+function convert.text_to_pixels(text, style)
+	-- Flat arguments check
+	if type(text) ~= "string" or type(style) ~= "table" then
+		error("string and style table expected", 2)
+	end
+	-- Calculation data
+	local ctx = tgdi.create_context()
+	local pixel_palette
+	-- Safe execution
+	local function text_to_pixels()
+
+		-- TODO: use paths to support spacing & scaling
+
+		--[[-- Text with spacing
+		if style.spacing > 0 then
+
+		-- Text without spacing
+		else
+
+		end]]
+	end
+	local success = pcall(text_to_pixels)
+	if not success then
+		error("invalid style table", 2)
+	end
+	-- Convert pixel palette to comfortable pixel table and return
+	local pixels, pixels_n = {}, 0
+	for pi, alpha in ipairs(pixel_palette) do
+		if alpha > 0 then
+			pixels_n = pixels_n + 1
+			pixels[pixels_n] = {a = alpha, x = (pi-1) % pixel_palette.width, y = math.floor((pi-1) / pixel_palette.width)}
+		end
+	end
+	return pixels
+end
+
+--MATH
+function math.bezier(pct, p)
+	if type(pct) ~= "number" or type(p) ~= "table" then
+		error("number and table expected", 2)
+	elseif pct < 0 or pct > 1 or #p < 2 then
+		error("invalid arguments", 2)
+	end
+	for i, v in ipairs(p) do
+		if type(v[1]) ~= "number" or type(v[2]) ~= "number" or (type(v[3]) ~= "number" and type(v[3]) ~= "nil") then
+			error("invalid table content", 2)
+		end
+	end
+	--Factorial
+	local function fac(n)
+		local k = 1
+		if n > 1 then
+			for i=2, n do
+				k = k * i
+			end
+		end
+		return k
+	end
+	--Binomial coefficient
+	local function bin(i, n)
+		return fac(n) / (fac(i) * fac(n-i))
+	end
+	--Bernstein polynom
+	local function bernstein(pct, i, n)
+		return bin(i, n) * pct^i * (1 - pct)^(n - i)
+	end
+	--Calculate coordinate
+	local point = {0, 0, 0}
+	local n = #p - 1
+	for i=0, n do
+		local bern = bernstein(pct, i, n)
+		point[1] = point[1] + p[i+1][1] * bern
+		point[2] = point[2] + p[i+1][2] * bern
+		point[3] = point[3] + (p[i+1][3] or 0) * bern
+	end
+	return point
+end
+
+function math.distance( w, h, d )
+	if type(w) ~= "number" or type(h) ~= "number" or (type(d) ~= "number" and type(d) ~= "nil") then
+		error("number, number and optional number expected", 2)
+	end
+	if d then
+		return math.sqrt(w^2 + h^2 + d^2)
+	else
+		return math.sqrt(w^2 + h^2)
+	end
+end
+
+function math.ellipse(x, y, w, h, a)
+	if type(x) ~= "number" or
+	type(y) ~= "number" or
+	type(w) ~= "number" or
+	type(h) ~= "number" or
+	type(a) ~= "number" then
+		error("number, number, number, number and number expected", 2)
+	end
+	local ra = math.rad(a)
+	return x + w/2 * math.cos(ra), y + h/2 * math.sin(ra)
+end
+
+function math.randomsteps(start, ends, step)
+	if type(start) ~= "number" or
+	type(ends) ~= "number" or
+	type(step) ~= "number" or
+	start > ends or
+	step <= 0 then
+		error("valid number, number and number expected", 2)
+	end
+	return start + math.random(0, math.floor((ends - start) / step)) * step
+end
+
+function math.randomway()
+	return math.random(0,1) * 2 - 1
+end
+
+function math.rotate(p, axis, angle)
+	if type(p) ~= "table" or #p ~= 3 or type(axis) ~= "string" or type(angle) ~= "number" then
+		error("table, string and number expected", 2)
+	elseif axis ~= "x" and axis ~= "y" and axis ~= "z" then
+		error("invalid axis", 2)
+	elseif type(p[1]) ~= "number" or type(p[2]) ~= "number" or type(p[3]) ~= "number" then
+		error("invalid table content", 2)
+	end
+	local ra = math.rad(angle)
+	if axis == "x" then
+		return {
+			p[1],
+			math.cos(ra)*p[2] - math.sin(ra)*p[3],
+			math.sin(ra)*p[2] + math.cos(ra)*p[3]
+		}
+	elseif axis == "y" then
+		return {
+			math.cos(ra)*p[1] + math.sin(ra)*p[3],
+			p[2],
+			-math.sin(ra)*p[1] + math.cos(ra)*p[3]
+		}
+	else
+		return {
+			math.cos(ra)*p[1] - math.sin(ra)*p[2],
+			math.sin(ra)*p[1] + math.cos(ra)*p[2],
+			p[3]
+		}
+	end
+end
+
+function math.round(num)
+	if type(num) ~= "number" then
+		error("number expected", 2)
+	end
+	return math.floor(num + 0.5)
+end
+
+function math.trim(num, starts, ends)
+	if type(starts) ~= "number" or
+	type(ends) ~= "number" or
+	type(num) ~= "number" then
+		error("number, number and number expected", 2)
+	end
+	return (num < starts and starts) or (num > ends and ends) or num
+end
+
 --STRING
 --[[
+UTF16 -> UTF8
+--------------
 U-00000000 ÅEU-0000007F: 	0xxxxxxx
 U-00000080 ÅEU-000007FF: 	110xxxxx 10xxxxxx
 U-00000800 ÅEU-0000FFFF: 	1110xxxx 10xxxxxx 10xxxxxx
@@ -174,7 +338,7 @@ end
 utils = {}
 
 function utils.distributor(t)
-	if type(t) ~= "table" or table.maxn(t) < 1 then
+	if type(t) ~= "table" or #t < 1 then
 		error("table expected (not empty)", 2)
 	end
 	--Member functions
@@ -220,7 +384,7 @@ function utils.interpolate(pct, val1, val2, calc)
 	end
 	-- Calculate percent value depending on calculation mode
 	if calc ~= nil then
-		if type(calc) == "number"  then
+		if type(calc) == "number" then
 			pct = pct^calc
 		elseif calc == "curve_up" then
 			pct = (math.sin( -math.pi/2 + pct * math.pi*2) + 1) / 2
@@ -248,13 +412,13 @@ function utils.interpolate(pct, val1, val2, calc)
 			return convert.a_to_ass((a2 - a1) * pct + a1)
 		end
 		-- Invalid string
-		error("invalid arguments", 2)
+		error("invalid strings", 2)
 	end
 end
 
-function utils.text_extents(text, styleref)
+function utils.text_extents(text, style)
 	-- Flat arguments check
-	if type(text) ~= "string" or type(styleref) ~= "table" then
+	if type(text) ~= "string" or type(style) ~= "table" then
 		error("string and style table expected", 2)
 	end
 	-- Calculation data
@@ -264,21 +428,21 @@ function utils.text_extents(text, styleref)
 	-- Safe execution
 	local function text_extents()
 		-- Extents with spacing
-		if styleref.spacing > 0 then
+		if style.spacing > 0 then
 			local spaced_width = 0
 			for uchar in string.uchars(text) do
 				width, height, ascent, descent, internal_lead, external_lead =
-					ctx:text_extents(uchar, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
-				spaced_width = spaced_width + width + styleref.spacing * 64
+					ctx:text_extents(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
+				spaced_width = spaced_width + width + style.spacing * 64
 			end
 			width = spaced_width
 		-- Extents without spacing
 		else
 			width, height, ascent, descent, internal_lead, external_lead =
-				ctx:text_extents(text, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
+				ctx:text_extents(text, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
 		end
 		-- Scale factor
-		scale_x, scale_y = styleref.scale_x / 100 / 64, styleref.scale_y / 100 / 64
+		scale_x, scale_y = style.scale_x / 100 / 64, style.scale_y / 100 / 64
 	end
 	local success = pcall(text_extents)
 	if not success then
@@ -286,4 +450,18 @@ function utils.text_extents(text, styleref)
 	end
 	-- Scale correctly and return
 	return width * scale_x, height * scale_y, ascent * scale_y, descent * scale_y, internal_lead * scale_y, external_lead * scale_y
+end
+
+-- IO
+function io.load_ass(filename)
+	if type(filename) ~= "string" then
+		error("string expected", 2)
+	end
+	local file, err = io.open(filename, "r")
+	if file then
+		LoadASS(file:read("*a"), utils.text_extents)
+		file:close()
+	else
+		error(err, 2)
+	end
 end

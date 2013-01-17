@@ -5,6 +5,9 @@ local produced_lines, process_time
 
 -- Execution initialization function
 function Init(input_filename, output_filename)
+	if type(input_filename) ~= "string" or type(output_filename) ~= "string" then
+		error("string and string expected", 2)
+	end
 	-- Prepare output
 	if output_filename:len() > 0 then
 		tmp_ofile = io.tmpfile()
