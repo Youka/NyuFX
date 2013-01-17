@@ -95,18 +95,17 @@ function io.write_line(line)
 	end
 	-- Convert line
 	local function timestamp(t)
-		local temp_time = t
 		-- Hours
-		local h = math.floor(temp_time / 3600000)
-		temp_time = temp_time % 3600000
+		local h = math.floor(t / 3600000)
+		t = t % 3600000
 		-- Minutes
-		local m = math.floor(temp_time / 60000)
-		temp_time = temp_time % 60000
+		local m = math.floor(t / 60000)
+		t = t % 60000
 		-- Seconds
-		local s = math.floor(temp_time / 1000)
-		temp_time = temp_time % 1000
+		local s = math.floor(t / 1000)
+		t = t % 1000
 		-- Milliseconds
-		local ms = math.floor(temp_time / 10)
+		local ms = math.floor(t / 10)
 		-- Timestamp
 		return string.format("%d:%02d:%02d.%02d", h, m, s, ms)
 	end

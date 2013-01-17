@@ -10,7 +10,7 @@ function convert.a_to_ass(a)
 	if type(a) ~= "number" then
 		error("number expected", 2)
 	elseif a < 0 or a > 255 then
-		error("valid number expected", 2)
+		return nil
 	end
 	return string.format("&H%02x&", 255-a)
 end
@@ -21,7 +21,7 @@ function convert.ass_to_a(str)
 	end
 	local a = str:match("&H(%x%x)&")
 	if not a then
-		error("invalid string", 2)
+		return nil
 	else
 		return 255-tonumber(a, 16)
 	end
@@ -31,7 +31,7 @@ function convert.rgb_to_ass(r,g,b)
 	if type(r) ~= "number" or type(g) ~= "number" or type(b) ~= "number" then
 		error("number, number and number expected", 2)
 	elseif r < 0 or r > 255 or g < 0 or g > 255 or b < 0 or b > 255 then
-		error("valid numbers expected", 2)
+		return nil
 	end
 	return string.format("&H%02x%02x%02x&", b, g, r)
 end
@@ -42,7 +42,7 @@ function convert.ass_to_rgb(str)
 	end
 	local b, g, r = str:match("&H(%x%x)(%x%x)(%x%x)&")
 	if not (b and g and r) then
-		error("invalid string", 2)
+		return nil
 	else
 		return tonumber(r, 16), tonumber(g, 16), tonumber(b, 16)
 	end
@@ -238,11 +238,15 @@ function utils.interpolate(pct, val1, val2, calc)
 		-- RGB
 		local r1, g1, b1 = convert.ass_to_rgb(val1)
 		local r2, g2, b2 = convert.ass_to_rgb(val2)
-		return convert.rgb_to_ass((r2 - r1) * pct + r1, (g2 - g1) * pct + g1, (b2 - b1) * pct + b1)
+		if b1 and b2 then
+			return convert.rgb_to_ass((r2 - r1) * pct + r1, (g2 - g1) * pct + g1, (b2 - b1) * pct + b1)
+		end
 		-- Alpha
 		local a1 = convert.ass_to_a(val1)
 		local a2 = convert.ass_to_a(val2)
-		return convert.a_to_ass((a2 - a1) * pct + a1)
+		if a1 and a2 then
+			return convert.a_to_ass((a2 - a1) * pct + a1)
+		end
 		-- Invalid string
 		error("invalid arguments", 2)
 	end
@@ -255,15 +259,18 @@ function utils.text_extents(text, styleref)
 	end
 	-- Calculation data
 	local ctx = tgdi.create_context()
+	local function text_extents(...)
+		return ctx:text_extents(...)
+	end
 	local status, width, height, ascent, descent, internal_lead, external_lead
 	-- Extents with spacing
 	if styleref.spacing > 0 then
 		local spaced_width = 0
 		for uchar in string.uchars(text) do
 			status, width, height, ascent, descent, internal_lead, external_lead =
-				pcall(ctx:text_extents, uchar, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
+				pcall(text_extents, uchar, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
 			if not status then
-				error("wrong arguments", 2)
+				error("invalid arguments", 2)
 			end
 			spaced_width = spaced_width + width + styleref.spacing * 64
 		end
@@ -271,9 +278,9 @@ function utils.text_extents(text, styleref)
 	-- Extents without spacing
 	else
 		status, width, height, ascent, descent, internal_lead, external_lead =
-			pcall(ctx:text_extents, text, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
+			pcall(text_extents, text, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
 		if not status then
-			error("wrong arguments", 2)
+			error("invalid arguments", 2)
 		end
 	end
 	-- Scale correctly and return
