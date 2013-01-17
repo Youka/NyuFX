@@ -54,10 +54,11 @@ function convert.text_to_pixels(text, style)
 		error("string and style table expected", 2)
 	end
 	-- Calculation data
-	local ctx = tgdi.create_context()
 	local pixel_palette
 	-- Safe execution
 	local function text_to_pixels()
+		-- Graphic context
+		local ctx = tgdi.create_context()
 
 		-- TODO: use paths to support spacing & scaling
 
@@ -233,11 +234,64 @@ end
 -- SHAPE
 shape = {}
 
--- TODO: shape.bounding
+function shape.bounding(shape, as_region)
+	if type(shape) ~= "string" or (type(as_region) ~= "boolean" and as_region ~= nil) then
+		error("string and optional boolean expected", 2)
+	end
+	-- Calculation data
+	local min_x, min_y, max_x, max_y
+	-- Look for minimal and maximal shape point
+	if not as_region then
+		-- Iterate through points
+		local function point_finder(x, y)
+			min_x = min_x and math.min(min_x, x) or x
+			min_y = min_y and math.min(min_y, y) or y
+			max_x = max_x and math.max(max_x, x) or x
+			max_y = max_y and math.max(max_y, y) or y
+		end
+		shape:gsub("(%-?%d+)%s+(%-?%d+)", point_finder)
+		if not min_x then
+			error("invalid shape", 2)
+		end
+	-- Convert to region and calculate bounding rectangle
+	else
+		-- Safe execution
+		local function bounding()
+			-- Graphic context
+			local ctx = tgdi.create_context()
+			-- Get bounding
+			ctx:add_path(shape)
+			min_x, min_y, max_x, max_y = ctx:path_box()
+		end
+		local success = pcall(bounding)
+		if not success then
+			error("invalid shape", 2)
+		end
+	end
+	-- Return resulting data
+	return min_x, min_y, max_x, max_y
+end
 
--- TODO: shape.ellipse
+function shape.ellipse(w, h)
+	if type(w) ~= "number" or type(h) ~= "number" then
+		error("number and number expected", 2)
+	end
+	return string.format("m 0 %d b 0 %d 0 0 %d 0 %d 0 %d 0 %d %d %d %d %d %d %d %d %d %d 0 %d 0 %d", h/2, h/2, w/2, w/2, w, w, h/2, w, h/2, w, h, w/2, h, w/2, h, h, h/2)
+end
 
--- TODO: shape.filter
+function shape.filter(shape, filter)
+	if type(shape) ~= "string" or type(filter) ~= "function" then
+		error("string and function expected", 2)
+	end
+	local function parser(x, y)
+		local new_x, new_y = filter(tonumber(x), tonumber(y))
+		if type(new_x) == "number" and type(new_y) == "number" then
+			return string.format("%d %d", new_x, new_y)
+		end
+	end
+	local new_shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", parser)
+	return new_shape
+end
 
 -- TODO: shape.glance
 
@@ -473,10 +527,11 @@ function utils.text_extents(text, style)
 		error("string and style table expected", 2)
 	end
 	-- Calculation data
-	local ctx = tgdi.create_context()
 	local width, height, ascent, descent, internal_lead, external_lead
 	-- Safe execution
 	local function text_extents()
+		-- Graphic context
+		local ctx = tgdi.create_context()
 		-- Extents with spacing
 		if style.spacing > 0 then
 			local spaced_width = 0
