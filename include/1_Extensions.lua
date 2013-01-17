@@ -255,35 +255,35 @@ end
 function utils.text_extents(text, styleref)
 	-- Flat arguments check
 	if type(text) ~= "string" or type(styleref) ~= "table" then
-		error("string and table expected", 2)
+		error("string and style table expected", 2)
 	end
 	-- Calculation data
 	local ctx = tgdi.create_context()
-	local function text_extents(...)
-		return ctx:text_extents(...)
-	end
-	local status, width, height, ascent, descent, internal_lead, external_lead
-	-- Extents with spacing
-	if styleref.spacing > 0 then
-		local spaced_width = 0
-		for uchar in string.uchars(text) do
-			status, width, height, ascent, descent, internal_lead, external_lead =
-				pcall(text_extents, uchar, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
-			if not status then
-				error("invalid arguments", 2)
+	local width, height, ascent, descent, internal_lead, external_lead
+	local scale_x, scale_y
+	-- Safe execution
+	local function text_extents()
+		-- Extents with spacing
+		if styleref.spacing > 0 then
+			local spaced_width = 0
+			for uchar in string.uchars(text) do
+				width, height, ascent, descent, internal_lead, external_lead =
+					ctx:text_extents(uchar, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
+				spaced_width = spaced_width + width + styleref.spacing * 64
 			end
-			spaced_width = spaced_width + width + styleref.spacing * 64
+			width = spaced_width
+		-- Extents without spacing
+		else
+			width, height, ascent, descent, internal_lead, external_lead =
+				ctx:text_extents(text, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
 		end
-		width = spaced_width
-	-- Extents without spacing
-	else
-		status, width, height, ascent, descent, internal_lead, external_lead =
-			pcall(text_extents, text, styleref.fontname, styleref.fontsize * 64, styleref.bold, styleref.italic, styleref.underline, styleref.strikeout, styleref.encoding)
-		if not status then
-			error("invalid arguments", 2)
-		end
+		-- Scale factor
+		scale_x, scale_y = styleref.scale_x / 100 / 64, styleref.scale_y / 100 / 64
+	end
+	local success = pcall(text_extents)
+	if not success then
+		error("invalid style table", 2)
 	end
 	-- Scale correctly and return
-	local scale_x, scale_y = styleref.scale_x / 100 / 64, styleref.scale_y / 100 / 64
 	return width * scale_x, height * scale_y, ascent * scale_y, descent * scale_y, internal_lead * scale_y, external_lead * scale_y
 end
