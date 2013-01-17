@@ -268,13 +268,71 @@ function shape.filter(shape, filter)
 	return new_shape
 end
 
--- TODO: shape.glance
+function shape.glance(edges, inner_size, outer_size)
+	if type(edges) ~= "number" or type(inner_size) ~= "number" or type(outer_size) ~= "number" or edges < 2 then
+		error("valid 3 numbers expected", 2)
+	end
+	-- Build shape
+	local shape = string.format("m 0 %d b", -outer_size)
+	local inner_p, outer_p
+	for i = 1, edges do
+		--Inner edge
+		inner_p = math.rotate({0, -inner_size, 0}, "z", ((i-0.5) / edges)*360)
+		--Outer edge
+		outer_p = math.rotate({0, -outer_size, 0}, "z", (i / edges)*360)
+		-- Add curve
+		shape = string.format("%s %d %d %d %d %d %d", shape, inner_p[1], inner_p[2], inner_p[1], inner_p[2], outer_p[1], outer_p[2])
+	end
+	-- Shift to positive numbers
+	local min_x, min_y = 0, 0
+	local function search_min(x, y)
+		min_x, min_y = math.min(min_x, x), math.min(min_y, y)
+	end
+	shape:gsub("(%-?%d+)%s+(%-?%d+)", search_min)
+	local function shift(x, y)
+		return string.format("%d %d", x-min_x, y-min_y)
+	end
+	shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", shift)
+	-- Return result
+	return shape
+end
 
--- TODO: shape.heart
+function shape.heart(size, offset)
+	if type(size) ~= "number" or type(offset) ~= "number" then
+		error("number and number expected", 2)
+	end
+	-- Build shape from template
+	local function sizer(num)
+		num = num / 30 * size
+		return math.round(num)
+	end
+	local shape = string.gsub("m 15 30 b 27 22 30 18 30 14 30 8 22 0 15 10 8 0 0 8 0 14 0 18 3 22 15 30", "%d+", sizer)
+	-- Shift mid point of heart vertically
+	local function y_shift(head, y)
+		return string.format("%s%d", head, y + offset)
+	end
+	shape = shape:gsub("(m %-?%d+ %-?%d+ b %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ )(%-?%d+)", y_shift)
+	-- Return result
+	return shape
+end
 
--- TODO: shape.move
+function shape.move(shape, x, y)
+	if type(shape) ~= "string" or type(x) ~= "number" or type(y) ~= "number" then
+		error("string, number and number expected", 2)
+	end
+	local function move(px, py)
+		return string.format("%d %d", px + x, py + y)
+	end
+	local new_shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", move)
+	return new_shape
+end
 
--- TODO: shape.rectangle
+function shape.rectangle(w, h)
+	if type(w) ~= "number" or type(h) ~= "number" then
+		error("number and number expected", 2)
+	end
+	return string.format("m 0 0 l %d 0 %d %d 0 %d", w, w, h, h)
+end
 
 -- TODO: shape.ring
 
