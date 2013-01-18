@@ -56,7 +56,7 @@ function convert.text_to_pixels(text, style)
 	-- Calculation data
 	local pixel_palette
 	-- Safe execution
-	local function text_to_pixels()
+	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
 
@@ -69,8 +69,7 @@ function convert.text_to_pixels(text, style)
 		else
 
 		end]]
-	end
-	local success = pcall(text_to_pixels)
+	end)
 	if not success then
 		error("invalid style table", 2)
 	end
@@ -227,19 +226,17 @@ function shape.bounding(shape)
 	-- Calculation data
 	local min_x, min_y, max_x, max_y
 	-- Safe execution
-	local function bounding()
+	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
 		-- Get bounding
-		local function scale8(x, y)
+		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 			return string.format("%d %d", x * 8, y * 8)
-		end
-		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", scale8)
+		end)
 		ctx:add_path(shape)
 		min_x, min_y, max_x, max_y = ctx:path_box()
 		min_x, min_y, max_x, max_y = math.floor(min_x/8), math.floor(min_y/8), math.floor(max_x/8), math.floor(max_y/8)
-	end
-	local success = pcall(bounding)
+	end)
 	if not success then
 		error("invalid shape", 2)
 	end
@@ -265,13 +262,12 @@ function shape.filter(shape, filter)
 	if type(shape) ~= "string" or type(filter) ~= "function" then
 		error("string and function expected", 2)
 	end
-	local function parser(x, y)
+	local new_shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 		local new_x, new_y = filter(tonumber(x), tonumber(y))
 		if type(new_x) == "number" and type(new_y) == "number" then
 			return string.format("%d %d", new_x, new_y)
 		end
-	end
-	local new_shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", parser)
+	end)
 	return new_shape
 end
 
@@ -292,14 +288,12 @@ function shape.glance(edges, inner_size, outer_size)
 	end
 	-- Shift to positive numbers
 	local min_x, min_y = 0, 0
-	local function search_min(x, y)
+	shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 		min_x, min_y = math.min(min_x, x), math.min(min_y, y)
-	end
-	shape:gsub("(%-?%d+)%s+(%-?%d+)", search_min)
-	local function shift(x, y)
+	end)
+	shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 		return string.format("%d %d", x-min_x, y-min_y)
-	end
-	shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", shift)
+	end)
 	-- Return result
 	return shape
 end
@@ -309,16 +303,14 @@ function shape.heart(size, offset)
 		error("number and number expected", 2)
 	end
 	-- Build shape from template
-	local function sizer(num)
+	local shape = string.gsub("m 15 30 b 27 22 30 18 30 14 30 8 22 0 15 10 8 0 0 8 0 14 0 18 3 22 15 30", "%d+", function(num)
 		num = num / 30 * size
 		return math.round(num)
-	end
-	local shape = string.gsub("m 15 30 b 27 22 30 18 30 14 30 8 22 0 15 10 8 0 0 8 0 14 0 18 3 22 15 30", "%d+", sizer)
+	end)
 	-- Shift mid point of heart vertically
-	local function y_shift(head, y)
+	shape = shape:gsub("(m %-?%d+ %-?%d+ b %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ )(%-?%d+)", function(head, y)
 		return string.format("%s%d", head, y + offset)
-	end
-	shape = shape:gsub("(m %-?%d+ %-?%d+ b %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ %-?%d+ )(%-?%d+)", y_shift)
+	end)
 	-- Return result
 	return shape
 end
@@ -327,10 +319,9 @@ function shape.move(shape, x, y)
 	if type(shape) ~= "string" or type(x) ~= "number" or type(y) ~= "number" then
 		error("string, number and number expected", 2)
 	end
-	local function move(px, py)
+	local new_shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(px, py)
 		return string.format("%d %d", px + x, py + y)
-	end
-	local new_shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", move)
+	end)
 	return new_shape
 end
 
@@ -368,22 +359,21 @@ function shape.split(shape, len)
 		error("invalid length", 2)
 	end
 	-- Curves to lines
-	local function curves_to_lines()
+	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
 		-- Flatten path
 		ctx:add_path(shape)
 		ctx:flatten_path()
 		shape = ctx:get_path()
-	end
-	local success = pcall(curves_to_lines)
+	end)
 	if not success then
 		error("invalid shape", 2)
 	end
 	-- Split lines to shorter segments
 	if len then
 		local line_mode, last_point = false
-		local function line_splitter(typ, space, x, y)
+		shape = shape:gsub("([ml]?)(%s*)(%-?%d+)%s+(%-?%d+)", function(typ, space, x, y)
 			-- Update line mode
 			if typ == "m" then
 				line_mode = false
@@ -411,8 +401,7 @@ function shape.split(shape, len)
 				last_point = {x = x, y = y}
 				return string.format("%s%s%d %d", typ, space, x, y)
 			end
-		end
-		shape = shape:gsub("([ml]?)(%s*)(%-?%d+)%s+(%-?%d+)", line_splitter)
+		end)
 	end
 	-- Return result
 	return shape
@@ -435,19 +424,67 @@ function shape.star(edges, inner_size, outer_size)
 	end
 	-- Shift to positive numbers
 	local min_x, min_y = 0, 0
-	local function search_min(x, y)
+	shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 		min_x, min_y = math.min(min_x, x), math.min(min_y, y)
-	end
-	shape:gsub("(%-?%d+)%s+(%-?%d+)", search_min)
-	local function shift(x, y)
+	end)
+	shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 		return string.format("%d %d", x-min_x, y-min_y)
-	end
-	shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", shift)
+	end)
 	-- Return result
 	return shape
 end
 
--- TODO: shape.tooutline
+function shape.tooutline(shape, size)
+	if type(shape) ~= "string" or type(size) ~= "number" then
+		error("string and number expected", 2)
+	end
+	-- Collect figures
+	local figures, figures_n, temp_path, temp_path_n = {}, 0, {}, 0
+	shape:gsub("(%a?)%s*(%-?%d+)%s+(%-?%d+)", function(typ, x, y)
+		-- Check point type
+		if typ ~= "m" and typ ~= "l" and typ ~= "" then
+			error("shape have to contain only \"moves\" and \"lines\"", 4)
+		end
+		-- Last figure finished?
+		if typ == "m" and temp_path_n ~= 0 then
+			figures_n = figures_n + 1
+			figures[figures_n] = temp_path
+			temp_path = {}
+			temp_path_n = 0
+		end
+		-- Add point
+		temp_path_n = temp_path_n + 1
+		temp_path[temp_path_n] = {x, y}
+	end)
+	-- Insert last figure
+	if temp_path_n ~= 0 then
+		figures_n = figures_n + 1
+		figures[figures_n] = temp_path
+		temp_path = {}
+		temp_path_n = 0
+	end
+	-- Erase double points
+	for f_i, figure in ipairs(figures) do
+		--[[local pi = 1
+		while pi <= #path do
+			local point = path[pi]
+			local post_point
+			if pi == #path then
+				post_point = path[1]
+			else
+				post_point = path[pi+1]
+			end
+			if point[1] == post_point[1] and point[2] == post_point[2] then
+				table.remove(path, pi)
+			else
+				pi = pi + 1
+			end
+		end]]
+	end
+
+	-- TODO: implent
+
+end
 
 function shape.triangle(size)
 	if type(size) ~= "number" then
@@ -457,8 +494,6 @@ function shape.triangle(size)
 	local base = -h / 6
 	return string.format("m %d %d l %d %d 0 %d %d %d", size/2, base, size, base+h, base+h, size/2, base)
 end
-
--- TODO: shape.transverter
 
 -- STRING
 --[[
@@ -498,7 +533,7 @@ function string.uchars(s)
 		error("string expected", 2)
 	end
 	local char_i, s_pos = 0, 1
-	local function itor()
+	return function()
 		if s_pos > s:len() then
 			return nil
 		end
@@ -507,7 +542,6 @@ function string.uchars(s)
 		char_i = char_i + 1
 		return char_i, s:sub(cur_pos, s_pos-1)
 	end
-	return itor
 end
 
 function string.ulen(s)
@@ -568,14 +602,13 @@ function table.list(...)
 	end
 	function ListFuncs:iter()
 		local stack = self.stack
-		local function iterator()
+		return function()
 			if stack ~= nil then
 				local value = stack[2]
 				stack = stack[1]
 				return value
 			end
 		end
-		return Iterator
 	end
 	function ListFuncs:invert()
 		local stack = nil
@@ -668,7 +701,7 @@ function utils.frames(starts, ends, frame_time)
 	-- Intermediate data
 	local cur_start_time, i, n = starts, 0, math.ceil((ends - starts) / frame_time)
 	-- Iterator function
-	local function next_frame()
+	return function()
 		if cur_start_time >= ends then
 			return nil
 		end
@@ -678,7 +711,6 @@ function utils.frames(starts, ends, frame_time)
 		i = i + 1
 		return return_start_time, return_end_time, i, n
 	end
-	return next_frame
 end
 
 function utils.interpolate(pct, val1, val2, calc)
@@ -732,7 +764,7 @@ function utils.text_extents(text, style)
 	-- Calculation data
 	local width, height, ascent, descent, internal_lead, external_lead
 	-- Safe execution
-	local function text_extents()
+	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
 		-- Extents with spacing
@@ -753,8 +785,7 @@ function utils.text_extents(text, style)
 		local scale_x, scale_y = style.scale_x / 100 / 64, style.scale_y / 100 / 64
 		width, height, ascent, descent, internal_lead, external_lead =
 			width * scale_x, height * scale_y, ascent * scale_y, descent * scale_y, internal_lead * scale_y, external_lead * scale_y
-	end
-	local success = pcall(text_extents)
+	end)
 	if not success then
 		error("invalid style table", 2)
 	end
