@@ -361,7 +361,62 @@ function shape.ring(out_r, in_r)
 	)
 end
 
--- TODO: shape.split
+function shape.split(shape, len)
+	if type(shape) ~= "string" or (type(len) ~= "number" and len ~= nil) then
+		error("string and optional number expected", 2)
+	elseif len and len <= 0 then
+		error("invalid length", 2)
+	end
+	-- Curves to lines
+	local function curves_to_lines()
+		-- Graphic context
+		local ctx = tgdi.create_context()
+		-- Flatten path
+		ctx:add_path(shape)
+		ctx:flatten_path()
+		shape = ctx:get_path()
+	end
+	local success = pcall(curves_to_lines)
+	if not success then
+		error("invalid shape", 2)
+	end
+	-- Split lines to shorter segments
+	if len then
+		local line_mode, last_point = false
+		local function line_splitter(typ, space, x, y)
+			-- Update line mode
+			if typ == "m" then
+				line_mode = false
+			elseif typ == "l" then
+				line_mode = true
+			end
+			-- LineTo with previous point?
+			if line_mode and last_point then
+				local distance = math.distance(x-last_point.x, y-last_point.y)
+				-- Can split?
+				if distance > len then
+					local lines = typ .. space
+					local dist_rest = distance % len
+					for cur_dist = dist_rest > 0 and dist_rest or len, distance, len do
+						local pct = cur_dist / distance
+						lines = string.format("%s%d %d ", lines, last_point.x + (x-last_point.x) * pct, last_point.y + (y-last_point.y) * pct)
+					end
+					last_point = {x = x, y = y}
+					return lines:sub(1,-2)
+				else
+					last_point = {x = x, y = y}
+					return string.format("%s%s%d %d", typ, space, x, y)
+				end
+			else
+				last_point = {x = x, y = y}
+				return string.format("%s%s%d %d", typ, space, x, y)
+			end
+		end
+		shape = shape:gsub("([ml]?)(%s*)(%-?%d+)%s+(%-?%d+)", line_splitter)
+	end
+	-- Return result
+	return shape
+end
 
 function shape.star(edges, inner_size, outer_size)
 	if type(edges) ~= "number" or type(inner_size) ~= "number" or type(outer_size) ~= "number" or edges < 2 then
