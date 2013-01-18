@@ -251,7 +251,14 @@ function shape.ellipse(w, h)
 	if type(w) ~= "number" or type(h) ~= "number" then
 		error("number and number expected", 2)
 	end
-	return string.format("m 0 %d b 0 %d 0 0 %d 0 %d 0 %d 0 %d %d %d %d %d %d %d %d %d %d 0 %d 0 %d", h/2, h/2, w/2, w/2, w, w, h/2, w, h/2, w, h, w/2, h, w/2, h, h, h/2)
+	local w2, h2 = w/2, h/2
+	return string.format("m %d %d b %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+						0, h2,	-- move
+						0, h2, 0, 0, w2, 0,	-- curve 1
+						w2, 0, w, 0, w, h2,	-- curve 2
+						w, h2, w, h, w2, h,	-- curve 3
+						w2, h, 0, h, 0, h2	-- curve 4
+	)
 end
 
 function shape.filter(shape, filter)
@@ -334,15 +341,67 @@ function shape.rectangle(w, h)
 	return string.format("m 0 0 l %d 0 %d %d 0 %d", w, w, h, h)
 end
 
--- TODO: shape.ring
+function shape.ring(out_r, in_r)
+	if type(out_r) ~= "number" or type(in_r) ~= "number" or in_r >= out_r then
+		error("valid number and number expected", 2)
+	end
+	local out_r2, in_r2 = out_r*2, in_r*2
+	local off = out_r - in_r
+	return string.format("m %d %d b %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d m %d %d b %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+		0, out_r,	-- outer move
+		0, out_r, 0, 0, out_r, 0,	-- outer curve 1
+		out_r, 0, out_r2, 0, out_r2, out_r,	-- outer curve 2
+		out_r2, out_r, out_r2, out_r2, out_r, out_r2,	-- outer curve 3
+		out_r, out_r2, 0, out_r2, 0, out_r,	-- outer curve 4
+		off, off+in_r,	-- inner move
+		off, off+in_r, off, off+in_r2, off+in_r, off+in_r2,	-- inner curve 1
+		off+in_r, off+in_r2, off+in_r2, off+in_r2, off+in_r2, off+in_r,	-- inner curve 2
+		off+in_r2, off+in_r, off+in_r2, off, off+in_r, off,	-- inner curve 3
+		off+in_r, off, off, off, off, off+in_r	-- inner curve 4
+	)
+end
 
 -- TODO: shape.split
 
--- TODO: shape.star
+function shape.star(edges, inner_size, outer_size)
+	if type(edges) ~= "number" or type(inner_size) ~= "number" or type(outer_size) ~= "number" or edges < 2 then
+		error("valid 3 numbers expected", 2)
+	end
+	-- Build shape
+	local shape = string.format("m 0 %d l", -outer_size)
+	local inner_p, outer_p
+	for i = 1, edges do
+		-- Inner edge
+		inner_p = math.rotate({0, -inner_size, 0}, "z", ((i-0.5) / edges)*360)
+		-- Outer edge
+		outer_p = math.rotate({0, -outer_size, 0}, "z", (i / edges)*360)
+		-- Add lines
+		shape = string.format("%s %d %d %d %d", shape, inner_p[1], inner_p[2], outer_p[1], outer_p[2])
+	end
+	-- Shift to positive numbers
+	local min_x, min_y = 0, 0
+	local function search_min(x, y)
+		min_x, min_y = math.min(min_x, x), math.min(min_y, y)
+	end
+	shape:gsub("(%-?%d+)%s+(%-?%d+)", search_min)
+	local function shift(x, y)
+		return string.format("%d %d", x-min_x, y-min_y)
+	end
+	shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", shift)
+	-- Return result
+	return shape
+end
 
 -- TODO: shape.tooutline
 
--- TODO: shape.triangle
+function shape.triangle(size)
+	if type(size) ~= "number" then
+		error("number expected", 2)
+	end
+	local h = math.sqrt(3) * size / 2
+	local base = -h / 6
+	return string.format("m %d %d l %d %d 0 %d %d %d", size/2, base, size, base+h, base+h, size/2, base)
+end
 
 -- TODO: shape.transverter
 
@@ -436,6 +495,62 @@ function table.copy(old_t)
 	return new_t
 end
 
+function table.list(...)
+	-- Member functions
+	local ListFuncs = {}
+	ListFuncs.__index = ListFuncs
+	function ListFuncs:push(value)
+		if value ~= nil then
+			self.stack = {self.stack, value}
+		end
+	end
+	function ListFuncs:pop()
+		if self.stack ~= nil then
+			local value = self.stack[2]
+			self.stack = self.stack[1]
+			return value
+		end
+	end
+	function ListFuncs:iter()
+		local stack = self.stack
+		local function iterator()
+			if stack ~= nil then
+				local value = stack[2]
+				stack = stack[1]
+				return value
+			end
+		end
+		return Iterator
+	end
+	function ListFuncs:invert()
+		local stack = nil
+		for value in self:iter() do
+			stack = {stack, value}
+		end
+		self.stack = stack
+	end
+	function ListFuncs:totable()
+		local n = 0
+		for _ in self:iter() do
+			n = n + 1
+		end
+		local t = table.create(n, 0)
+		n = 0
+		for value in self:iter() do
+			n = n + 1
+			t[n] = value
+		end
+		return t
+	end
+	-- Object creation
+	local obj = setmetatable({stack = nil}, ListFuncs)
+	-- Initialization
+	for _, value in ipairs(arg) do
+		obj:push(value)
+	end
+	return obj
+end
+
 function table.max(t)
 	if type(t) ~= "table" then
 		error("table expected", 2)
@@ -477,7 +592,7 @@ function utils.distributor(t)
 	if type(t) ~= "table" or #t < 1 then
 		error("table expected (not empty)", 2)
 	end
-	--Member functions
+	-- Member functions
 	local func_t = {}
 	func_t.__index = func_t
 	local index = 1
@@ -487,7 +602,7 @@ function utils.distributor(t)
 		index = index + 1
 		return val
 	end
-	--Return object
+	-- Return object
 	return setmetatable(t, func_t)
 end
 
