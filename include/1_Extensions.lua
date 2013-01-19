@@ -329,7 +329,7 @@ function shape.rectangle(w, h)
 	if type(w) ~= "number" or type(h) ~= "number" then
 		error("number and number expected", 2)
 	end
-	return string.format("m 0 0 l %d 0 %d %d 0 %d", w, w, h, h)
+	return string.format("m 0 0 l %d 0 %d %d 0 %d 0 0", w, w, h, h)
 end
 
 function shape.ring(out_r, in_r)
@@ -380,27 +380,31 @@ function shape.split(shape, len)
 			elseif typ == "l" then
 				line_mode = true
 			end
+			-- Line(s) buffer
+			local lines
 			-- LineTo with previous point?
 			if line_mode and last_point then
-				local distance = math.distance(x-last_point.x, y-last_point.y)
+				local rel_x, rel_y = x-last_point.x, y-last_point.y
+				local distance = math.distance(rel_x, rel_y)
 				-- Can split?
 				if distance > len then
-					local lines = typ .. space
+					lines = typ .. space
 					local dist_rest = distance % len
 					for cur_dist = dist_rest > 0 and dist_rest or len, distance, len do
 						local pct = cur_dist / distance
-						lines = string.format("%s%d %d ", lines, last_point.x + (x-last_point.x) * pct, last_point.y + (y-last_point.y) * pct)
+						lines = string.format("%s%d %d ", lines, last_point.x + rel_x * pct, last_point.y + rel_y * pct)
 					end
-					last_point = {x = x, y = y}
-					return lines:sub(1,-2)
+					lines = lines:sub(1,-2)
 				else
-					last_point = {x = x, y = y}
-					return string.format("%s%s%d %d", typ, space, x, y)
+					lines = string.format("%s%s%d %d", typ, space, x, y)
 				end
 			else
-				last_point = {x = x, y = y}
-				return string.format("%s%s%d %d", typ, space, x, y)
+				lines = string.format("%s%s%d %d", typ, space, x, y)
 			end
+			-- Save point for next one
+			last_point = {x = x, y = y}
+			-- Return new line(s)
+			return lines
 		end)
 	end
 	-- Return result
@@ -439,47 +443,155 @@ function shape.tooutline(shape, size)
 		error("string and number expected", 2)
 	end
 	-- Collect figures
-	local figures, figures_n, temp_path, temp_path_n = {}, 0, {}, 0
+	local figures, figures_n = {}, 0
+	local figure, figure_n = {}, 0
 	shape:gsub("(%a?)%s*(%-?%d+)%s+(%-?%d+)", function(typ, x, y)
 		-- Check point type
 		if typ ~= "m" and typ ~= "l" and typ ~= "" then
 			error("shape have to contain only \"moves\" and \"lines\"", 4)
 		end
 		-- Last figure finished?
-		if typ == "m" and temp_path_n ~= 0 then
+		if typ == "m" and figure_n ~= 0 then
+			-- Enough figure points?
+			if figure_n < 3 then
+				error("at least one figure hasn't enough points", 4)
+			end
+			-- Save figure
 			figures_n = figures_n + 1
-			figures[figures_n] = temp_path
-			temp_path = {}
-			temp_path_n = 0
+			figures[figures_n] = figure
+			figure = {}
+			figure_n = 0
 		end
-		-- Add point
-		temp_path_n = temp_path_n + 1
-		temp_path[temp_path_n] = {x, y}
+		-- Add point to current figure
+		figure_n = figure_n + 1
+		figure[figure_n] = {x, y}
 	end)
 	-- Insert last figure
-	if temp_path_n ~= 0 then
+	if figure_n ~= 0 then
+		-- Enough figure points?
+		if figure_n < 3 then
+			error("at least one figure hasn't enough points", 2)
+		end
+		-- Save figure
 		figures_n = figures_n + 1
-		figures[figures_n] = temp_path
-		temp_path = {}
-		temp_path_n = 0
+		figures[figures_n] = figure
+		figure = {}
+		figure_n = 0
 	end
-	-- Erase double points
-	for f_i, figure in ipairs(figures) do
-		--[[local pi = 1
-		while pi <= #path do
-			local point = path[pi]
-			local post_point
-			if pi == #path then
-				post_point = path[1]
+	-- Remove double points (recreate figures)
+	for fi = 1, #figures do
+		local old_figure, old_figure_n = figures[fi], #figures[fi]
+		local new_figure, new_figure_n = table.create(old_figure_n, 0), 0
+		for pi, point in ipairs(old_figure) do
+			local pre_point
+			if pi == 1 then
+				pre_point = old_figure[old_figure_n]
 			else
-				post_point = path[pi+1]
+				pre_point = old_figure[pi-1]
 			end
-			if point[1] == post_point[1] and point[2] == post_point[2] then
-				table.remove(path, pi)
+			if not (point[1] == pre_point[1] and point[2] == pre_point[2]) then
+				new_figure_n = new_figure_n + 1
+				new_figure[new_figure_n] = point
+			end
+		end
+		figures[fi] = new_figure
+	end
+	-- Vector functions for further calculations
+	local function vec_length(vec)
+		return math.sqrt(vec[1]^2 + vec[2]^2)
+	end
+	local function vec_sizer(vec, size)
+		local len = vec_length(vec)
+		if len == 0 then
+			return {0, 0}
+		else
+			return {vec[1] / len * size, vec[2] / len * size}
+		end
+	end
+	local zvec = {0, 0, 1}
+	local function calc_ortho_vec(p1, p2)
+		local vec1 = {p2[1]-p1[1], p2[2]-p1[2], 0}
+		return {
+			vec1[2] * zvec[3] - vec1[3] * zvec[2],
+			vec1[3] * zvec[1] - vec1[1] * zvec[3]
+		}
+	end
+	-- Stroke figures
+	local stroke_figures = {table.create(#figures, 0),table.create(#figures, 0)}	-- inner + outer
+	local stroke_subfigures_i = 0
+	-- Through figures
+	for fi, figure in ipairs(figures) do
+		stroke_subfigures_i = stroke_subfigures_i + 1
+		-- One pass for inner, one for outer outline
+		for i = 1, 2 do
+			-- Outline buffer
+			local outline, outline_n = {}, 0
+			-- Point iteration order = inner or outer outline
+			local loop_begin, loop_end, loop_steps
+			if i == 1 then
+				loop_begin, loop_end, loop_steps = #figure, 1, -1
 			else
-				pi = pi + 1
+				loop_begin, loop_end, loop_steps = 1, #figure, 1
 			end
-		end]]
+			-- Iterate through figure points
+			for pi = loop_begin, loop_end, loop_steps do
+				-- Collect current, previous and next point
+				local point = figure[pi]
+				local pre_point, post_point
+				if i == 1 then
+					if pi == 1 then
+						pre_point = figure[pi+1]
+						post_point = figure[#figure]
+					elseif pi == #figure then
+						pre_point = figure[1]
+						post_point = figure[pi-1]
+					else
+						pre_point = figure[pi+1]
+						post_point = figure[pi-1]
+					end
+				else
+					if pi == 1 then
+						pre_point = figure[#figure]
+						post_point = figure[pi+1]
+					elseif pi == #figure then
+						pre_point = figure[pi-1]
+						post_point = figure[1]
+					else
+						pre_point = figure[pi-1]
+						post_point = figure[pi+1]
+					end
+				end
+				-- Calculate orthogonal vectors to both neighbour points
+				local o_vec1 = vec_sizer( calc_ortho_vec(pre_point, point), size)
+				local o_vec2 = vec_sizer( calc_ortho_vec(point, post_point), size)
+				--[[-- Calculate
+				local o_vec12 = {
+									o_vec2[1] - o_vec1[1],
+									o_vec2[2] - o_vec1[2]
+								}
+				local len = vec_length(o_vec12)
+				if len == 0 then
+					table.insert(temp_path, {
+									math.floor(point[1] + o_vec1[1]),
+									math.floor(point[2] + o_vec1[2])
+									})
+				else
+					for o = 0, len, 2 do
+						local pct = o / len
+						local o_vecp = vec_sizer( {
+													o_vec1[1]+o_vec12[1]*pct,
+													o_vec1[2]+o_vec12[2]*pct
+												}, size)
+						table.insert(temp_path, {
+										math.floor(point[1] + o_vecp[1]),
+										math.floor(point[2] + o_vecp[2])
+										})
+					end
+				end]]
+			end
+			-- Insert inner or outer outline
+			stroke_figures[i][stroke_subfigures_i] = outline
+		end
 	end
 
 	-- TODO: implent
@@ -560,9 +672,11 @@ function table.append(t1, t2)
 	if type(t1) ~= "table" or type(t2) ~= "table" then
 		error("table and table expected", 2)
 	end
+	local t1_n = #t1
 	for i, v in pairs(t2) do
 		if tonumber(i) then
-			table.insert(t1, v)
+			t1_n = t1_n + 1
+			t1[t1_n] = v
 		else
 			t1[i] = v
 		end
