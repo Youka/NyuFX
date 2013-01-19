@@ -479,7 +479,7 @@ function shape.tooutline(shape, size)
 		figure_n = 0
 	end
 	-- Remove double points (recreate figures)
-	for fi = 1, #figures do
+	for fi = 1, figures_n do
 		local old_figure, old_figure_n = figures[fi], #figures[fi]
 		local new_figure, new_figure_n = table.create(old_figure_n, 0), 0
 		for pi, point in ipairs(old_figure) do
@@ -517,7 +517,7 @@ function shape.tooutline(shape, size)
 		}
 	end
 	-- Stroke figures
-	local stroke_figures = {table.create(#figures, 0),table.create(#figures, 0)}	-- inner + outer
+	local stroke_figures = {table.create(figures_n, 0),table.create(figures_n, 0)}	-- inner + outer
 	local stroke_subfigures_i = 0
 	-- Through figures
 	for fi, figure in ipairs(figures) do
@@ -564,6 +564,9 @@ function shape.tooutline(shape, size)
 				-- Calculate orthogonal vectors to both neighbour points
 				local o_vec1 = vec_sizer( calc_ortho_vec(pre_point, point), size)
 				local o_vec2 = vec_sizer( calc_ortho_vec(point, post_point), size)
+
+				-- TODO: implent curve/line insertion
+
 				--[[-- Calculate
 				local o_vec12 = {
 									o_vec2[1] - o_vec1[1],
@@ -594,8 +597,23 @@ function shape.tooutline(shape, size)
 		end
 	end
 
-	-- TODO: implent
-
+	-- Convert stroke figures to shape
+	local stroke_shape = ""
+	for fi = 1, figures_n do
+		-- Closed inner outline to shape
+		local inner_outline = stroke_figures[1][fi]
+		for pi, point in ipairs(inner_outline) do
+			stroke_shape = string.format("%s%s%d %d ", stroke_shape, pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
+		end
+		stroke_shape = string.format("%s%d %d ", stroke_shape, inner_outline[1][1], inner_outline[1][2])
+		-- Closed outer outline to shape
+		local outer_outline = stroke_figures[2][fi]
+		for pi, point in ipairs(outer_outline) do
+			stroke_shape = string.format("%s%s%d %d ", stroke_shape, pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
+		end
+		stroke_shape = string.format("%s%d %d ", stroke_shape, outer_outline[1][1], outer_outline[1][2])
+	end
+	return stroke_shape:sub(1,-2)
 end
 
 function shape.triangle(size)
