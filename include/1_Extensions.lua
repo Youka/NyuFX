@@ -508,13 +508,21 @@ function shape.tooutline(shape, size)
 			return {vec[1] / len * size, vec[2] / len * size}
 		end
 	end
-	local zvec = {0, 0, 1}
-	local function calc_ortho_vec(p1, p2)
-		local vec1 = {p2[1]-p1[1], p2[2]-p1[2], 0}
+	local vecz = {0, 0, 1}
+	local function vec_ortho(vec)
+		local vec3d = {vec[1], vec[2], 0}
 		return {
-			vec1[2] * zvec[3] - vec1[3] * zvec[2],
-			vec1[3] * zvec[1] - vec1[1] * zvec[3]
+			vec3d[2] * vecz[3] - vec3d[3] * vecz[2],
+			vec3d[3] * vecz[1] - vec3d[1] * vecz[3]
 		}
+	end
+	function vec_cross_deg(vec1, vec2)
+		return math.deg(
+			math.acos(
+				(vec1[1] * vec2[1] + vec1[2] * vec2[2]) /
+				(vec_length(vec1) * vec_length(vec2))
+			)
+		)
 	end
 	-- Stroke figures
 	local stroke_figures = {table.create(figures_n, 0),table.create(figures_n, 0)}	-- inner + outer
@@ -562,35 +570,21 @@ function shape.tooutline(shape, size)
 					end
 				end
 				-- Calculate orthogonal vectors to both neighbour points
-				local o_vec1 = vec_sizer( calc_ortho_vec(pre_point, point), size)
-				local o_vec2 = vec_sizer( calc_ortho_vec(point, post_point), size)
-
-				-- TODO: implent curve/line insertion
-
-				--[[-- Calculate
-				local o_vec12 = {
-									o_vec2[1] - o_vec1[1],
-									o_vec2[2] - o_vec1[2]
-								}
-				local len = vec_length(o_vec12)
-				if len == 0 then
-					table.insert(temp_path, {
-									math.floor(point[1] + o_vec1[1]),
-									math.floor(point[2] + o_vec1[2])
-									})
+				local o_vec1 = vec_sizer( vec_ortho({point[1]-pre_point[1], point[2]-pre_point[2]}), size )
+				local o_vec2 = vec_sizer( vec_ortho({post_point[1]-point[1], post_point[2]-point[2]}), size )
+				-- Calculate degree between orthogonal vectors
+				local degree = vec_cross_deg(o_vec1, o_vec2)
+				-- Add straight line
+				if degree == 0 then
+					outline_n = outline_n + 1
+					outline[outline_n] = {math.floor(point[1] + o_vec1[1]), math.floor(point[2] + o_vec1[2])}
+				-- Add curve
 				else
-					for o = 0, len, 2 do
-						local pct = o / len
-						local o_vecp = vec_sizer( {
-													o_vec1[1]+o_vec12[1]*pct,
-													o_vec1[2]+o_vec12[2]*pct
-												}, size)
-						table.insert(temp_path, {
-										math.floor(point[1] + o_vecp[1]),
-										math.floor(point[2] + o_vecp[2])
-										})
-					end
-				end]]
+
+					-- TODO: implent curve insertion
+
+				end
+
 			end
 			-- Insert inner or outer outline
 			stroke_figures[i][stroke_subfigures_i] = outline
