@@ -1,4 +1,3 @@
 * 'Cancel' bug (hanging)
-* Replace string concatenation with table.concat
 * complete convert library
 * implent ASS parser

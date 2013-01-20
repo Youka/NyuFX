@@ -320,7 +320,7 @@ function shape.glance(edges, inner_size, outer_size)
 		error("valid 3 numbers expected", 2)
 	end
 	-- Build shape
-	local shape = string.format("m 0 %d b", -outer_size)
+	local shape, shape_n = {string.format("m 0 %d b", -outer_size)}, 1
 	local inner_p, outer_p
 	for i = 1, edges do
 		--Inner edge
@@ -328,8 +328,10 @@ function shape.glance(edges, inner_size, outer_size)
 		--Outer edge
 		outer_p = math.rotate({0, -outer_size, 0}, "z", (i / edges)*360)
 		-- Add curve
-		shape = string.format("%s %d %d %d %d %d %d", shape, inner_p[1], inner_p[2], inner_p[1], inner_p[2], outer_p[1], outer_p[2])
+		shape_n = shape_n + 1
+		shape[shape_n] = string.format(" %d %d %d %d %d %d", inner_p[1], inner_p[2], inner_p[1], inner_p[2], outer_p[1], outer_p[2])
 	end
+	shape = table.concat(shape)
 	-- Shift to positive numbers
 	local min_x, min_y = 0, 0
 	shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
@@ -432,13 +434,15 @@ function shape.split(shape, len)
 				local distance = math.distance(rel_x, rel_y)
 				-- Can split?
 				if distance > len then
-					lines = typ .. space
+					lines = {typ .. space}
+					local lines_n = 1
 					local dist_rest = distance % len
 					for cur_dist = dist_rest > 0 and dist_rest or len, distance, len do
 						local pct = cur_dist / distance
-						lines = string.format("%s%d %d ", lines, last_point.x + rel_x * pct, last_point.y + rel_y * pct)
+						lines_n = lines_n + 1
+						lines[lines_n] = string.format("%d %d ", last_point.x + rel_x * pct, last_point.y + rel_y * pct)
 					end
-					lines = lines:sub(1,-2)
+					lines = table.concat(lines):sub(1,-2)
 				else
 					lines = string.format("%s%s%d %d", typ, space, x, y)
 				end
@@ -460,7 +464,7 @@ function shape.star(edges, inner_size, outer_size)
 		error("valid 3 numbers expected", 2)
 	end
 	-- Build shape
-	local shape = string.format("m 0 %d l", -outer_size)
+	local shape, shape_n = {string.format("m 0 %d l", -outer_size)}, 1
 	local inner_p, outer_p
 	for i = 1, edges do
 		-- Inner edge
@@ -468,8 +472,10 @@ function shape.star(edges, inner_size, outer_size)
 		-- Outer edge
 		outer_p = math.rotate({0, -outer_size, 0}, "z", (i / edges)*360)
 		-- Add lines
-		shape = string.format("%s %d %d %d %d", shape, inner_p[1], inner_p[2], outer_p[1], outer_p[2])
+		shape_n = shape_n + 1
+		shape[shape_n] = string.format(" %d %d %d %d", inner_p[1], inner_p[2], outer_p[1], outer_p[2])
 	end
+	shape = table.concat(shape)
 	-- Shift to positive numbers
 	local min_x, min_y = 0, 0
 	shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
@@ -636,24 +642,27 @@ function shape.tooutline(shape, size)
 			stroke_figures[i][stroke_subfigures_i] = outline
 		end
 	end
-
 	-- Convert stroke figures to shape
-	local stroke_shape = ""
+	local stroke_shape, stroke_shape_n = {}, 0
 	for fi = 1, figures_n do
 		-- Closed inner outline to shape
 		local inner_outline = stroke_figures[1][fi]
 		for pi, point in ipairs(inner_outline) do
-			stroke_shape = string.format("%s%s%d %d ", stroke_shape, pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
+			stroke_shape_n = stroke_shape_n + 1
+			stroke_shape[stroke_shape_n] = string.format("%s%d %d ", pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
 		end
-		stroke_shape = string.format("%s%d %d ", stroke_shape, inner_outline[1][1], inner_outline[1][2])
+		stroke_shape_n = stroke_shape_n + 1
+		stroke_shape[stroke_shape_n] = string.format("%d %d ", inner_outline[1][1], inner_outline[1][2])
 		-- Closed outer outline to shape
 		local outer_outline = stroke_figures[2][fi]
 		for pi, point in ipairs(outer_outline) do
-			stroke_shape = string.format("%s%s%d %d ", stroke_shape, pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
+			stroke_shape_n = stroke_shape_n + 1
+			stroke_shape[stroke_shape_n] = string.format("%s%d %d ", pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
 		end
-		stroke_shape = string.format("%s%d %d ", stroke_shape, outer_outline[1][1], outer_outline[1][2])
+		stroke_shape_n = stroke_shape_n + 1
+		stroke_shape[stroke_shape_n] = string.format("%d %d ", outer_outline[1][1], outer_outline[1][2])
 	end
-	return stroke_shape:sub(1,-2)
+	return table.concat(stroke_shape):sub(1,-2)
 end
 
 function shape.triangle(size)
@@ -826,7 +835,7 @@ function table.tostring(t)
 	if type(t) ~= "table" then
 		error("table expected", 2)
 	end
-	local temp_text = ""
+	local result, result_n = {}, 0
 	local function table_print(t, space)
 		for i, v in pairs(t) do
 			if type(i) == "string" then
@@ -835,14 +844,15 @@ function table.tostring(t)
 			if type(v) == "string" then
 				v = string.format("%q", v)
 			end
-			temp_text = string.format("%s%s[%s] = %s\n", temp_text, space, tostring(i), tostring(v))
+			result_n = result_n + 1
+			result[result_n] = string.format("%s[%s] = %s\n", space, tostring(i), tostring(v))
 			if type(v) == "table" then
 				table_print(v, space .. "\t")
 			end
 		end
 	end
 	table_print(t, "\t")
-	return temp_text
+	return table.concat(result)
 end
 
 -- UTILS
