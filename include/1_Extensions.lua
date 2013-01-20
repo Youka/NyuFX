@@ -55,14 +55,15 @@ function convert.shape_to_pixels(shape)
 	end
 	-- Calculation data
 	local pixel_palette
-	local min_x, min_y = 0, 0
+	local min_x, min_y
 	-- Safe execution
 	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
 		-- Get pixels
 		shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
-			min_x, min_y = math.min(min_x, x), math.min(min_y, y)
+			min_x = min_x and math.min(min_x, x) or min_x
+			min_y = min_y and math.min(min_y, y) or min_y
 		end)
 		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 			return string.format("%d %d", (x-min_x) * 8, (y-min_y) * 8)
