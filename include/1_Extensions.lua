@@ -89,7 +89,50 @@ end
 
 -- TODO: convert.text_to_pixels
 
--- TODO: convert.image_to_pixels
+function convert.image_to_pixels(image)
+	if type(image) ~= "string" then
+		error("string expected", 2)
+	end
+	-- Image data
+	local pixel_palette
+	-- Safe execution
+	local success = pcall(function()
+		-- Get image
+		pixel_palette = tgdi.load_image(image)
+	end)
+	if not success then
+		error("invalid image", 2)
+	end
+	-- Convert pixel palette to RGBA pixel table
+	local pixels, pixels_n = table.create(pixel_palette.width * pixel_palette.height, 0), 0
+	if pixel_palette.has_alpha then
+		for y = 0, pixel_palette.height-1 do
+			for x = 0, pixel_palette.width-1 do
+				local i = 1 + y * pixel_palette.width * 4 + x * 4
+				local a = pixel_palette[i+3]
+				if a > 0 then
+					local r = pixel_palette[i]
+					local g = pixel_palette[i+1]
+					local b = pixel_palette[i+2]
+					pixels_n = pixels_n + 1
+					pixels[pixels_n] = {r = r, g = g, b = b, a = a, x = x, y = y}
+				end
+			end
+		end
+	else
+		for y = 0, pixel_palette.height-1 do
+			for x = 0, pixel_palette.width-1 do
+				local i = 1 + y * pixel_palette.width * 3 + x * 3
+				local r = pixel_palette[i]
+				local g = pixel_palette[i+1]
+				local b = pixel_palette[i+2]
+				pixels_n = pixels_n + 1
+				pixels[pixels_n] = {r = r, g = g, b = b, a = 255, x = x, y = y}
+			end
+		end
+	end
+	return pixels
+end
 
 -- MATH
 function math.bezier(pct, p)
