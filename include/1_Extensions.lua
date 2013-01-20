@@ -513,12 +513,10 @@ function shape.tooutline(shape, size)
 			vec3d[3] * vecz[1] - vec3d[1] * vecz[3]
 		}
 	end
-	function vec_cross_deg(vec1, vec2)
-		return math.deg(
-			math.acos(
+	local function vec_cross_rad(vec1, vec2)
+		return math.acos(
 				(vec1[1] * vec2[1] + vec1[2] * vec2[2]) /
 				(math.distance(vec1[1], vec1[2]) * math.distance(vec2[1], vec2[2]))
-			)
 		)
 	end
 	-- Stroke figures
@@ -569,19 +567,25 @@ function shape.tooutline(shape, size)
 				-- Calculate orthogonal vectors to both neighbour points
 				local o_vec1 = vec_sizer( vec_ortho({point[1]-pre_point[1], point[2]-pre_point[2]}), size )
 				local o_vec2 = vec_sizer( vec_ortho({post_point[1]-point[1], post_point[2]-point[2]}), size )
-				-- No/minimal edge
-				if math.distance(o_vec1[1]-o_vec2[1], o_vec1[2]-o_vec2[2]) < 2 then
-					-- Insert line point
-					outline_n = outline_n + 1
-					outline[outline_n] = {math.floor(point[1] + o_vec1[1]), math.floor(point[2] + o_vec1[2])}
-				-- Round edge
-				else
-					-- Calculate degree between orthogonal vectors
-					local degree = vec_cross_deg(o_vec1, o_vec2)
-					-- Insert curve points
+				-- Calculate radian, degree & circumference between orthogonal vectors
+				local ra = vec_cross_rad(o_vec1, o_vec2)
+				local degr = math.deg(ra)
+				local circ = ra * size
+				-- Add first edge point
+				outline_n = outline_n + 1
+				outline[outline_n] = {math.floor(point[1] + o_vec1[1]), math.floor(point[2] + o_vec1[2])}
+				-- Round edge needed?
+				local max_circ = 2
+				if circ > max_circ then
+					local circ_rest = circ % max_circ
+					for cur_circ = circ_rest > 0 and circ_rest or max_circ, circ, max_circ do
 
-					-- TODO: implent curve insertion
+						-- TODO: fix wrong curves
 
+						local curve_vec = math.rotate({o_vec1[1], o_vec1[2], 0}, "z", cur_circ / circ * degr)
+						outline_n = outline_n + 1
+						outline[outline_n] = {math.floor(point[1] + curve_vec[1]), math.floor(point[2] + curve_vec[2])}
+					end
 				end
 			end
 			-- Insert inner or outer outline
