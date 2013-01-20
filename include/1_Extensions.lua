@@ -48,37 +48,37 @@ function convert.ass_to_rgb(str)
 	end
 end
 
-function convert.text_to_pixels(text, style)
-	-- Flat arguments check
-	if type(text) ~= "string" or type(style) ~= "table" then
-		error("string and style table expected", 2)
+function convert.shape_to_pixels(shape)
+	-- Argument check
+	if type(shape) ~= "string" then
+		error("string expected", 2)
 	end
 	-- Calculation data
 	local pixel_palette
+	local min_x, min_y = 0, 0
 	-- Safe execution
 	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
-
-		-- TODO: use paths to support spacing & scaling
-
-		--[[-- Text with spacing
-		if style.spacing > 0 then
-
-		-- Text without spacing
-		else
-
-		end]]
+		-- Get pixels
+		shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
+			min_x, min_y = math.min(min_x, x), math.min(min_y, y)
+		end)
+		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
+			return string.format("%d %d", (x-min_x) * 8, (y-min_y) * 8)
+		end)
+		ctx:add_path(shape)
+		pixel_palette = ctx:get_pixels(true)
 	end)
 	if not success then
 		error("invalid style table", 2)
 	end
-	-- Convert pixel palette to comfortable pixel table and return
+	-- Convert pixel palette to pixel table with right-shifted positions and return
 	local pixels, pixels_n = {}, 0
 	for pi, alpha in ipairs(pixel_palette) do
 		if alpha > 0 then
 			pixels_n = pixels_n + 1
-			pixels[pixels_n] = {a = alpha, x = (pi-1) % pixel_palette.width, y = math.floor((pi-1) / pixel_palette.width)}
+			pixels[pixels_n] = {a = alpha, x = (pi-1) % pixel_palette.width + min_x, y = math.floor((pi-1) / pixel_palette.width) + min_y}
 		end
 	end
 	return pixels
@@ -86,7 +86,7 @@ end
 
 -- TODO: convert.text_to_shape
 
--- TODO: convert.shape_to_pixels
+-- TODO: convert.text_to_pixels
 
 -- TODO: convert.image_to_pixels
 
@@ -497,11 +497,8 @@ function shape.tooutline(shape, size)
 		figures[fi] = new_figure
 	end
 	-- Vector functions for further calculations
-	local function vec_length(vec)
-		return math.sqrt(vec[1]^2 + vec[2]^2)
-	end
 	local function vec_sizer(vec, size)
-		local len = vec_length(vec)
+		local len = math.distance(vec[1], vec[2])
 		if len == 0 then
 			return {0, 0}
 		else
@@ -520,7 +517,7 @@ function shape.tooutline(shape, size)
 		return math.deg(
 			math.acos(
 				(vec1[1] * vec2[1] + vec1[2] * vec2[2]) /
-				(vec_length(vec1) * vec_length(vec2))
+				(math.distance(vec1[1], vec1[2]) * math.distance(vec2[1], vec2[2]))
 			)
 		)
 	end
@@ -572,19 +569,20 @@ function shape.tooutline(shape, size)
 				-- Calculate orthogonal vectors to both neighbour points
 				local o_vec1 = vec_sizer( vec_ortho({point[1]-pre_point[1], point[2]-pre_point[2]}), size )
 				local o_vec2 = vec_sizer( vec_ortho({post_point[1]-point[1], post_point[2]-point[2]}), size )
-				-- Calculate degree between orthogonal vectors
-				local degree = vec_cross_deg(o_vec1, o_vec2)
-				-- Add straight line
-				if degree == 0 then
+				-- No/minimal edge
+				if math.distance(o_vec1[1]-o_vec2[1], o_vec1[2]-o_vec2[2]) < 2 then
+					-- Insert line point
 					outline_n = outline_n + 1
 					outline[outline_n] = {math.floor(point[1] + o_vec1[1]), math.floor(point[2] + o_vec1[2])}
-				-- Add curve
+				-- Round edge
 				else
+					-- Calculate degree between orthogonal vectors
+					local degree = vec_cross_deg(o_vec1, o_vec2)
+					-- Insert curve points
 
 					-- TODO: implent curve insertion
 
 				end
-
 			end
 			-- Insert inner or outer outline
 			stroke_figures[i][stroke_subfigures_i] = outline
