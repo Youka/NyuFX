@@ -11,10 +11,13 @@ Generator::Generator(wxString lua_file, wxString ass_file, wxString output_file,
 }
 
 Generator::~Generator(){
-	wxMutexGuiLocker gui_locker;
+	if(!wxThread::IsMain())	// Queued in destroy list in main thread (or deleted after run in current thread)?
+		wxMutexGuiEnter();
 	this->gencanc->Enable(true);	// Disabled in case of cancel operation
 	this->gencanc->SetLabelText(_("Generate"));
 	this->gencanc->SetToolTip(_("Start process!"));
+	if(!wxThread::IsMain())
+		wxMutexGuiLeave();
 }
 
 wxThread::ExitCode Generator::Entry(){
