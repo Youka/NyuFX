@@ -53,7 +53,7 @@ function convert.shape_to_pixels(shape)
 	if type(shape) ~= "string" then
 		error("string expected", 2)
 	end
-	-- Calculation data
+	-- Result data
 	local pixel_palette
 	local min_x, min_y
 	-- Safe execution
@@ -72,7 +72,7 @@ function convert.shape_to_pixels(shape)
 		pixel_palette = ctx:get_pixels(true)
 	end)
 	if not success then
-		error("invalid style table", 2)
+		error("invalid text or style table", 2)
 	end
 	-- Convert pixel palette to pixel table with right-shifted positions and return
 	local pixels, pixels_n = {}, 0
@@ -85,9 +85,55 @@ function convert.shape_to_pixels(shape)
 	return pixels
 end
 
--- TODO: convert.text_to_shape
+function convert.text_to_shape(text, style)
+	-- Flat arguments check
+	if type(text) ~= "string" or type(style) ~= "table" then
+		error("string and style table expected", 2)
+	end
+	-- Result data
+	local shape
+	-- Safe execution
+	local success = pcall(function()
+		-- Graphic context
+		local ctx = tgdi.create_context()
+		-- Text with spacing
+		if style.spacing > 0 then
+			local shape_collection, shape_collection_n = {}, 0
+			local current_x = 0
+			for uchar_i, uchar in string.uchars(text) do
+				ctx:add_path(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
+				shape = ctx:get_path()
+				ctx:abort_path()
+				shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
+					return string.format("%d %d", x + current_x, y)
+				end)
+				shape_collection_n = shape_collection_n + 1
+				shape_collection[shape_collection_n] = shape
+				current_x = current_x + ctx:text_extents(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding) + style.spacing * 64
+			end
+			shape = table.concat(shape_collection, " ")
+		-- Text without spacing
+		else
+			ctx:add_path(text, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
+			shape = ctx:get_path()
+		end
+		-- Scale correctly
+		local scale_x, scale_y = style.scale_x / 100 / 8, style.scale_y / 100 / 8
+		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
+			return string.format("%d %d", x * scale_x, y * scale_y)
+		end)
+	end)
+	if not success then
+		error("invalid text or style table", 2)
+	end
+	return shape
+end
 
--- TODO: convert.text_to_pixels
+function convert.text_to_pixels(text, style, off_x, off_y)
+
+	-- TODO: implent text to pixels
+
+end
 
 function convert.image_to_pixels(image)
 	if type(image) ~= "string" then
@@ -267,7 +313,7 @@ function shape.bounding(shape)
 	if type(shape) ~= "string" or (type(as_region) ~= "boolean" and as_region ~= nil) then
 		error("string and optional boolean expected", 2)
 	end
-	-- Calculation data
+	-- Result data
 	local min_x, min_y, max_x, max_y
 	-- Safe execution
 	local success = pcall(function()
@@ -284,7 +330,6 @@ function shape.bounding(shape)
 	if not success then
 		error("invalid shape", 2)
 	end
-	-- Return resulting data
 	return min_x, min_y, max_x, max_y
 end
 
@@ -649,20 +694,20 @@ function shape.tooutline(shape, size)
 		local inner_outline = stroke_figures[1][fi]
 		for pi, point in ipairs(inner_outline) do
 			stroke_shape_n = stroke_shape_n + 1
-			stroke_shape[stroke_shape_n] = string.format("%s%d %d ", pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
+			stroke_shape[stroke_shape_n] = string.format("%s%d %d", pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
 		end
 		stroke_shape_n = stroke_shape_n + 1
-		stroke_shape[stroke_shape_n] = string.format("%d %d ", inner_outline[1][1], inner_outline[1][2])
+		stroke_shape[stroke_shape_n] = string.format("%d %d", inner_outline[1][1], inner_outline[1][2])
 		-- Closed outer outline to shape
 		local outer_outline = stroke_figures[2][fi]
 		for pi, point in ipairs(outer_outline) do
 			stroke_shape_n = stroke_shape_n + 1
-			stroke_shape[stroke_shape_n] = string.format("%s%d %d ", pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
+			stroke_shape[stroke_shape_n] = string.format("%s%d %d", pi == 1 and "m " or pi == 2 and "l " or "", point[1], point[2])
 		end
 		stroke_shape_n = stroke_shape_n + 1
-		stroke_shape[stroke_shape_n] = string.format("%d %d ", outer_outline[1][1], outer_outline[1][2])
+		stroke_shape[stroke_shape_n] = string.format("%d %d", outer_outline[1][1], outer_outline[1][2])
 	end
-	return table.concat(stroke_shape):sub(1,-2)
+	return table.concat(stroke_shape, " ")
 end
 
 function shape.triangle(size)
@@ -845,14 +890,14 @@ function table.tostring(t)
 				v = string.format("%q", v)
 			end
 			result_n = result_n + 1
-			result[result_n] = string.format("%s[%s] = %s\n", space, tostring(i), tostring(v))
+			result[result_n] = string.format("%s[%s] = %s", space, tostring(i), tostring(v))
 			if type(v) == "table" then
 				table_print(v, space .. "\t")
 			end
 		end
 	end
 	table_print(t, "\t")
-	return table.concat(result)
+	return table.concat(result, "\n")
 end
 
 -- UTILS
@@ -943,7 +988,7 @@ function utils.text_extents(text, style)
 	if type(text) ~= "string" or type(style) ~= "table" then
 		error("string and style table expected", 2)
 	end
-	-- Calculation data
+	-- Result data
 	local width, height, ascent, descent, internal_lead, external_lead
 	-- Safe execution
 	local success = pcall(function()
@@ -952,7 +997,7 @@ function utils.text_extents(text, style)
 		-- Extents with spacing
 		if style.spacing > 0 then
 			local spaced_width = 0
-			for uchar in string.uchars(text) do
+			for uchar_i, uchar in string.uchars(text) do
 				width, height, ascent, descent, internal_lead, external_lead =
 					ctx:text_extents(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
 				spaced_width = spaced_width + width + style.spacing * 64
