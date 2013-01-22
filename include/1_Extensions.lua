@@ -55,31 +55,35 @@ function convert.shape_to_pixels(shape)
 	end
 	-- Result data
 	local pixel_palette
-	local min_x, min_y
+	local shift_x, shift_y
 	-- Safe execution
 	local success = pcall(function()
 		-- Graphic context
 		local ctx = tgdi.create_context()
-		-- Get pixels
+		-- Shift shape in valid bitmap section (shifts are 8-fold = subpixel save)
+		local min_x, min_y
 		shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
-			min_x = min_x and math.min(min_x, x) or min_x
-			min_y = min_y and math.min(min_y, y) or min_y
+			min_x = min_x and math.min(min_x, x) or x
+			min_y = min_y and math.min(min_y, y) or y
 		end)
+		shift_x, shift_y = min_x >= 0 and min_x % 8 - min_x or 8-(-min_x % 8) - min_x, min_y >= 0 and min_y % 8 - min_y or 8-(-min_y % 8) - min_y
 		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
-			return string.format("%d %d", (x-min_x) * 8, (y-min_y) * 8)
+			return string.format("%d %d", x + shift_x, y + shift_y)
 		end)
+		-- Get pixels
 		ctx:add_path(shape)
 		pixel_palette = ctx:get_pixels(true)
 	end)
 	if not success then
-		error("invalid text or style table", 2)
+		error("invalid shape", 2)
 	end
 	-- Convert pixel palette to pixel table with right-shifted positions and return
 	local pixels, pixels_n = {}, 0
+	shift_x, shift_y = shift_x / -8, shift_y / -8
 	for pi, alpha in ipairs(pixel_palette) do
 		if alpha > 0 then
 			pixels_n = pixels_n + 1
-			pixels[pixels_n] = {a = alpha, x = (pi-1) % pixel_palette.width + min_x, y = math.floor((pi-1) / pixel_palette.width) + min_y}
+			pixels[pixels_n] = {a = alpha, x = (pi-1) % pixel_palette.width + shift_x, y = math.floor((pi-1) / pixel_palette.width) + shift_y}
 		end
 	end
 	return pixels
@@ -130,9 +134,35 @@ function convert.text_to_shape(text, style)
 end
 
 function convert.text_to_pixels(text, style, off_x, off_y)
-
-	-- TODO: implent text to pixels
-
+	-- Flat arguments check
+	if type(text) ~= "string" or type(style) ~= "table" or
+	not(
+		(off_x == nil and off_y == nil) or
+		(type(off_x) == "number" and type(off_y) == "number")
+	) then
+		error("string, style table and optional number and number expected", 2)
+	elseif off_x and (off_x < 0 or off_x >= 1 or off_y < 0 or off_y >= 1) then
+		error("offset has to be in range 0<=x<1", 2)
+	end
+	-- Result data
+	local pixels
+	-- Safe execution
+	local success = pcall(function()
+		if off_x and off_x > 0 and off_y > 0 then
+			off_x, off_y = math.floor(off_x * 8), math.floor(off_y * 8)
+			pixels = convert.shape_to_pixels(
+				convert.text_to_shape(text, style):gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
+					return string.format("%d %d", x+off_x, y+off_y)
+				end)
+			)
+		else
+			pixels = convert.shape_to_pixels(convert.text_to_shape(text, style))
+		end
+	end)
+	if not success then
+		error("invalid text or style table", 2)
+	end
+	return pixels
 end
 
 function convert.image_to_pixels(image)
