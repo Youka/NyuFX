@@ -1,3 +1,4 @@
+-- PROGRESS
 -- Output buffer & filename
 local tmp_ofile, ofilename
 -- Process information
@@ -78,7 +79,7 @@ function Exit()
 	end
 end
 
--- Output function
+-- IO
 function io.write_line(line)
 	-- Check line
 	if type(line) ~= "table" then
@@ -129,5 +130,18 @@ function io.write_line(line)
 	if tmp_ofile then
 		tmp_ofile:write(text)
 		produced_lines = produced_lines + 1
+	end
+end
+
+function io.load_ass(filename)
+	if type(filename) ~= "string" then
+		error("string expected", 2)
+	end
+	local file, err = io.open(filename, "r")
+	if file then
+		LoadASS(file:read("*a"), utils.text_extents)
+		file:close()
+	else
+		error(err, 2)
 	end
 end

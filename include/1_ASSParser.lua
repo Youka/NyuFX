@@ -1,0 +1,161 @@
+--[[
+meta
+	.comment
+	.title
+	.script_type
+	.wrap_style
+	.width
+	.height
+	.scaled_border_and_shadow
+	.ratio
+	.zoom
+	.position
+	.last_style
+	.audio
+	.video
+styles
+	[i]
+		.name
+		.fontname
+		.fontsize
+		.color1
+		.alpha1
+		.color2
+		.alpha2
+		.color3
+		.alpha3
+		.color4
+		.alpha4
+		.bold
+		.italic
+		.underline
+		.strikeout
+		.scale_x
+		.scale_y
+		.spacing
+		.angle
+		.borderstyle
+		.outline
+		.shadow
+		.alignment
+		.margin_l
+		.margin_r
+		.margin_v
+		.encoding
+lines
+	[i]
+		.comment
+		.layer
+		.start_time
+		.end_time
+		.mid_time
+		.duration
+		.infade
+		.outfade
+		.style
+		.styleref
+		.actor
+		.margin_l
+		.margin_r
+		.margin_v
+		.effect
+		.k_text
+		.text
+		.i
+		.width
+		.height
+		.ascent
+		.descent
+		.intlead
+		.extlead
+		.x
+		.y
+		.left
+		.center
+		.right
+		.top
+		.middle
+		.bottom
+		.syls
+			[i]
+				.i
+				.word_i
+				.start_time
+				.end_time
+				.mid_time
+				.duration
+				.text
+				.inline_fx
+				.prespace
+				.postspace
+				.width
+				.height
+				.ascent
+				.descent
+				.intlead
+				.extlead
+				.x
+				.y
+				.left
+				.center
+				.right
+				.top
+				.middle
+				.bottom
+		.chars
+			[i]
+				.i
+				.syl_i
+				.word_i
+				.start_time
+				.end_time
+				.mid_time
+				.duration
+				.text
+				.width
+				.height
+				.ascent
+				.descent
+				.intlead
+				.extlead
+				.x
+				.y
+				.left
+				.center
+				.right
+				.top
+				.middle
+				.bottom
+		.words
+			[i]
+				.i
+				.start_time
+				.end_time
+				.mid_time
+				.duration
+				.text
+				.width
+				.height
+				.ascent
+				.descent
+				.intlead
+				.extlead
+				.x
+				.y
+				.left
+				.center
+				.right
+				.top
+				.middle
+				.bottom
+]]--
+
+-- Global ASS tables
+meta = {}
+styles = {}
+lines = {}
+
+-- ASS parser
+function LoadASS(content, text_extents_func)
+
+end

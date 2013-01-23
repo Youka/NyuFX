@@ -11,11 +11,12 @@ function gettext(path)
 			end
 		end
 	end
-	local po_content = ""
+	local po_content, po_content_n = {}, 0
 	for entry, _ in pairs(entries) do
-		po_content = string.format("%smsgid %q\nmsgstr \"\"\n\n", po_content, entry)
+		po_content_n = po_content_n + 1
+		po_content[po_content_n] = string.format("msgid %q\nmsgstr \"\"", entry)
 	end
-	return po_content
+	return table.concat(po_content, "\n\n")
 end
 
 local f = io.open("nyufx.po", "w")

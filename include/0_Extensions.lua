@@ -1048,17 +1048,3 @@ function utils.text_extents(text, style)
 	end
 	return width, height, ascent, descent, internal_lead, external_lead
 end
-
--- IO
-function io.load_ass(filename)
-	if type(filename) ~= "string" then
-		error("string expected", 2)
-	end
-	local file, err = io.open(filename, "r")
-	if file then
-		LoadASS(file:read("*a"), utils.text_extents)
-		file:close()
-	else
-		error(err, 2)
-	end
-end
