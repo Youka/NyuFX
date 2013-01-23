@@ -8,17 +8,16 @@
 #define EnableLogging(status) wxLog::EnableLogging(status)
 
 static void SetLanguage(wxLanguage language){
-	// Locale memory
-	static wxLocale *locale = 0;
-	if(locale)
-		delete locale;
-	locale = new wxLocale(language, wxLOCALE_CONV_ENCODING);	// Set current language
-	locale->AddCatalogLookupPathPrefix(wxT("lang"));	// Set lookup directory for languages
-	locale->AddCatalog(wxT("nyufx"));	// Define catalog name / language file name to load
-	if(!locale->IsOk()){	// If language isn't available...
-		delete locale;
-		locale = new wxLocale(wxLANGUAGE_ENGLISH);	// ... go back to secure english language
-	}
+	// Set locale to english (wx sets default locale to system at startup and updates it over time, so wxLocale is needed for an effective change)
+	static wxLocale lang(wxLANGUAGE_ENGLISH);
+	// Create & define translation object
+	wxFileTranslationsLoader::AddCatalogLookupPathPrefix(wxT("lang"));
+	wxTranslations *trans = new wxTranslations;
+	trans->SetLanguage(language);
+	trans->AddStdCatalog();
+	trans->AddCatalog(wxT("nyufx"));
+	// Set current translator and delete previous
+	wxTranslations::Set(trans);
 }
 
 inline void ConfigTooltips(long wait_before, long duration, long wait_between, int max_width){
