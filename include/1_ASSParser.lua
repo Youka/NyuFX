@@ -156,7 +156,40 @@ styles = {}
 lines = {}
 
 -- ASS parser
-function LoadASS(content, text_extents_func)
+function LoadASS(content)
+	-- Unicode string trimming
+	local function trim(text)
+		-- Text to character table
+		local chars, chars_n = table.create(text:ulen(),0), 0
+		for ci, char in text:uchars() do
+			chars_n = chars_n + 1
+			chars[chars_n] = char
+		end
+		-- Count prespace
+		local prespace = 0
+		for ci = 1, chars_n do
+			if chars[ci] ~= " " and chars[ci] ~= "\t" then
+				prespace = ci-1
+				break
+			elseif ci == chars_n then
+				prespace = chars_n
+			end
+		end
+		-- Count postspace
+		local postspace = 0
+		if prespace ~= chars_n then
+			for ci = chars_n, 1, -1 do
+				if chars[ci] ~= " " and chars[ci] ~= "\t" then
+					postspace = chars_n - ci
+					break
+				elseif ci == 1 then
+					postspace = chars_n
+				end
+			end
+		end
+		-- Return trimmed text and spaces
+		return text:sub(1+prespace,-1-postspace), prespace, postspace
+	end
 	-- Searching patterns
 	local meta_comment = ";%s*(.*)"
 	local meta_title = "Title:%s*(.*)"
@@ -317,7 +350,7 @@ function LoadASS(content, text_extents_func)
 		end
 	end
 	-- Add more informations to line
-	local function UpgradeLine()
+	local function UpgradeLines()
 		-- Through lines
 		for li, line in ipairs(lines) do
 			-- Add times
@@ -339,9 +372,45 @@ function LoadASS(content, text_extents_func)
 	end
 	-- Add line subtexts
 	local function AddSubTexts()
+		-- Through lines
+		for li, line in ipairs(lines) do
+			-- Sylables
+			line.syls = {}
+			local syls_n, last_time, word_i = 0, 0, 1
+			for pre_tag, tag_time, post_tag, text in line.k_text:gmatch("{(.-)\\[kK][of]?(%d+)(.-)}([^{]*)") do
+				local syl = table.create(0,24)
+				-- Times
+				syl.duration = tag_time * 10
+				syl.start_time = last_time
+				syl.mid_time = syl.start_time + syl.duration / 2
+				syl.end_time = syl.start_time + syl.duration
+				last_time = syl.end_time
+				-- Text
+				syl.text, syl.prespace, syl.postspace = trim(text)
+				-- Inline fx
+				local inline_fx = string.match(pre_tag .. post_tag, "\\%-([^\\]*)")
+				if inline_fx then
+					syl.inline_fx = inline_fx
+				else
+					syl.inline_fx = ""
+				end
+				-- Indices
+				if syl.prespace > 0 then word_i = word_i + 1 end
+				syl.word_i = word_i
+				if syl.postspace > 0 then word_i = word_i + 1 end
+				syls_n = syls_n + 1
+				syl.i = syls_n
+				line.syls[syls_n] = syl
+			end
+			-- Characters
 
-		-- TODO
+			-- TODO: characters
 
+			-- Words
+
+			-- TODO: words
+
+		end
 	end
 	-- Add sizes to all line texts
 	local function AddSizes()
@@ -405,7 +474,7 @@ function LoadASS(content, text_extents_func)
 		ParseLine(line)
 	end
 	-- Add additional informations
-	UpgradeLine()
+	UpgradeLines()
 	AddSubTexts()
 	AddSizes()
 	AddPositions()

@@ -102,9 +102,9 @@ function convert.text_to_shape(text, style)
 		local ctx = tgdi.create_context()
 		-- Text with spacing
 		if style.spacing > 0 then
-			local shape_collection, shape_collection_n = table.create(string.ulen(text),0), 0
+			local shape_collection, shape_collection_n = table.create(text:ulen(),0), 0
 			local current_x = 0
-			for uchar_i, uchar in string.uchars(text) do
+			for uchar_i, uchar in text:uchars() do
 				ctx:add_path(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
 				shape = ctx:get_path()
 				ctx:abort_path()
@@ -792,7 +792,7 @@ function string.uchars(s)
 			return nil
 		end
 		local cur_pos = s_pos
-		s_pos = s_pos + string.ucharrange(s, s_pos)
+		s_pos = s_pos + s:ucharrange(s_pos)
 		char_i = char_i + 1
 		return char_i, s:sub(cur_pos, s_pos-1)
 	end
@@ -803,7 +803,7 @@ function string.ulen(s)
 		error("string expected", 2)
 	end
 	local n = 0
-	for _ in string.uchars(s) do
+	for _ in s:uchars() do
 		n = n + 1
 	end
 	return n
@@ -1027,7 +1027,7 @@ function utils.text_extents(text, style)
 		-- Extents with spacing
 		if style.spacing > 0 then
 			local spaced_width = 0
-			for uchar_i, uchar in string.uchars(text) do
+			for uchar_i, uchar in text:uchars() do
 				width, height, ascent, descent, internal_lead, external_lead =
 					ctx:text_extents(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
 				spaced_width = spaced_width + width + style.spacing * 64

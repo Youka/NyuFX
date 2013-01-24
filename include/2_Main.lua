@@ -55,7 +55,7 @@ Dialogue: 0,0:00:00.00,0:00:10.00,Default,,0000,0000,0000,,Test]]
 		local template = content:gsub("\nDialogue:", "\nComment:")
 		tmp_ofile:write(template)
 	end
-	LoadASS(content, utils.text_extents)
+	LoadASS(content)
 end
 
 -- Execution exit function
@@ -139,7 +139,7 @@ function io.load_ass(filename)
 	end
 	local file, err = io.open(filename, "r")
 	if file then
-		LoadASS(file:read("*a"), utils.text_extents)
+		LoadASS(file:read("*a"))
 		file:close()
 	else
 		error(err, 2)
