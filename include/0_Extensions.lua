@@ -102,7 +102,7 @@ function convert.text_to_shape(text, style)
 		local ctx = tgdi.create_context()
 		-- Text with spacing
 		if style.spacing > 0 then
-			local shape_collection, shape_collection_n = {}, 0
+			local shape_collection, shape_collection_n = table.create(string.ulen(text),0), 0
 			local current_x = 0
 			for uchar_i, uchar in string.uchars(text) do
 				ctx:add_path(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)

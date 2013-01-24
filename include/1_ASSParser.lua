@@ -47,8 +47,8 @@ lines
 		.comment
 		.layer
 		.start_time
-		.end_time
 		.mid_time
+		.end_time
 		.duration
 		.infade
 		.outfade
@@ -81,8 +81,8 @@ lines
 				.i
 				.word_i
 				.start_time
-				.end_time
 				.mid_time
+				.end_time
 				.duration
 				.text
 				.inline_fx
@@ -108,8 +108,8 @@ lines
 				.syl_i
 				.word_i
 				.start_time
-				.end_time
 				.mid_time
+				.end_time
 				.duration
 				.text
 				.width
@@ -130,8 +130,8 @@ lines
 			[i]
 				.i
 				.start_time
-				.end_time
 				.mid_time
+				.end_time
 				.duration
 				.text
 				.width
@@ -223,7 +223,7 @@ function LoadASS(content, text_extents_func)
 		-- Styles
 		if line:find(style_line) then
 			-- Extract style
-			local style = {}
+			local style = table.create(0,23)
 			style.name, style.fontname, style.fontsize,
 			style.color1, style.color2, style.color3, style.color4,
 			style.bold, style.italic, style.underline, style.strikeout,
@@ -285,7 +285,7 @@ function LoadASS(content, text_extents_func)
 		local d_line = line:find(dialog_line)
 		if c_line or d_line then
 			-- Extract dialog
-			local dialog = {}
+			local dialog = table.create(0,11)
 			if c_line then
 				dialog.comment = true
 				dialog.layer, dialog.start_time, dialog.end_time, dialog.style, dialog.actor, dialog.margin_r, dialog.margin_l, dialog.margin_v, dialog.effect, dialog.k_text =
@@ -316,19 +316,40 @@ function LoadASS(content, text_extents_func)
 			lines[#lines+1] = dialog
 		end
 	end
+	-- Add more informations to line
+	local function UpgradeLine()
+		-- Through lines
+		for li, line in ipairs(lines) do
+			-- Add times
+			if line.start_time and line.end_time then
+				line.duration = line.end_time - line.start_time
+				line.mid_time = line.start_time + line.duration / 2
+			end
+			-- Add style reference
+			for si, style in ipairs(styles) do
+				if line.style == style.name then
+					line.styleref = style
+				end
+			end
+			-- Add tagless text
+			line.text = line.k_text:gsub("{.-}", "")
+			-- Add index
+			line.i = li
+		end
+	end
 	-- Add line subtexts
 	local function AddSubTexts()
 
 		-- TODO
 
 	end
-	-- Add sizes to all texts
+	-- Add sizes to all line texts
 	local function AddSizes()
 
 		-- TODO
 
 	end
-	-- Add positions to all texts
+	-- Add positions to all line texts
 	local function AddPositions()
 
 		-- TODO
@@ -336,9 +357,44 @@ function LoadASS(content, text_extents_func)
 	end
 	-- Add line in- & outfade time
 	local function AddInOutTimes(first_last_dur)
-
-		-- TODO
-
+		-- Collect style names and fitting lines
+		local line_styles = {}
+		for li, line in ipairs(lines) do
+			if not line_styles[line.style] then
+				line_styles[line.style] = {{start_time = line.start_time, end_time = line.end_time, i = line.i}}
+			else
+				line_styles[line.style][#line_styles[line.style]+1] = {start_time = line.start_time, end_time = line.end_time, i = line.i}
+			end
+		end
+		-- Sort lines by time
+		for si, style in pairs(line_styles) do
+			-- Collect and order start times
+			local start_times, start_times_n = table.create(#style,0), 0
+			for li, line in ipairs(style) do
+				start_times_n = start_times_n + 1
+				start_times[start_times_n] = line.start_time
+			end
+			table.sort(start_times)
+			-- Order lines by start times
+			local old_style = table.copy(style)
+			for ti, start_time in ipairs(start_times) do
+				for li = 1, #old_style do
+					local line = old_style[li]
+					if line and start_time == line.start_time then
+						style[ti] = table.copy(line)
+						old_style[li] = nil
+						break
+					end
+				end
+			end
+		end
+		-- Insert calculated in- & outfade times
+		for si, style in pairs(line_styles) do
+			for li, line in ipairs(style) do
+				lines[line.i].infade = (li == 1) and first_last_dur or line.start_time - style[li-1].end_time
+				lines[line.i].outfade = (li == #style) and first_last_dur or style[li+1].start_time - line.end_time
+			end
+		end
 	end
 	-- Check function argument
 	if type(content) ~= "string" then
@@ -349,6 +405,7 @@ function LoadASS(content, text_extents_func)
 		ParseLine(line)
 	end
 	-- Add additional informations
+	UpgradeLine()
 	AddSubTexts()
 	AddSizes()
 	AddPositions()
