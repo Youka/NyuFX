@@ -1,1 +1,0 @@
-print( shape.glance(4, 0, 50) )

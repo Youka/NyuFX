@@ -1,1 +1,0 @@
-print( shape.triangle(50) )

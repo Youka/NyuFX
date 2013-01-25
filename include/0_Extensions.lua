@@ -148,7 +148,9 @@ function convert.text_to_pixels(text, style, off_x, off_y)
 	local pixels
 	-- Safe execution
 	local success = pcall(function()
-		if off_x and (off_x > 0 or off_y > 0) then
+		if not text:find("[^%s]") then
+			pixels = {}
+		elseif off_x and (off_x > 0 or off_y > 0) then
 			off_x, off_y = math.floor(off_x * 8), math.floor(off_y * 8)
 			pixels = convert.shape_to_pixels(
 				convert.text_to_shape(text, style):gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)

@@ -1,1 +1,0 @@
-print( shape.ellipse(50, 80) )

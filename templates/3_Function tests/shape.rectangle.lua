@@ -1,1 +1,0 @@
-print( shape.rectangle(1, 1) )

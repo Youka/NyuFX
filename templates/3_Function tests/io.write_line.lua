@@ -1,1 +1,0 @@
-io.write_line(lines[1])

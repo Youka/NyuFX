@@ -52,7 +52,7 @@ Dialogue: 0,0:00:00.00,0:00:10.00,Default,,0000,0000,0000,,Test]]
 	end
 	-- Evaluate input
 	if tmp_ofile then
-		local template = content:gsub("\nDialogue:", "\nComment:")
+		local template = content:gsub("\nDialogue:", "\nComment:"):gsub("\n+$", "")
 		tmp_ofile:write(template)
 	end
 	LoadASS(content)

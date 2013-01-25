@@ -20,12 +20,14 @@ function sub(line, l)
 end
 
 for li, line in ipairs(lines) do
-	if line.styleref.alignment >=7 then
-		roumaji( line, table.copy(line) )
-	elseif line.styleref.alignment <=3 then
-		sub( line, table.copy(line) )
-	else
-		kanji( line, table.copy(line) )
+	if not line.comment then
+		if line.styleref.alignment >=7 then
+			roumaji( line, table.copy(line) )
+		elseif line.styleref.alignment <=3 then
+			sub( line, table.copy(line) )
+		else
+			kanji( line, table.copy(line) )
+		end
 	end
 	io.progressbar(li / #lines)
 end
