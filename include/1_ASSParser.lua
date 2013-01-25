@@ -134,6 +134,8 @@ lines
 				.end_time
 				.duration
 				.text
+				.prespace
+				.postspace
 				.width
 				.height
 				.ascent
@@ -149,11 +151,6 @@ lines
 				.middle
 				.bottom
 ]]--
-
--- Global ASS tables
-meta = {}
-styles = {}
-lines = {}
 
 -- ASS parser
 function LoadASS(content)
@@ -403,13 +400,94 @@ function LoadASS(content)
 				line.syls[syls_n] = syl
 			end
 			-- Characters
-
-			-- TODO: characters
-
+			line.chars = {}
+			local chars_n = 0
+			word_i = 1
+			for ci, uchar in line.text:uchars() do
+				local char = table.create(0,22)
+				-- Times
+				char.duration = line.duration
+				char.start_time = 0
+				char.mid_time = char.duration / 2
+				char.end_time = char.duration
+				-- Text
+				char.text = uchar
+				-- Indices
+				if uchar == " " or uchar == "\t" then
+					char.word_i = 0
+					if ci ~= 1 and line.chars[ci-1] ~= " " and line.chars[ci-1] ~= "\t" then
+						word_i = word_i + 1
+					end
+				else
+					char.word_i = word_i
+				end
+				char.syl_i = 1
+				chars_n = chars_n + 1
+				char.i = chars_n
+				line.chars[chars_n] = char
+			end
+			-- Character-sylable relation
+			local ci = 1
+			for si, syl in ipairs(line.syls) do
+				-- Prespace
+				for i = 0, syl.prespace - 1 do
+					line.chars[ci+i].start_time = syl.start_time
+					line.chars[ci+i].end_time = syl.end_time
+					line.chars[ci+i].duration = syl.duration
+					line.chars[ci+i].syl_i = si
+				end
+				ci = ci + syl.prespace
+				-- Characters
+				for syl_ci, uchar in syl.text:uchars() do
+					line.chars[ci+syl_ci-1].start_time = syl.start_time
+					line.chars[ci+syl_ci-1].end_time = syl.end_time
+					line.chars[ci+syl_ci-1].duration = syl.duration
+					line.chars[ci+syl_ci-1].syl_i = si
+				end
+				ci = ci + syl.text:ulen()
+				-- Postspace
+				for i = 0, syl.postspace - 1 do
+					line.chars[ci+i].start_time = syl.start_time
+					line.chars[ci+i].end_time = syl.end_time
+					line.chars[ci+i].duration = syl.duration
+					line.chars[ci+i].syl_i = si
+				end
+				ci = ci + syl.postspace
+			end
 			-- Words
-
-			-- TODO: words
-
+			line.words = {}
+			local words_n = 0
+			for text in line.text:gmatch("[ \t]*[^ \t]+[ \t]*") do
+				local word = table.create(0,20)
+				-- Times
+				word.duration = line.duration
+				word.start_time = 0
+				word.mid_time = word.duration / 2
+				word.end_time = word.duration
+				-- Text
+				word.text, word.prespace, word.postspace = trim(text)
+				-- Indices
+				words_n = words_n + 1
+				word.i = words_n
+				line.words[words_n] = word
+			end
+			-- Word-sylable relation
+			for wi, word in ipairs(line.words) do
+				local found_start = false
+				for si, syl in ipairs(line.syls) do
+					if syl.word_i == wi then
+						if not found_start then
+							word.start_time = syl.start_time
+							found_start = true
+						end
+						if si == #line.syls or line.syls[si+1].word_i ~= wi then
+							word.duration = word.end_time - word.start_time
+							word.end_time = syl.end_time
+							break
+						end
+					end
+				end
+			end
 		end
 	end
 	-- Add sizes to all line texts
@@ -469,6 +547,10 @@ function LoadASS(content)
 	if type(content) ~= "string" then
 		error("string expected", 2)
 	end
+	-- Define global ASS tables
+	meta = {}
+	styles = {}
+	lines = {}
 	-- Parse lines
 	for line in content:gmatch("[^\n]+") do
 		ParseLine(line)
