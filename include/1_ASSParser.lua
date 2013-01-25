@@ -492,15 +492,39 @@ function LoadASS(content)
 	end
 	-- Add sizes to all line texts
 	local function AddSizes()
-
-		-- TODO
-
+		-- Through lines
+		for li, line in ipairs(lines) do
+			-- Size calculation possible?
+			if line.styleref then
+				-- Line
+				line.width, line.height, line.ascent, line.descent, line.intlead, line.extlead = utils.text_extents(line.text, line.styleref)
+				-- Sylables
+				for si, syl in ipairs(line.syls) do
+					syl.width, syl.height, syl.ascent, syl.descent, syl.intlead, syl.extlead = utils.text_extents(syl.text, line.styleref)
+				end
+				-- Characters
+				for ci, char in ipairs(line.chars) do
+					char.width, char.height, char.ascent, char.descent, char.intlead, char.extlead = utils.text_extents(char.text, line.styleref)
+				end
+				-- Words
+				for wi, word in ipairs(line.words) do
+					word.width, word.height, word.ascent, word.descent, word.intlead, word.extlead = utils.text_extents(word.text, line.styleref)
+				end
+			end
+		end
 	end
 	-- Add positions to all line texts
 	local function AddPositions()
+		-- Through lines
+		for li, line in ipairs(lines) do
+			-- Position calculation possible?
+			if line.styleref and meta.width and meta.height then
+				local space_width = utils.text_extents(" ", line.styleref)
 
-		-- TODO
+				-- TODO
 
+			end
+		end
 	end
 	-- Add line in- & outfade time
 	local function AddInOutTimes(first_last_dur)
