@@ -520,9 +520,225 @@ function LoadASS(content)
 			-- Position calculation possible?
 			if line.styleref and meta.width and meta.height then
 				local space_width = utils.text_extents(" ", line.styleref)
-
-				-- TODO
-
+				-- Line y
+				if line.styleref.alignment > 6 then
+					line.top = math.max(line.margin_v, line.styleref.margin_v)
+					line.middle = line.top + line.height / 2
+					line.bottom = line.top + line.height
+					line.y = line.top
+				elseif line.styleref.alignment > 3 then
+					line.top = meta.height / 2 - line.height / 2
+					line.middle = line.top + line.height / 2
+					line.bottom = line.top + line.height
+					line.y = line.middle
+				else
+					line.top = meta.height - math.max(line.margin_v, line.styleref.margin_v) - line.height
+					line.middle = line.top + line.height / 2
+					line.bottom = line.top + line.height
+					line.y = line.bottom
+				end
+				-- Line x
+				if (line.styleref.alignment-1) % 3 == 0 then
+					line.left = math.max(line.margin_l, line.styleref.margin_l)
+					line.center = line.left + line.width / 2
+					line.right = line.left + line.width
+					line.x = line.left
+				elseif (line.styleref.alignment-2) % 3 == 0 then
+					line.left = meta.width / 2 - line.width / 2
+					line.center = line.left + line.width / 2
+					line.right = line.left + line.width
+					line.x = line.center
+				else
+					line.left = meta.width - math.max(line.margin_r, line.styleref.margin_r) - line.width
+					line.center = line.left + line.width / 2
+					line.right = line.left + line.width
+					line.x = line.right
+				end
+				-- Sylables dimension
+				local max_width, sum_height = 0, 0
+				for si, syl in ipairs(line.syls) do
+					max_width = math.max(max_width, syl.width)
+					sum_height = sum_height + syl.height
+				end
+				-- Sylables y
+				if line.styleref.alignment > 6 or line.styleref.alignment < 4 then
+					for si, syl in ipairs(line.syls) do
+						syl.top = line.top
+						syl.middle = line.middle
+						syl.bottom = line.bottom
+						syl.y = line.y
+					end
+				else
+					local cur_y = meta.height / 2 - sum_height / 2
+					for si, syl in ipairs(line.syls) do
+						syl.top = cur_y
+						syl.middle = syl.top + syl.height / 2
+						syl.bottom = syl.top + syl.height
+						syl.y = syl.middle
+						cur_y = cur_y + syl.height
+					end
+				end
+				-- Sylables x
+				if line.styleref.alignment > 6 or line.styleref.alignment < 4 then
+					local cur_x = line.left
+					for si, syl in ipairs(line.syls) do
+						cur_x = cur_x + syl.prespace * space_width
+						syl.left = cur_x
+						syl.center = syl.left + syl.width / 2
+						syl.right = syl.left + syl.width
+						if (line.styleref.alignment-1) % 3 == 0 then
+							syl.x = syl.left
+						elseif (line.styleref.alignment-2) % 3 == 0 then
+							syl.x = syl.center
+						else
+							syl.x = syl.right
+						end
+						cur_x = cur_x + syl.width + syl.postspace * space_width
+					end
+				else
+					for si, syl in ipairs(line.syls) do
+						local x_fix = (max_width - syl.width) / 2
+						if line.styleref.alignment == 4 then
+							syl.left = line.left + x_fix
+							syl.center = syl.left + syl.width / 2
+							syl.right = syl.left + syl.width
+							syl.x = syl.left
+						elseif line.styleref.alignment == 5 then
+							syl.left = meta.width / 2 - syl.width / 2
+							syl.center = syl.left + syl.width / 2
+							syl.right = syl.left + syl.width
+							syl.x = syl.center
+						else
+							syl.left = line.right - syl.width - x_fix
+							syl.center = syl.left + syl.width / 2
+							syl.right = syl.left + syl.width
+							syl.x = syl.right
+						end
+					end
+				end
+				-- Characters dimension
+				max_width, sum_height = 0, 0
+				for ci, char in ipairs(line.chars) do
+					max_width = math.max(max_width, char.width)
+					sum_height = sum_height + char.height
+				end
+				-- Characters y
+				if line.styleref.alignment > 6 or line.styleref.alignment < 4 then
+					for ci, char in ipairs(line.chars) do
+						char.top = line.top
+						char.middle = line.middle
+						char.bottom = line.bottom
+						char.y = line.y
+					end
+				else
+					local cur_y = meta.height / 2 - sum_height / 2
+					for ci, char in ipairs(line.chars) do
+						char.top = cur_y
+						char.middle = char.top + char.height / 2
+						char.bottom = char.top + char.height
+						char.y = char.middle
+						cur_y = cur_y + char.height
+					end
+				end
+				-- Characters x
+				if line.styleref.alignment > 6 or line.styleref.alignment < 4 then
+					local cur_x = line.left
+					for ci, char in ipairs(line.chars) do
+						char.left = cur_x
+						char.center = char.left + char.width / 2
+						char.right = char.left + char.width
+						if (line.styleref.alignment-1) % 3 == 0 then
+							char.x = char.left
+						elseif (line.styleref.alignment-2) % 3 == 0 then
+							char.x = char.center
+						else
+							char.x = char.right
+						end
+						cur_x = cur_x + char.width
+					end
+				else
+					for ci, char in ipairs(line.chars) do
+						local x_fix = (max_width - char.width) / 2
+						if line.styleref.alignment == 4 then
+							char.left = line.left + x_fix
+							char.center = char.left + char.width / 2
+							char.right = char.left + char.width
+							char.x = char.left
+						elseif line.styleref.alignment == 5 then
+							char.left = meta.width / 2 - char.width / 2
+							char.center = char.left + char.width / 2
+							char.right = char.left + char.width
+							char.x = char.center
+						else
+							char.left = line.right - char.width - x_fix
+							char.center = char.left + char.width / 2
+							char.right = char.left + char.width
+							char.x = char.right
+						end
+					end
+				end
+				-- Words dimension
+				max_width, sum_height = 0, 0
+				for wi, word in ipairs(line.words) do
+					max_width = math.max(max_width, word.width)
+					sum_height = sum_height + word.height
+				end
+				-- Words y
+				if line.styleref.alignment > 6 or line.styleref.alignment < 4 then
+					for wi, word in ipairs(line.words) do
+						word.top = line.top
+						word.middle = line.middle
+						word.bottom = line.bottom
+						word.y = line.y
+					end
+				else
+					local cur_y = meta.height / 2 - sum_height / 2
+					for wi, word in ipairs(line.words) do
+						word.top = cur_y
+						word.middle = word.top + word.height / 2
+						word.bottom = word.top + word.height
+						word.y = word.middle
+						cur_y = cur_y + word.height
+					end
+				end
+				-- Words x
+				if line.styleref.alignment > 6 or line.styleref.alignment < 4 then
+					local cur_x = line.left
+					for wi, word in ipairs(line.words) do
+						cur_x = cur_x + word.prespace * space_width
+						word.left = cur_x
+						word.center = word.left + word.width / 2
+						word.right = word.left + word.width
+						if (line.styleref.alignment-1) % 3 == 0 then
+							word.x = word.left
+						elseif (line.styleref.alignment-2) % 3 == 0 then
+							word.x = word.center
+						else
+							word.x = word.right
+						end
+						cur_x = cur_x + word.width + word.postspace * space_width
+					end
+				else
+					for wi, word in ipairs(line.words) do
+						local x_fix = (max_width - word.width) / 2
+						if line.styleref.alignment == 4 then
+							word.left = line.left + x_fix
+							word.center = word.left + word.width / 2
+							word.right = word.left + word.width
+							word.x = word.left
+						elseif line.styleref.alignment == 5 then
+							word.left = meta.width / 2 - word.width / 2
+							word.center = word.left + word.width / 2
+							word.right = word.left + word.width
+							word.x = word.center
+						else
+							word.left = line.right - word.width - x_fix
+							word.center = word.left + word.width / 2
+							word.right = word.left + word.width
+							word.x = word.right
+						end
+					end
+				end
 			end
 		end
 	end
