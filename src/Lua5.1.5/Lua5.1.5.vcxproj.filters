@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lapi.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lauxlib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lbaselib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lcode.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ldblib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ldebug.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ldo.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ldump.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lfunc.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lgc.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="linit.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="liolib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="llex.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lmathlib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lmem.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="loadlib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lobject.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lopcodes.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="loslib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lparser.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lstate.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lstring.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lstrlib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ltable.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ltablib.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ltm.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lundump.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lvm.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="lzio.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="WinIO.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lapi.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lauxlib.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lcode.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ldebug.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ldo.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lfunc.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lgc.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="llex.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="llimits.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lmem.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lobject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lopcodes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lparser.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lstate.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lstring.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ltable.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ltm.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lua.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="luaconf.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lualib.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lundump.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lvm.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="lzio.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="WinIO.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

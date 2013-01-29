@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6C29E891-24E1-48AD-A17C-3BAE36BD54F0}</ProjectGuid>
+    <RootNamespace>NyuFX</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>Lua5.1.5;E:\PROJEKTE\Librarys\wxWidgets-2.9.4\lib\vc_lib\mswu;E:\PROJEKTE\Librarys\wxWidgets-2.9.4\include;E:\PROJEKTE\Librarys\wxWidgets-2.9.4\contrib\include;E:\PROJEKTE\Librarys\ffmpeg-1.1\build\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32_EXTRA_LEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>E:\PROJEKTE\Librarys\wxWidgets-2.9.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>comctl32.lib;rpcrt4.lib;winmm.lib;wsock32.lib;wxmsw29u_stc.lib;wxscintilla.lib;wxmsw29u_webview.lib;wxmsw29u_adv.lib;wxmsw29u_core.lib;wxbase29u.lib;wxregexu.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;Lua5.1.5.lib;libavcodec.a;libavformat.a;libavutil.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Release;E:\PROJEKTE\Librarys\wxWidgets-2.9.4\lib\vc_lib;E:\PROJEKTE\Librarys\ffmpeg-1.1\build\msvc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <UACExecutionLevel>HighestAvailable</UACExecutionLevel>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="About.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="ASSEditor.cpp" />
+    <ClCompile Include="EditorBase.cpp" />
+    <ClCompile Include="GUI_events.cpp" />
+    <ClCompile Include="GUI_interface.cpp" />
+    <ClCompile Include="HelpWindow.cpp" />
+    <ClCompile Include="LuaEditor.cpp" />
+    <ClCompile Include="Options.cpp" />
+    <ClCompile Include="OutputCtrl.cpp" />
+    <ClCompile Include="Replace.cpp" />
+    <ClCompile Include="SaveSymbol.cpp" />
+    <ClCompile Include="TaskIcon.cpp" />
+    <ClCompile Include="Generator.cpp" />
+    <ClCompile Include="ltable2.cpp" />
+    <ClCompile Include="ltgdi.cpp" />
+    <ClCompile Include="lva.cpp" />
+    <ClCompile Include="Scripting.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="About.h" />
+    <ClInclude Include="ASSEditor.h" />
+    <ClInclude Include="EditorBase.h" />
+    <ClInclude Include="GUI.h" />
+    <ClInclude Include="HelpWindow.h" />
+    <ClInclude Include="LuaEditor.h" />
+    <ClInclude Include="Options.h" />
+    <ClInclude Include="OutputCtrl.h" />
+    <ClInclude Include="Replace.h" />
+    <ClInclude Include="SaveSymbol.h" />
+    <ClInclude Include="TaskIcon.h" />
+    <ClInclude Include="Generator.h" />
+    <ClInclude Include="llibs.h" />
+    <ClInclude Include="Lua.h" />
+    <ClInclude Include="Scripting.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Lua5.1.5\Lua5.1.5.vcxproj">
+      <Project>{c005fc88-0359-4258-a8c8-7afc18873543}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

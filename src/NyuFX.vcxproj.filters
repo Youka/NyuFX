@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{2ac4d02f-2a66-4d1a-8f75-8758aaa90986}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{d172673e-5483-49bc-b93a-adc0dd714e8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{e6414259-990e-4cea-aea3-f7a2dab809ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Progress">
+      <UniqueIdentifier>{10c80da4-aaa6-45e8-b074-641c190540ba}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Config.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="About.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ASSEditor.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorBase.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI_events.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI_interface.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="HelpWindow.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaEditor.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Options.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputCtrl.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Replace.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveSymbol.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskIcon.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Generator.cpp">
+      <Filter>Progress</Filter>
+    </ClCompile>
+    <ClCompile Include="ltable2.cpp">
+      <Filter>Progress</Filter>
+    </ClCompile>
+    <ClCompile Include="ltgdi.cpp">
+      <Filter>Progress</Filter>
+    </ClCompile>
+    <ClCompile Include="lva.cpp">
+      <Filter>Progress</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.cpp">
+      <Filter>Progress</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Config.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="About.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ASSEditor.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorBase.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="HelpWindow.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaEditor.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Options.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputCtrl.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Replace.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveSymbol.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskIcon.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Generator.h">
+      <Filter>Progress</Filter>
+    </ClInclude>
+    <ClInclude Include="llibs.h">
+      <Filter>Progress</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua.h">
+      <Filter>Progress</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Progress</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

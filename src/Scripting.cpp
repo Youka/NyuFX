@@ -1,5 +1,5 @@
 #include "Scripting.h"
-#include "libs.h"
+#include "llibs.h"
 #include <wx/thread.h>
 #include <wx/msgdlg.h>
 

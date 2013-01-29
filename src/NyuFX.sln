@@ -1,12 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NyuFX", "NyuFX.vcproj", "{6C29E891-24E1-48AD-A17C-3BAE36BD54F0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C005FC88-0359-4258-A8C8-7AFC18873543} = {C005FC88-0359-4258-A8C8-7AFC18873543}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NyuFX", "NyuFX.vcxproj", "{6C29E891-24E1-48AD-A17C-3BAE36BD54F0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua5.1.5", "Lua5.1.5\Lua5.1.5.vcproj", "{C005FC88-0359-4258-A8C8-7AFC18873543}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua5.1.5", "Lua5.1.5\Lua5.1.5.vcxproj", "{C005FC88-0359-4258-A8C8-7AFC18873543}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
