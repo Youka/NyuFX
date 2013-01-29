@@ -113,7 +113,7 @@ msgid "Forward in history"
 msgstr "Vorw‰rts im Verlauf"
 
 msgid "NONE"
-msgstr "NICHTS"
+msgstr "KEINER"
 
 msgid "Close"
 msgstr "Schlieﬂen"

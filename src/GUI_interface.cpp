@@ -95,7 +95,7 @@ void GUI::CreateMenu(){
 	this->viewMenu->Append(ID_MENU_UNFOLD_ALL, _("Unfold all") + wxT("\tSHIFT+F4"), _("Unfolds all lines in Lua editor"));
 	this->viewMenu->AppendSeparator();
 	this->openviewMenu = new wxMenu;
-	this->openviewMenu->Append(ID_MENU_OPEN_INCL, wxT("Includes\tF2"), _("Open include folder"));
+	this->openviewMenu->Append(ID_MENU_OPEN_INCL, wxT("Include\tF2"), _("Open include folder"));
 	this->openviewMenu->Append(ID_MENU_OPEN_TMPL, wxT("Templates\tF3"), _("Open templates folder"));
 	this->openviewMenu->Append(ID_MENU_OPEN_TOOLS, wxT("Tools\tF4"), _("Open tools folder"));
 	this->viewMenu->AppendSubMenu(this->openviewMenu, _("Folders"), _("Open folders of NyuFX"));
