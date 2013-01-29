@@ -77,6 +77,7 @@ Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 	// Register Lua utility functions
 	luaopen_table2(this->L);
 	luaopen_tgdi(this->L);
+	luaopen_va(this->L);
 }
 
 bool Scripting::DoFile(wxString file){
