@@ -16,12 +16,12 @@ extern "C"{
 struct VAStream;
 struct VAFormat{
 	AVFormatContext* format;
-	std::list<VAStream*> streams;
+	std::list<VAStream*>* streams;
 };
 struct VAStream{
 	AVStream *stream;
 	AVFormatContext* format;
-	bool has_format;
+	bool is_deleted;
 };
 
 // FUNCTIONS
@@ -40,20 +40,21 @@ DEF_HEAD_1ARG(create_demuxer, 1)
 	// Create userdata
 	VAFormat *va_format = lua_createuserdata<VAFormat>(L, DEMUXER);
 	va_format->format = format;
+	va_format->streams = new std::list<VAStream*>;
 	return 1;
 DEF_TAIL
 
+#include <wx/msgdlg.h>
 DEF_HEAD_1ARG(delete_demuxer, 1)
 	// Get demuxer
 	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
 	// Close stream codecs
-	if(!va_format->streams.empty()){
-		for(std::list<VAStream*>::iterator iter = va_format->streams.begin(); iter != va_format->streams.end(); iter++){
-			if( (*iter)->stream->codec )
-				avcodec_close((*iter)->stream->codec);
-			(*iter)->has_format = false;
-		}
+	for(std::list<VAStream*>::iterator iter = va_format->streams->begin(); iter != va_format->streams->end(); ++iter){
+		if( (*iter)->stream->codec )
+			avcodec_close((*iter)->stream->codec);
+		(*iter)->is_deleted = true;
 	}
+	delete va_format->streams;
 	// Delete demuxer
 	avformat_close_input(&va_format->format);
 DEF_TAIL
@@ -62,12 +63,15 @@ DEF_HEAD_1ARG(demuxer_info, 1)
 	// Get demuxer
 	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
 	// Create demuxer information table
-	lua_createtable(L, 0, 1);
+	lua_createtable(L, 0, 8);
 	lua_pushnumber(L, va_format->format->nb_streams); lua_setfield(L, -2, "streams");
 	lua_pushstring(L, va_format->format->filename); lua_setfield(L, -2, "filename");
-
-	// TODO: more informations
-
+	lua_pushstring(L, va_format->format->iformat->long_name); lua_setfield(L, -2, "container");
+	lua_pushnumber(L, va_format->format->start_time / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "start_time");
+	lua_pushnumber(L, va_format->format->duration / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "duration");
+	lua_pushnumber(L, va_format->format->bit_rate); lua_setfield(L, -2, "bitrate");
+	lua_pushnumber(L, va_format->format->nb_programs); lua_setfield(L, -2, "programs");
+	lua_pushnumber(L, va_format->format->nb_chapters); lua_setfield(L, -2, "chapters");
 	return 1;
 DEF_TAIL
 
