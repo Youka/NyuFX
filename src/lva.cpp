@@ -199,8 +199,12 @@ DEF_HEAD_1ARG(stream_info, 1)
 			lua_pushnumber(L, stream->codec->sample_rate); lua_setfield(L, -2, "sample_rate");
 			lua_pushnumber(L, stream->codec->channels); lua_setfield(L, -2, "channels");
 			lua_pushstring(L, SAFE_NAME(av_get_sample_fmt_name(stream->codec->sample_fmt))); lua_setfield(L, -2, "sample_format");
-			lua_pushnumber(L, stream->nb_frames / static_cast<double>(stream->codec->sample_rate)); lua_setfield(L, -2, "duration");
+			lua_pushnumber(L, stream->codec->sample_rate > 0 ? stream->nb_frames / static_cast<double>(stream->codec->sample_rate) : 0); lua_setfield(L, -2, "duration");
 			lua_pushnumber(L, stream->codec->bits_per_coded_sample); lua_setfield(L, -2, "bits_per_sample");
+			break;
+		case AVMEDIA_TYPE_SUBTITLE:
+			lua_pushstring(L, stream->codec->codec->long_name); lua_setfield(L, -2, "codec");
+			lua_pushstring(L, stream->codec->subtitle_header_size > 0 ? reinterpret_cast<char*>(stream->codec->subtitle_header) : ""); lua_setfield(L, -2, "header");
 			break;
 	}
 	return 1;
@@ -221,9 +225,19 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 	// Reset file read pointer
 	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0)
 		luaL_error2(L, "resetting demuxer read pointer failed");
-
-	// TODO: decode video/audio/subtitle
-
+	// Decode frames
+	switch(stream->codec->codec_type){
+		case AVMEDIA_TYPE_VIDEO:
+			// TODO: decode video
+			break;
+		case AVMEDIA_TYPE_AUDIO:
+			// TODO: decode audio
+			break;
+		case AVMEDIA_TYPE_SUBTITLE:
+			// TODO: decode subtitles
+			//avcodec_decode_subtitle2
+			break;
+	}
 DEF_TAIL
 
 // REGISTER
