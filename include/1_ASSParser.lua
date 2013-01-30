@@ -431,25 +431,28 @@ function LoadASS(content)
 			for si, syl in ipairs(line.syls) do
 				-- Prespace
 				for i = 0, syl.prespace - 1 do
-					line.chars[ci+i].start_time = syl.start_time
-					line.chars[ci+i].end_time = syl.end_time
 					line.chars[ci+i].duration = syl.duration
+					line.chars[ci+i].start_time = syl.start_time
+					line.chars[ci+i].mid_time = syl.mid_time
+					line.chars[ci+i].end_time = syl.end_time
 					line.chars[ci+i].syl_i = si
 				end
 				ci = ci + syl.prespace
 				-- Characters
 				for syl_ci, uchar in syl.text:uchars() do
-					line.chars[ci+syl_ci-1].start_time = syl.start_time
-					line.chars[ci+syl_ci-1].end_time = syl.end_time
 					line.chars[ci+syl_ci-1].duration = syl.duration
+					line.chars[ci+syl_ci-1].start_time = syl.start_time
+					line.chars[ci+syl_ci-1].mid_time = syl.mid_time
+					line.chars[ci+syl_ci-1].end_time = syl.end_time
 					line.chars[ci+syl_ci-1].syl_i = si
 				end
 				ci = ci + syl.text:ulen()
 				-- Postspace
 				for i = 0, syl.postspace - 1 do
-					line.chars[ci+i].start_time = syl.start_time
-					line.chars[ci+i].end_time = syl.end_time
 					line.chars[ci+i].duration = syl.duration
+					line.chars[ci+i].start_time = syl.start_time
+					line.chars[ci+i].mid_time = syl.mid_time
+					line.chars[ci+i].end_time = syl.end_time
 					line.chars[ci+i].syl_i = si
 				end
 				ci = ci + syl.postspace
@@ -481,8 +484,9 @@ function LoadASS(content)
 							found_start = true
 						end
 						if si == #line.syls or line.syls[si+1].word_i ~= wi then
-							word.duration = word.end_time - word.start_time
 							word.end_time = syl.end_time
+							word.duration = word.end_time - word.start_time
+							word.mid_time = word.start_time + word.duration / 2
 							break
 						end
 					end
