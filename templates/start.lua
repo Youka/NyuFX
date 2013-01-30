@@ -21,9 +21,9 @@ end
 
 for li, line in ipairs(lines) do
 	if not line.comment then
-		if line.styleref.alignment >=7 then
+		if line.styleref.alignment >= 7 then
 			roumaji( line, table.copy(line) )
-		elseif line.styleref.alignment <=3 then
+		elseif line.styleref.alignment <= 3 then
 			sub( line, table.copy(line) )
 		else
 			kanji( line, table.copy(line) )

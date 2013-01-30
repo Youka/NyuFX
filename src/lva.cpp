@@ -2,6 +2,7 @@
 #define __STDC_CONSTANT_MACROS 1
 extern "C"{
 	#include <libavformat/avformat.h>
+	#include <libavutil/pixdesc.h>
 	#include <libswscale/swscale.h>
 }
 #include <list>
@@ -22,6 +23,33 @@ struct VAStream{
 	AVStream *stream;
 	VAFormat *va_format;
 };
+
+inline double av_q2d_safe(AVRational a){
+    return a.den == 0 ? 0 : av_q2d(a);
+}
+
+void lua_pushrational(lua_State *L, AVRational a){
+	lua_createtable(L, 0, 2);
+	lua_pushnumber(L, a.num); lua_setfield(L, -2, "num");
+	lua_pushnumber(L, a.den); lua_setfield(L, -2, "den");
+}
+
+#define SAFE_NAME(s) s==NULL ? "unknown" : s
+
+int gcd(int a, int b){
+	// Swap bigger number to first number
+	if(b > a)
+		a ^= b ^= a ^= b;
+	// Zero isn't a valid divisor
+	if(b==0)
+		return 1;
+	// divisor = gcd ?
+	int rest = a % b;
+	if(rest == 0)
+		return b;
+	else
+		return gcd(b, rest);
+}
 
 // FUNCTIONS
 DEF_HEAD_1ARG(create_demuxer, 1)
@@ -68,7 +96,6 @@ DEF_HEAD_1ARG(demuxer_info, 1)
 	lua_pushnumber(L, va_format->format->start_time / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "start_time");
 	lua_pushnumber(L, va_format->format->duration / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "duration");
 	lua_pushnumber(L, va_format->format->bit_rate); lua_setfield(L, -2, "bitrate");
-	lua_pushnumber(L, va_format->format->nb_programs); lua_setfield(L, -2, "programs");
 	lua_pushnumber(L, va_format->format->nb_chapters); lua_setfield(L, -2, "chapters");
 	return 1;
 DEF_TAIL
@@ -114,16 +141,46 @@ DEF_HEAD_1ARG(stream_info, 1)
 	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
 	if(va_stream->va_format == NULL)
 		luaL_error2(L, "stream invalid (demuxer already deleted)");
-	// Create stream information table
 	AVStream *stream = va_stream->stream;
-	lua_createtable(L, 0, 4);
+	// Create stream information table
+	lua_createtable(L, 0, 2);
 	lua_pushnumber(L, stream->index); lua_setfield(L, -2, "index");
-	const char *media_type = av_get_media_type_string(stream->codec->codec_type); lua_pushstring(L, media_type != NULL ? media_type : "unknown"); lua_setfield(L, -2, "type");
-	lua_pushstring(L, stream->codec->codec->long_name); lua_setfield(L, -2, "codec");
-	lua_pushnumber(L, stream->codec->bit_rate); lua_setfield(L, -2, "bitrate");
-
-	// TODO
-
+	lua_pushstring(L, SAFE_NAME(av_get_media_type_string(stream->codec->codec_type))); lua_setfield(L, -2, "type");
+	switch(stream->codec->codec_type){
+		case AVMEDIA_TYPE_VIDEO:
+			lua_pushstring(L, stream->codec->codec->long_name); lua_setfield(L, -2, "codec");
+			lua_pushnumber(L, stream->codec->bit_rate); lua_setfield(L, -2, "bitrate");
+			lua_pushstring(L, SAFE_NAME(av_get_profile_name(stream->codec->codec, stream->codec->profile))); lua_setfield(L, -2, "profile");
+			lua_pushnumber(L, stream->codec->level); lua_setfield(L, -2, "level");
+			lua_pushrational(L, stream->r_frame_rate); lua_setfield(L, -2, "framerate");
+			lua_pushrational(L, stream->time_base); lua_setfield(L, -2, "time_base");
+			lua_pushnumber(L, stream->start_time * av_q2d_safe(stream->time_base)); lua_setfield(L, -2, "start_time");
+			lua_pushnumber(L, stream->duration * av_q2d_safe(stream->time_base)); lua_setfield(L, -2, "duration");
+			lua_pushnumber(L, stream->nb_frames); lua_setfield(L, -2, "frames");
+			lua_pushnumber(L, stream->codec->width); lua_setfield(L, -2, "width");
+			lua_pushnumber(L, stream->codec->height); lua_setfield(L, -2, "height");
+			{
+				int div = gcd(stream->codec->width, stream->codec->height);
+				AVRational aspect_ratio = {stream->codec->width / div, stream->codec->height / div};
+				lua_pushrational(L, aspect_ratio); lua_setfield(L, -2, "display_aspect_ratio");
+			}
+			lua_pushstring(L, SAFE_NAME(av_get_pix_fmt_name(stream->codec->pix_fmt))); lua_setfield(L, -2, "pixel_format");
+			lua_pushnumber(L, stream->codec->has_b_frames); lua_setfield(L, -2, "b_frames");
+			lua_pushnumber(L, stream->codec->refs); lua_setfield(L, -2, "reference_frames");
+			break;
+		case AVMEDIA_TYPE_AUDIO:
+			lua_pushstring(L, stream->codec->codec->long_name); lua_setfield(L, -2, "codec");
+			lua_pushnumber(L, stream->codec->bit_rate); lua_setfield(L, -2, "bitrate");
+			lua_pushstring(L, SAFE_NAME(av_get_profile_name(stream->codec->codec, stream->codec->profile))); lua_setfield(L, -2, "profile");
+			lua_pushnumber(L, stream->codec->level); lua_setfield(L, -2, "level");
+			lua_pushnumber(L, stream->nb_frames); lua_setfield(L, -2, "samples");
+			lua_pushnumber(L, stream->codec->sample_rate); lua_setfield(L, -2, "sample_rate");
+			lua_pushnumber(L, stream->codec->channels); lua_setfield(L, -2, "channels");
+			lua_pushstring(L, SAFE_NAME(av_get_sample_fmt_name(stream->codec->sample_fmt))); lua_setfield(L, -2, "sample_format");
+			lua_pushnumber(L, stream->nb_frames / static_cast<double>(stream->codec->sample_rate)); lua_setfield(L, -2, "duration");
+			lua_pushnumber(L, stream->codec->bits_per_coded_sample); lua_setfield(L, -2, "bits_per_sample");
+			break;
+	}
 	return 1;
 DEF_TAIL
 
@@ -135,13 +192,13 @@ inline void register_va_meta(lua_State *L){
 	luaL_newmetatable(L, DEMUXER);
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_demuxer); lua_setfield(L, -2, "__gc");
-	lua_pushcfunction(L, l_demuxer_info); lua_setfield(L, -2, "getinfo");
-	lua_pushcfunction(L, l_demuxer_get_stream); lua_setfield(L, -2, "getstream");
+	lua_pushcfunction(L, l_demuxer_info); lua_setfield(L, -2, "get_info");
+	lua_pushcfunction(L, l_demuxer_get_stream); lua_setfield(L, -2, "get_stream");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, ISTREAM);
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_stream); lua_setfield(L, -2, "__gc");
-	lua_pushcfunction(L, l_stream_info); lua_setfield(L, -2, "getinfo");
+	lua_pushcfunction(L, l_stream_info); lua_setfield(L, -2, "get_info");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, MUXER);
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
