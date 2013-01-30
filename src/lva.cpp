@@ -100,6 +100,24 @@ DEF_HEAD_1ARG(demuxer_info, 1)
 	return 1;
 DEF_TAIL
 
+DEF_HEAD_1ARG(demuxer_get_chapters, 1)
+	// Get demuxer
+	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
+	// Create chapters table
+	lua_createtable(L, va_format->format->nb_chapters, 0);
+	for(unsigned int chapter_i = 0; chapter_i < va_format->format->nb_chapters; chapter_i++){
+		AVChapter *chapter = va_format->format->chapters[chapter_i];
+		lua_createtable(L, 0, 4);
+		lua_pushnumber(L, chapter->start * av_q2d_safe(chapter->time_base)); lua_setfield(L, -2, "start");
+		lua_pushnumber(L, chapter->end * av_q2d_safe(chapter->time_base)); lua_setfield(L, -2, "end");
+		AVDictionaryEntry *entry = av_dict_get(chapter->metadata, "", NULL, AV_DICT_IGNORE_SUFFIX);
+		lua_pushstring(L, entry ? entry->key : ""); lua_setfield(L, -2, "key");
+		lua_pushstring(L, entry ? entry->value : ""); lua_setfield(L, -2, "value");
+		lua_rawseti(L, -2, chapter_i+1);
+	}
+	return 1;
+DEF_TAIL
+
 DEF_HEAD_1ARG(demuxer_get_stream, 2)
 	// Get demuxer & stream index
 	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
@@ -114,7 +132,7 @@ DEF_HEAD_1ARG(demuxer_get_stream, 2)
 	// Open stream codec
 	AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
 	if(codec == NULL)
-		luaL_error2(L, wxString::Format("codec not found: %s", stream->codec->codec_name));
+		luaL_error2(L, wxString::Format("codec not found: %s\n(%s)", stream->codec->codec_name, SAFE_NAME(av_get_media_type_string(stream->codec->codec_type))));
 	if(avcodec_open2(stream->codec, codec, NULL) < 0)
 		luaL_error2(L, "couldn't open codec");
 	// Create userdata
@@ -193,6 +211,7 @@ inline void register_va_meta(lua_State *L){
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_demuxer); lua_setfield(L, -2, "__gc");
 	lua_pushcfunction(L, l_demuxer_info); lua_setfield(L, -2, "get_info");
+	lua_pushcfunction(L, l_demuxer_get_chapters); lua_setfield(L, -2, "get_chapters");
 	lua_pushcfunction(L, l_demuxer_get_stream); lua_setfield(L, -2, "get_stream");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, ISTREAM);
