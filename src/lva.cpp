@@ -24,6 +24,10 @@ struct VAStream{
 	VAFormat *va_format;
 };
 
+#define DECODE_TYPE(type) (type == AVMEDIA_TYPE_VIDEO || type == AVMEDIA_TYPE_AUDIO || type == AVMEDIA_TYPE_SUBTITLE)
+
+#define SAFE_NAME(s) s==NULL ? "unknown" : s
+
 inline double av_q2d_safe(AVRational a){
     return a.den == 0 ? 0 : av_q2d(a);
 }
@@ -33,8 +37,6 @@ void lua_pushrational(lua_State *L, AVRational a){
 	lua_pushnumber(L, a.num); lua_setfield(L, -2, "num");
 	lua_pushnumber(L, a.den); lua_setfield(L, -2, "den");
 }
-
-#define SAFE_NAME(s) s==NULL ? "unknown" : s
 
 int gcd(int a, int b){
 	// Swap bigger number to first number
@@ -76,7 +78,7 @@ DEF_HEAD_1ARG(delete_demuxer, 1)
 	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
 	// Close stream codecs
 	for(std::list<VAStream*>::iterator iter = va_format->va_streams->begin(); iter != va_format->va_streams->end(); ++iter){
-		if( (*iter)->stream->codec )
+		if( (*iter)->stream->codec && DECODE_TYPE((*iter)->stream->codec->codec_type) )
 			avcodec_close((*iter)->stream->codec);
 		(*iter)->va_format = NULL;
 	}
@@ -130,11 +132,13 @@ DEF_HEAD_1ARG(demuxer_get_stream, 2)
 		if( (*iter)->stream == stream )
 			luaL_error2(L, "stream already in use");
 	// Open stream codec
-	AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
-	if(codec == NULL)
-		luaL_error2(L, wxString::Format("codec not found: %s\n(%s)", stream->codec->codec_name, SAFE_NAME(av_get_media_type_string(stream->codec->codec_type))));
-	if(avcodec_open2(stream->codec, codec, NULL) < 0)
-		luaL_error2(L, "couldn't open codec");
+	if(DECODE_TYPE(stream->codec->codec_type)){
+		AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
+		if(codec == NULL)
+			luaL_error2(L, wxString::Format("codec not found: %s", stream->codec->codec_name));
+		if(avcodec_open2(stream->codec, codec, NULL) < 0)
+			luaL_error2(L, "couldn't open codec");
+	}
 	// Create userdata
 	VAStream *va_stream = lua_createuserdata<VAStream>(L, ISTREAM);
 	va_stream->stream = stream;
@@ -148,7 +152,7 @@ DEF_HEAD_1ARG(delete_stream, 1)
 	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
 	// Close stream codec & remove from stream list
 	if(va_stream->va_format != NULL){
-		if(va_stream->stream->codec)
+		if(va_stream->stream->codec && DECODE_TYPE(va_stream->stream->codec->codec_type))
 			avcodec_close(va_stream->stream->codec);
 		va_stream->va_format->va_streams->remove(va_stream);
 	}
@@ -202,6 +206,26 @@ DEF_HEAD_1ARG(stream_info, 1)
 	return 1;
 DEF_TAIL
 
+DEF_HEAD_2ARG(stream_get_frames, 2, 4)
+	// Get stream, callback function and frames range
+	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
+	if(va_stream->va_format == NULL)
+		luaL_error2(L, "stream invalid (demuxer already deleted)");
+	if(!DECODE_TYPE(va_stream->stream->codec->codec_type))
+		luaL_error2(L, "stream invalid (not decodable type)");
+	luaL_argcheck(L, lua_isfunction(L,2), 2, "function expected");
+	double start = luaL_optnumber(L, 3, 1), end = luaL_optnumber(L, 4, 0);
+	// Prepare needed pointers
+	AVFormatContext *format = va_stream->va_format->format;
+	AVStream *stream = va_stream->stream;
+	// Reset file read pointer
+	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0)
+		luaL_error2(L, "resetting demuxer read pointer failed");
+
+	// TODO: decode video/audio/subtitle
+
+DEF_TAIL
+
 // REGISTER
 inline void register_va_meta(lua_State *L){
 	// Initialize libav
@@ -218,6 +242,7 @@ inline void register_va_meta(lua_State *L){
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_stream); lua_setfield(L, -2, "__gc");
 	lua_pushcfunction(L, l_stream_info); lua_setfield(L, -2, "get_info");
+	lua_pushcfunction(L, l_stream_get_frames); lua_setfield(L, -2, "get_frames");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, MUXER);
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
