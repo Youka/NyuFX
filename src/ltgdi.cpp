@@ -451,8 +451,8 @@ inline void register_tgdi_meta(lua_State *L){
 	}
 	// Meta methods
 	luaL_newmetatable(L, TGDI);
-	lua_pushcfunction(L, l_delete_context); lua_setfield(L, -2, "__gc");
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
+	lua_pushcfunction(L, l_delete_context); lua_setfield(L, -2, "__gc");
 	lua_pushcfunction(L, l_flatten_path); lua_setfield(L, -2, "flatten_path");
 	lua_pushcfunction(L, l_abort_path); lua_setfield(L, -2, "abort_path");
 	lua_pushcfunction(L, l_path_box); lua_setfield(L, -2, "path_box");

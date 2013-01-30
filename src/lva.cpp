@@ -16,12 +16,11 @@ extern "C"{
 struct VAStream;
 struct VAFormat{
 	AVFormatContext* format;
-	std::list<VAStream*>* streams;
+	std::list<VAStream*>* va_streams;
 };
 struct VAStream{
 	AVStream *stream;
-	AVFormatContext* format;
-	bool is_deleted;
+	VAFormat *va_format;
 };
 
 // FUNCTIONS
@@ -40,21 +39,20 @@ DEF_HEAD_1ARG(create_demuxer, 1)
 	// Create userdata
 	VAFormat *va_format = lua_createuserdata<VAFormat>(L, DEMUXER);
 	va_format->format = format;
-	va_format->streams = new std::list<VAStream*>;
+	va_format->va_streams = new std::list<VAStream*>;
 	return 1;
 DEF_TAIL
 
-#include <wx/msgdlg.h>
 DEF_HEAD_1ARG(delete_demuxer, 1)
 	// Get demuxer
 	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
 	// Close stream codecs
-	for(std::list<VAStream*>::iterator iter = va_format->streams->begin(); iter != va_format->streams->end(); ++iter){
+	for(std::list<VAStream*>::iterator iter = va_format->va_streams->begin(); iter != va_format->va_streams->end(); ++iter){
 		if( (*iter)->stream->codec )
 			avcodec_close((*iter)->stream->codec);
-		(*iter)->is_deleted = true;
+		(*iter)->va_format = NULL;
 	}
-	delete va_format->streams;
+	delete va_format->va_streams;
 	// Delete demuxer
 	avformat_close_input(&va_format->format);
 DEF_TAIL
@@ -75,20 +73,77 @@ DEF_HEAD_1ARG(demuxer_info, 1)
 	return 1;
 DEF_TAIL
 
+DEF_HEAD_1ARG(demuxer_get_stream, 2)
+	// Get demuxer & stream index
+	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
+	int stream_index = luaL_checknumber(L, 2);
+	// Get stream
+	if(stream_index < 0 || stream_index >= va_format->format->nb_streams)
+		luaL_error2(L, "invalid stream index");
+	AVStream *stream = va_format->format->streams[stream_index];
+	for(std::list<VAStream*>::iterator iter = va_format->va_streams->begin(); iter != va_format->va_streams->end(); ++iter)
+		if( (*iter)->stream == stream )
+			luaL_error2(L, "stream already in use");
+	// Open stream codec
+	AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
+	if(codec == NULL)
+		luaL_error2(L, wxString::Format("codec not found: %s", stream->codec->codec_name));
+	if(avcodec_open2(stream->codec, codec, NULL) < 0)
+		luaL_error2(L, "couldn't open codec");
+	// Create userdata
+	VAStream *va_stream = lua_createuserdata<VAStream>(L, ISTREAM);
+	va_stream->stream = stream;
+	va_stream->va_format = va_format;
+	va_format->va_streams->push_back(va_stream);
+	return 1;
+DEF_TAIL
+
+DEF_HEAD_1ARG(delete_stream, 1)
+	// Get stream
+	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
+	// Close stream codec & remove from stream list
+	if(va_stream->va_format != NULL){
+		if(va_stream->stream->codec)
+			avcodec_close(va_stream->stream->codec);
+		va_stream->va_format->va_streams->remove(va_stream);
+	}
+DEF_TAIL
+
+DEF_HEAD_1ARG(stream_info, 1)
+	// Get stream
+	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
+	if(va_stream->va_format == NULL)
+		luaL_error2(L, "stream invalid (demuxer already deleted)");
+	// Create stream information table
+	AVStream *stream = va_stream->stream;
+	lua_createtable(L, 0, 4);
+	lua_pushnumber(L, stream->index); lua_setfield(L, -2, "index");
+	const char *media_type = av_get_media_type_string(stream->codec->codec_type); lua_pushstring(L, media_type != NULL ? media_type : "unknown"); lua_setfield(L, -2, "type");
+	lua_pushstring(L, stream->codec->codec->long_name); lua_setfield(L, -2, "codec");
+	lua_pushnumber(L, stream->codec->bit_rate); lua_setfield(L, -2, "bitrate");
+
+	// TODO
+
+	return 1;
+DEF_TAIL
+
 // REGISTER
 inline void register_va_meta(lua_State *L){
 	// Initialize libav
 	av_register_all();
 	// Meta methods
 	luaL_newmetatable(L, DEMUXER);
+	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_demuxer); lua_setfield(L, -2, "__gc");
-	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_demuxer_info); lua_setfield(L, -2, "getinfo");
-	lua_pop(L, 1);
-	luaL_newmetatable(L, MUXER);
-	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
+	lua_pushcfunction(L, l_demuxer_get_stream); lua_setfield(L, -2, "getstream");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, ISTREAM);
+	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
+	lua_pushcfunction(L, l_delete_stream); lua_setfield(L, -2, "__gc");
+	lua_pushcfunction(L, l_stream_info); lua_setfield(L, -2, "getinfo");
+	lua_pop(L, 1);
+	luaL_newmetatable(L, MUXER);
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, OSTREAM);
