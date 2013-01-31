@@ -1,3 +1,4 @@
+* process cached frames by video decoding
 * implent video&audio library
 * implent localization
 * rewrite templates
