@@ -4,10 +4,396 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: BBA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "X-Generator: Poedit 1.5.4\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"Language: Chinese\n"
+
+msgid "Lua editor"
+msgstr "Lua编辑器"
+
+msgid "Choose sound file"
+msgstr "选择音频文件"
+
+msgid "Select all text in focus"
+msgstr "选择重点中的所有文本"
+
+msgid "Help"
+msgstr "帮助"
+
+msgid "Open file for focused editor"
+msgstr "在重点编辑器中打开文件"
+
+msgid "Set progressbar to 0%"
+msgstr "设置进度条为0％"
+
+msgid "Thanks to:"
+msgstr "感谢："
+
+msgid "Zooms one level nearer to editor content"
+msgstr "编辑器的邻近内容放大一个级别"
+
+msgid "Open"
+msgstr "打开"
+
+msgid "Unfolds all lines in Lua editor"
+msgstr "显示Lua编辑器中的所有行"
+
+msgid "Paste"
+msgstr "粘贴"
+
+msgid "Open Lua file"
+msgstr "打开Lua文件"
+
+msgid "Toggle editors visibility"
+msgstr "切换编辑器的可见性"
+
+msgid "HTML & PDF documents in 'docs' folder"
+msgstr "'docs'文件夹中的HTML和PDF文件"
+
+msgid "Copy"
+msgstr "复制"
+
+msgid "Search and replace text"
+msgstr "搜索和替换文本"
+
+msgid "Copy selection to clipboard"
+msgstr "复制到剪贴板"
+
+msgid "Taskicon?"
+msgstr "任务图标？"
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Generate"
+msgstr "生成"
+
+msgid "Reload"
+msgstr "重新读取"
+
+msgid "Font"
+msgstr "字体"
+
+msgid "Application options"
+msgstr "程序选项"
+
+msgid "View"
+msgstr "预览"
+
+msgid "Paste clipboard"
+msgstr "粘贴剪切板"
+
+msgid "Reload opened file for focused editor"
+msgstr "重新读取重点编辑器打开的文件"
+
+msgid "Choose"
+msgstr "选择"
+
+msgid "Zooms one level farther to editor content"
+msgstr "编辑器的远离内容放大一个级别"
+
+msgid "Open include folder"
+msgstr "打开包含文件夹"
+
+msgid "Process error"
+msgstr "程序错误"
+
+msgid "Replace"
+msgstr "更换"
+
+msgid "Website:"
+msgstr "网站："
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Help browser"
+msgstr "帮助浏览器"
+
+msgid "Auto-Style"
+msgstr "自动样式排列"
+
+msgid "Show/Hide"
+msgstr "显示/隐藏"
+
+msgid "Forward in history"
+msgstr "历史记录"
+
+msgid "NONE"
+msgstr "无"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Go to line..."
+msgstr "转到行..."
+
+msgid "Stop page loading"
+msgstr "停止页面加载"
+
+msgid "File not exists!"
+msgstr "文件不存在！"
+
+msgid "Zoom out"
+msgstr "缩小"
+
+msgid "Current URL"
+msgstr "当前URL"
+
+msgid "Output options"
+msgstr "输出选项"
+
+msgid "Cut selection to clipboard"
+msgstr "剪切到剪贴板"
+
+msgid "Reset"
+msgstr "重置"
+
+msgid "ASS editor"
+msgstr "ASS编辑器"
+
+msgid "Clear log text"
+msgstr "清除日志"
+
+msgid "Abort"
+msgstr "终止"
+
+msgid "Toggle view for ASS editor"
+msgstr "切换视图为ASS编辑器"
+
+msgid "Quit"
+msgstr "退出"
+
+msgid "Editor view"
+msgstr "编辑视图"
+
+msgid "Tools"
+msgstr "工具"
+
+msgid "Lua error"
+msgstr "Lua错误"
+
+msgid "Clear file of focused editor"
+msgstr "关闭重点编辑器中的文件"
+
+msgid "Start process!"
+msgstr "开始的过程！"
+
+msgid "Choose line number"
+msgstr "选择行的编号"
+
+msgid "Moves caret to line"
+msgstr "在行中插入符号"
+
+msgid "Go to Lua line..."
+msgstr "跳转到Lua行..."
+
+msgid "Undo"
+msgstr "撤销"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "Help for NyuFX usage"
+msgstr "NyuFX使用帮助"
+
+msgid "After process command"
+msgstr "进程指令后"
+
+msgid "Minimize program to taskicon? (otherwise to taskbar)"
+msgstr "程序最小化到任务图标？（否则到任务栏）"
+
+msgid "Load page"
+msgstr "载入页面"
+
+msgid "Do you really want to abort process?"
+msgstr "你真的想放弃进程吗"
+
+msgid "Open folders of NyuFX"
+msgstr "打开Nyufx文件夹"
+
+msgid "Back in history"
+msgstr "回顾历史"
+
+msgid "File saved?"
+msgstr "保存文件？"
+
+msgid "Currently terminating process!"
+msgstr "当前终止的进程"
+
+msgid "Toggle view for Lua editor"
+msgstr "切换到Lua编辑器"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Search and replace - Lua editor"
+msgstr "搜索和替换 - LUA编辑器"
+
+msgid "Search and replace - ASS editor"
+msgstr "搜索和替换 - ASS编辑器"
+
+msgid "'Exit' function is missing!"
+msgstr "'退出'功能不存在！"
+
+msgid "Open ASS file"
+msgstr "打开ASS文件"
+
+msgid "Programmer:"
+msgstr "程序员："
+
+msgid "Delete selection"
+msgstr "删除所选"
+
+msgid "Choose output file"
+msgstr "选择输出文件"
+
+msgid "Redo action"
+msgstr "重复上次动作"
+
+msgid "Couldn't run thread!"
+msgstr "无法运行线程"
+
+msgid "Go to ASS line..."
+msgstr "跳转到ASS行..."
+
+msgid "Output by 'print' function"
+msgstr "输出'print'函数"
+
+msgid "Folds all lines in Lua editor"
+msgstr "收起Lua编辑器中的所有行"
+
+msgid "New"
+msgstr "新的"
+
+msgid "Open tools folder"
+msgstr "打开工具文件夹"
+
+msgid "Language change requires a program restart"
+msgstr "更改语言，需要重新启动程序"
+
+msgid "Save ASS file"
+msgstr "保存ASS文件"
+
+msgid "GUI language"
+msgstr "GUI语言"
+
+msgid "Style text"
+msgstr "样式文本"
+
+msgid "About"
+msgstr "关于"
+
+msgid "'Init' function is missing!"
+msgstr "'初始化'功能不存在！"
+
+msgid "Karaoke effect creation with pixel & vector utilities."
+msgstr "卡拉OK效果创建像素和矢量的方案"
+
+msgid "Informations about NyuFX"
+msgstr "关于NyuFX的信息"
+
+msgid "Save file of focused editor"
+msgstr "保存重点编辑器的文件"
+
+msgid "Folders"
+msgstr "文件夹"
+
+msgid "Unfold all"
+msgstr "全部展开"
+
+msgid "Active editor"
+msgstr "活动的编辑器"
+
+msgid "Save Lua file"
+msgstr "保存Lua文件"
+
+msgid "Progress"
+msgstr "进展"
+
+msgid "Output file error"
+msgstr "输出文件错误"
+
+msgid "Open output file"
+msgstr "打开输出文件"
+
+msgid "Cut"
+msgstr "剪切"
+
+msgid "Cancel"
+msgstr "关闭"
+
+msgid "Default font of both editors"
+msgstr "两个编辑器的默认字体"
+
+msgid "Open templates folder"
+msgstr "打开模板文件夹"
+
+msgid "Couldn't create thread!"
+msgstr "无法创建线程！"
+
+msgid "Save file with specific target of focused editor"
+msgstr "保存重点编辑器中的特定目标文件"
+
+msgid "Undo action"
+msgstr "恢复上次动作"
+
+msgid "Access error"
+msgstr "访问错误"
+
+msgid "Choose an output file"
+msgstr "选择一个输出文件"
+
+msgid "Output"
+msgstr "输出"
+
+msgid "Zoom in"
+msgstr "放大"
+
+msgid "Fold all"
+msgstr "全部收起"
+
+msgid "Accept"
+msgstr "接受"
+
+msgid "Set by 'io.progressbar' function"
+msgstr "留出'io.progressbar'函数"
+
+msgid "Not possible while a process is running!"
+msgstr "在一个进程正在运行时无法做到！"
+
+msgid "Sound file to play after generation"
+msgstr "播放音频文件在下一代"
+
+msgid "Select all"
+msgstr "全选"
+
+msgid "Redo"
+msgstr "重做"
+
+msgid "Save as..."
+msgstr "另存为"
+
+msgid "Sound"
+msgstr "音频"
+
+msgid "Language"
+msgstr "语言"
+
+msgid "Stop process!"
+msgstr "停止进程"
+
+msgid "Close NyuFX"
+msgstr "关闭NyuFX"
+
+msgid "File"
+msgstr "文件"
+
+msgid "Progressbar"
+msgstr "进度条"

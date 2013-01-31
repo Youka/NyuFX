@@ -165,7 +165,7 @@ DEF_HEAD_1ARG(stream_info, 1)
 		luaL_error2(L, "stream invalid (demuxer already deleted)");
 	AVStream *stream = va_stream->stream;
 	// Create stream information table
-	lua_createtable(L, 0, 2);
+	lua_createtable(L, 0, 4);
 	lua_pushnumber(L, stream->index); lua_setfield(L, -2, "index");
 	lua_pushstring(L, SAFE_NAME(av_get_media_type_string(stream->codec->codec_type))); lua_setfield(L, -2, "type");
 	switch(stream->codec->codec_type){
@@ -219,23 +219,56 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 		luaL_error2(L, "stream invalid (not decodable type)");
 	luaL_argcheck(L, lua_isfunction(L,2), 2, "function expected");
 	double start = luaL_optnumber(L, 3, 1), end = luaL_optnumber(L, 4, 0);
-	// Prepare needed pointers
+	// Demuxer pointers & time base
 	AVFormatContext *format = va_stream->va_format->format;
 	AVStream *stream = va_stream->stream;
-	// Reset file read pointer
-	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0)
-		luaL_error2(L, "resetting demuxer read pointer failed");
+	double time_base = av_q2d_safe(stream->time_base);
+	// Set demuxer read pointer to stream start
+	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0 &&
+		av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0)
+		luaL_error2(L, "setting demuxer read pointer to stream start failed");
 	// Decode frames
 	switch(stream->codec->codec_type){
-		case AVMEDIA_TYPE_VIDEO:
-			// TODO: decode video
+		case AVMEDIA_TYPE_VIDEO:{
+
+				// TODO: decode video
+
+			}
 			break;
-		case AVMEDIA_TYPE_AUDIO:
-			// TODO: decode audio
+		case AVMEDIA_TYPE_AUDIO:{
+
+				// TODO: decode audio
+
+			}
 			break;
-		case AVMEDIA_TYPE_SUBTITLE:
-			// TODO: decode subtitles
-			//avcodec_decode_subtitle2
+		case AVMEDIA_TYPE_SUBTITLE:{
+				// Just SSA/ASS supported
+				if(stream->codec->codec_id != AV_CODEC_ID_SSA)
+					luaL_error2(L, "not supported subtitle format (SSA/ASS only)");
+				// Read stream data
+				AVPacket packet; av_init_packet(&packet);
+				AVSubtitle subtitle; int got_sub;
+				while(av_read_frame(format, &packet) == 0){
+					if(packet.stream_index == stream->index){
+						// Decode subtitle
+						if(avcodec_decode_subtitle2(stream->codec, &subtitle, &got_sub, &packet) >= 0 && got_sub != 0){
+							// Send subtitle to Lua
+							lua_pushvalue(L, 2);
+							lua_pushstring(L, subtitle.rects[0]->ass);
+							if(lua_pcall(L, 1, 0, 0)){
+								avsubtitle_free(&subtitle);
+								av_free_packet(&packet);
+								luaL_error2(L, lua_tostring(L,-1));
+							}
+							avsubtitle_free(&subtitle);
+						}else{
+							av_free_packet(&packet);
+							luaL_error2(L, "couldn't decode subtitle");
+						}
+					}
+					av_free_packet(&packet);
+				}
+			}
 			break;
 	}
 DEF_TAIL

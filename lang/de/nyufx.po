@@ -1,29 +1,30 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: NyuFX 1.6\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: Youka\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
+"Language: German\n"
 
 msgid "Lua editor"
 msgstr "Lua Editor"
 
 msgid "Choose sound file"
-msgstr "Wähle Audiodatei"
+msgstr "WÃ¤hle Audiodatei"
 
 msgid "Select all text in focus"
-msgstr "Wähle gesamten Editortext aus"
+msgstr "WÃ¤hle gesamten Editortext aus"
 
 msgid "Help"
 msgstr "Hilfe"
 
 msgid "Open file for focused editor"
-msgstr "Öffne Datei für fokussierten Editor"
+msgstr "Ã–ffne Datei fÃ¼r fokussierten Editor"
 
 msgid "Set progressbar to 0%"
 msgstr "Setze Fortschrittsbalken auf 0%"
@@ -32,16 +33,16 @@ msgid "Zooms one level nearer to editor content"
 msgstr "Verkleinere Sichtfeld zum Editorinhalt um eine Stufe"
 
 msgid "Open"
-msgstr "Öffnen"
+msgstr "Ã–ffnen"
 
 msgid "Unfolds all lines in Lua editor"
 msgstr "Entfalte alle Zeilen im Lua Editor"
 
 msgid "Paste"
-msgstr "Einfügen"
+msgstr "EinfÃ¼gen"
 
 msgid "Open Lua file"
-msgstr "Öffne Lua Datei"
+msgstr "Ã–ffne Lua Datei"
 
 msgid "Toggle editors visibility"
 msgstr "Schalte Editorsichtbarkeit um"
@@ -77,19 +78,19 @@ msgid "View"
 msgstr "Ansicht"
 
 msgid "Paste clipboard"
-msgstr "Füge Zwischenablage ein"
+msgstr "FÃ¼ge Zwischenablage ein"
 
 msgid "Reload opened file for focused editor"
-msgstr "Lade geöffnete Datei des fokussierten Editors neu"
+msgstr "Lade geÃ¶ffnete Datei des fokussierten Editors neu"
 
 msgid "Not possible while a process is running!"
-msgstr "Nicht möglich während laufendem Prozess!"
+msgstr "Nicht mÃ¶glich wÃ¤hrend laufendem Prozess!"
 
 msgid "Zooms one level farther to editor content"
-msgstr "Vergrößere Sichtfeld zum Editorinhalt um eine Stufe"
+msgstr "VergrÃ¶ÃŸere Sichtfeld zum Editorinhalt um eine Stufe"
 
 msgid "Open include folder"
-msgstr "Öffne include Ordner"
+msgstr "Ã–ffne include Ordner"
 
 msgid "Process error"
 msgstr "Prozessfehler"
@@ -98,7 +99,7 @@ msgid "Replace"
 msgstr "Ersetzen"
 
 msgid "Delete"
-msgstr "Löschen"
+msgstr "LÃ¶schen"
 
 msgid "Redo"
 msgstr "Wiederherstellen"
@@ -110,13 +111,13 @@ msgid "Show/Hide"
 msgstr "Zeigen/Verstecken"
 
 msgid "Forward in history"
-msgstr "Vorwärts im Verlauf"
+msgstr "VorwÃ¤rts im Verlauf"
 
 msgid "NONE"
 msgstr "KEINER"
 
 msgid "Close"
-msgstr "Schließen"
+msgstr "SchlieÃŸen"
 
 msgid "Save"
 msgstr "Speichern"
@@ -131,7 +132,7 @@ msgid "File not exists!"
 msgstr "Datei existiert nicht!"
 
 msgid "Zoom out"
-msgstr "Vergrößere Sichtfeld"
+msgstr "VergrÃ¶ÃŸere Sichtfeld"
 
 msgid "Current URL"
 msgstr "Momentane URL"
@@ -143,7 +144,7 @@ msgid "Cut selection to clipboard"
 msgstr "Schneide Auswahl aus zur Zwischenablage"
 
 msgid "Reset"
-msgstr "Zurücksetzen"
+msgstr "ZurÃ¼cksetzen"
 
 msgid "ASS editor"
 msgstr "ASS Editor"
@@ -176,7 +177,7 @@ msgid "Start process!"
 msgstr "Starte Prozess!"
 
 msgid "Choose line number"
-msgstr "Wähle Zeile"
+msgstr "WÃ¤hle Zeile"
 
 msgid "Moves caret to line"
 msgstr "Bewege Textmarke zu Zeile"
@@ -185,7 +186,7 @@ msgid "Go to Lua line..."
 msgstr "Springe zu Lua Zeile..."
 
 msgid "Undo"
-msgstr "Rückgängig machen"
+msgstr "RÃ¼ckgÃ¤ngig machen"
 
 msgid "Log"
 msgstr "Protokoll"
@@ -203,13 +204,13 @@ msgid "Load page"
 msgstr "Lade Seite"
 
 msgid "Do you really want to abort process?"
-msgstr "Möchten sie wirklich den Prozess abbrechen?"
+msgstr "MÃ¶chten sie wirklich den Prozess abbrechen?"
 
 msgid "Open folders of NyuFX"
-msgstr "Öffne Ordner von NyuFX"
+msgstr "Ã–ffne Ordner von NyuFX"
 
 msgid "Back in history"
-msgstr "Zurück im Verlauf"
+msgstr "ZurÃ¼ck im Verlauf"
 
 msgid "File saved?"
 msgstr "Datei gespeichert?"
@@ -233,13 +234,13 @@ msgid "'Exit' function is missing!"
 msgstr "'Exit' Funktion fehlt!"
 
 msgid "Undo action"
-msgstr "Mache Aktion rückgängig"
+msgstr "Mache Aktion rÃ¼ckgÃ¤ngig"
 
 msgid "Delete selection"
-msgstr "Lösche Auswahl"
+msgstr "LÃ¶sche Auswahl"
 
 msgid "Choose output file"
-msgstr "Wähle Ausgabedatei"
+msgstr "WÃ¤hle Ausgabedatei"
 
 msgid "Redo action"
 msgstr "Wiederhole Aktion"
@@ -269,10 +270,10 @@ msgid "Thanks to:"
 msgstr "Dank an:"
 
 msgid "Open tools folder"
-msgstr "Öffne tools Ordner"
+msgstr "Ã–ffne tools Ordner"
 
 msgid "Language change requires a program restart"
-msgstr "Sprachänderung erfordert einen Programm Neustart"
+msgstr "SprachÃ¤nderung erfordert einen Programm Neustart"
 
 msgid "Save ASS file"
 msgstr "Speichere ASS Datei"
@@ -290,7 +291,7 @@ msgid "Output"
 msgstr "Ausgabe"
 
 msgid "Informations about NyuFX"
-msgstr "Informationen über NyuFX"
+msgstr "Informationen Ã¼ber NyuFX"
 
 msgid "Unfold all"
 msgstr "Entfalte alles"
@@ -332,19 +333,19 @@ msgid "Default font of both editors"
 msgstr "Standard Schrift von beiden Editoren"
 
 msgid "Open templates folder"
-msgstr "Öffne templates Ordner"
+msgstr "Ã–ffne templates Ordner"
 
 msgid "Choose an output file"
-msgstr "Wähle Ausgabedatei"
+msgstr "WÃ¤hle Ausgabedatei"
 
 msgid "Save file with specific target of focused editor"
-msgstr "Speichere Datei mit ausgewähltem Ziel vom fokussierten Editor"
+msgstr "Speichere Datei mit ausgewÃ¤hltem Ziel vom fokussierten Editor"
 
 msgid "Open output file"
-msgstr "Öffne Ausgabedatei"
+msgstr "Ã–ffne Ausgabedatei"
 
 msgid "Website:"
-msgstr "Internetpräsenz:"
+msgstr "InternetprÃ¤senz:"
 
 msgid "Access error"
 msgstr "Zugriffsfehler"
@@ -362,16 +363,16 @@ msgid "Accept"
 msgstr "Akzeptieren"
 
 msgid "Open ASS file"
-msgstr "Öffne ASS Datei"
+msgstr "Ã–ffne ASS Datei"
 
 msgid "Karaoke effect creation with pixel & vector utilities."
 msgstr "Karaoke Effekt Erstellung mit Pixel & Vektor Werkzeugen."
 
 msgid "Choose"
-msgstr "Wähle"
+msgstr "WÃ¤hle"
 
 msgid "Select all"
-msgstr "Alles auswählen"
+msgstr "Alles auswÃ¤hlen"
 
 msgid "Sound"
 msgstr "Audio"
@@ -389,7 +390,7 @@ msgid "File"
 msgstr "Datei"
 
 msgid "Close NyuFX"
-msgstr "Schließe NyuFX"
+msgstr "SchlieÃŸe NyuFX"
 
 msgid "Progressbar"
 msgstr "Fortschrittsbalken"
