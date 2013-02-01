@@ -1,5 +1,8 @@
-* process cached frames by video decoding
-* implent video&audio library
+* fix audio samples to Lua
+* decode packet data completely
+* optimize frame range decoding
+
 * implent localization
+
 * rewrite templates
 * update documentation

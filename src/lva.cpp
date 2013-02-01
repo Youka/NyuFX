@@ -30,12 +30,6 @@ inline double av_q2d_safe(AVRational a){
     return a.den == 0 ? 0 : av_q2d(a);
 }
 
-void lua_pushrational(lua_State *L, AVRational a){
-	lua_createtable(L, 0, 2);
-	lua_pushnumber(L, a.num); lua_setfield(L, -2, "num");
-	lua_pushnumber(L, a.den); lua_setfield(L, -2, "den");
-}
-
 int gcd(int a, int b){
 	// Swap bigger number to first number
 	if(b > a)
@@ -49,6 +43,56 @@ int gcd(int a, int b){
 		return b;
 	else
 		return gcd(b, rest);
+}
+
+void lua_pushrational(lua_State *L, AVRational a){
+	lua_createtable(L, 0, 2);
+	lua_pushnumber(L, a.num); lua_setfield(L, -2, "num");
+	lua_pushnumber(L, a.den); lua_setfield(L, -2, "den");
+}
+
+void lua_pushsamples(lua_State *L, uint8_t *samples, int samples_n, AVSampleFormat format){
+	lua_createtable(L, samples_n, 0);
+	/*switch(format){
+		case AV_SAMPLE_FMT_U8:
+		case AV_SAMPLE_FMT_U8P:
+			for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
+				lua_pushnumber(L, *samples++); lua_rawseti(L, -2, sample_i+1);
+			}
+			break;
+		case AV_SAMPLE_FMT_S16:
+		case AV_SAMPLE_FMT_S16P:{
+				int16_t *data = reinterpret_cast<int16_t*>(samples);
+				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
+					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
+				}
+			}
+			break;
+		case AV_SAMPLE_FMT_S32:
+		case AV_SAMPLE_FMT_S32P:{
+				int32_t *data = reinterpret_cast<int32_t*>(samples);
+				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
+					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
+				}
+			}
+			break;
+		case AV_SAMPLE_FMT_FLT:
+		case AV_SAMPLE_FMT_FLTP:{
+				float *data = reinterpret_cast<float*>(samples);
+				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
+					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
+				}
+			}
+			break;
+		case AV_SAMPLE_FMT_DBL:
+		case AV_SAMPLE_FMT_DBLP:{
+				double *data = reinterpret_cast<double*>(samples);
+				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
+					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
+				}
+			}
+			break;
+	}*/
 }
 
 // FUNCTIONS
@@ -258,7 +302,7 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0 &&
 		av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0)
 		luaL_error2(L, "setting demuxer read pointer to stream start failed");
-	// Decode frames
+	// Decode stream
 	switch(stream->codec->codec_type){
 		case AVMEDIA_TYPE_VIDEO:{
 				// Allocate image buffers & converter
@@ -381,18 +425,56 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							luaL_error2(L, "couldn't decode samples");
 						}
 						if(got_frame != 0){
-
-							// TODO
-
+							// Filter by requested samples
+							if(start > end || (start <= sample_i && end >= sample_i)){
+								// Send samples to Lua
+								lua_pushvalue(L, 2);
+								lua_createtable(L, frame->channels, 1);
+								lua_pushnumber(L, sample_i); lua_setfield(L, -2, "i");
+								for(unsigned int channel_i = 0; channel_i < frame->channels; channel_i++){
+									lua_pushsamples(L, frame->data[channel_i], frame->nb_samples, static_cast<AVSampleFormat>(frame->format));
+									lua_rawseti(L, -2, channel_i+1);
+								}
+								if(lua_pcall(L, 1, 0, 0)){
+									av_free_packet(&packet);
+									avcodec_free_frame(&frame);
+									luaL_error2(L, lua_tostring(L,-1));
+								}
+								lua_gc(L, LUA_GCCOLLECT, 0);
+							}
 							sample_i += frame->nb_samples;
 						}
 					}
 					av_free_packet(&packet);
 				}
 				// Flush cached samples
-
-				// TODO
-
+				packet.size = 0; packet.data = NULL;
+				do{
+					// Decode samples
+					if(avcodec_decode_audio4(stream->codec, frame, &got_frame, &packet) < 0){
+						avcodec_free_frame(&frame);
+						luaL_error2(L, "couldn't decode samples");
+					}
+					if(got_frame != 0){
+						// Filter by requested samples
+						if(start > end || (start <= sample_i && end >= sample_i)){
+							// Send samples to Lua
+							lua_pushvalue(L, 2);
+							lua_createtable(L, frame->channels, 1);
+							lua_pushnumber(L, sample_i); lua_setfield(L, -2, "i");
+							for(unsigned int channel_i = 0; channel_i < frame->channels; channel_i++){
+								lua_pushsamples(L, frame->data[channel_i], frame->nb_samples, static_cast<AVSampleFormat>(frame->format));
+								lua_rawseti(L, -2, channel_i+1);
+							}
+							if(lua_pcall(L, 1, 0, 0)){
+								avcodec_free_frame(&frame);
+								luaL_error2(L, lua_tostring(L,-1));
+							}
+							lua_gc(L, LUA_GCCOLLECT, 0);
+						}
+						sample_i += frame->nb_samples;
+					}
+				}while(got_frame != 0);
 				// Free samples buffer
 				avcodec_free_frame(&frame);
 			}
