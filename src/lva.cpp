@@ -52,6 +52,26 @@ int gcd(int a, int b){
 }
 
 // FUNCTIONS
+DEF_HEAD_1ARG(list_demuxers, 0)
+	lua_newtable(L);
+	unsigned int i = 0;
+	AVInputFormat *iformat = NULL;
+	while((iformat = av_iformat_next(iformat)) != NULL){
+		lua_pushstring(L, iformat->long_name); lua_rawseti(L, -2, ++i);
+	}
+	return 1;
+DEF_TAIL
+
+DEF_HEAD_1ARG(list_decoders, 0)
+	lua_newtable(L);
+	unsigned int i = 0;
+	AVCodec *codec = NULL;
+	while((codec = av_codec_next(codec)) != NULL){
+		lua_pushstring(L, codec->long_name); lua_rawseti(L, -2, ++i);
+	}
+	return 1;
+DEF_TAIL
+
 DEF_HEAD_1ARG(create_demuxer, 1)
 	// Get filename
 	wxString filename = wxFileName(wxString::FromUTF8(luaL_checkstring(L, 1))).GetShortPath();
@@ -447,6 +467,8 @@ inline void register_va_meta(lua_State *L){
 
 inline void register_va_lib(lua_State *L){
 	const luaL_Reg va[] = {
+		{"demuxers", l_list_demuxers},
+		{"decoders", l_list_decoders},
 		{"create_demuxer", l_create_demuxer},
 		{0, 0}
 	};
