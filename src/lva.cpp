@@ -51,48 +51,64 @@ void lua_pushrational(lua_State *L, AVRational a){
 	lua_pushnumber(L, a.den); lua_setfield(L, -2, "den");
 }
 
-void lua_pushsamples(lua_State *L, uint8_t *samples, int samples_n, AVSampleFormat format){
-	lua_createtable(L, samples_n, 0);
-	/*switch(format){
-		case AV_SAMPLE_FMT_U8:
-		case AV_SAMPLE_FMT_U8P:
-			for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
-				lua_pushnumber(L, *samples++); lua_rawseti(L, -2, sample_i+1);
-			}
-			break;
-		case AV_SAMPLE_FMT_S16:
-		case AV_SAMPLE_FMT_S16P:{
-				int16_t *data = reinterpret_cast<int16_t*>(samples);
+void lua_pushframe(lua_State *L, AVFrame *frame, unsigned int frame_i, AVPicture *picture){
+	lua_createtable(L, frame->width * frame->height * 3, 2);
+	lua_pushnumber(L, frame_i); lua_setfield(L, -2, "i");
+	lua_pushboolean(L, frame->key_frame); lua_setfield(L, -2, "key");
+	unsigned long i = 0;
+	uint8_t *row;
+	for(unsigned int y = 0; y < frame->height; y++){
+		row = picture->data[0] + y * picture->linesize[0];
+		for(unsigned int x = 0; x < frame->width; x++){
+			lua_pushnumber(L, *(row)); lua_rawseti(L, -2, ++i);	// r
+			lua_pushnumber(L, *(row+1)); lua_rawseti(L, -2, ++i);	// g
+			lua_pushnumber(L, *(row+2)); lua_rawseti(L, -2, ++i);	// b
+			row += 3;
+		}
+	}
+}
+
+void lua_pushsamples(lua_State *L, AVFrame *frame, unsigned int sample_i){
+	unsigned int samples_n = frame->channels * frame->nb_samples;
+	lua_createtable(L, samples_n, 1);
+	lua_pushnumber(L, sample_i); lua_setfield(L, -2, "i");
+	switch(frame->format){
+		case AV_SAMPLE_FMT_U8:{
+				uint8_t *data = frame->data[0];
 				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
 					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
 				}
 			}
 			break;
-		case AV_SAMPLE_FMT_S32:
-		case AV_SAMPLE_FMT_S32P:{
-				int32_t *data = reinterpret_cast<int32_t*>(samples);
+		case AV_SAMPLE_FMT_S16:{
+				int16_t *data = reinterpret_cast<int16_t*>(frame->data[0]);
 				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
 					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
 				}
 			}
 			break;
-		case AV_SAMPLE_FMT_FLT:
-		case AV_SAMPLE_FMT_FLTP:{
-				float *data = reinterpret_cast<float*>(samples);
+		case AV_SAMPLE_FMT_S32:{
+				int32_t *data = reinterpret_cast<int32_t*>(frame->data[0]);
 				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
 					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
 				}
 			}
 			break;
-		case AV_SAMPLE_FMT_DBL:
-		case AV_SAMPLE_FMT_DBLP:{
-				double *data = reinterpret_cast<double*>(samples);
+		case AV_SAMPLE_FMT_FLT:{
+				float *data = reinterpret_cast<float*>(frame->data[0]);
 				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
 					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
 				}
 			}
 			break;
-	}*/
+		case AV_SAMPLE_FMT_DBL:{
+				double *data = reinterpret_cast<double*>(frame->data[0]);
+				for(unsigned int sample_i = 0; sample_i < samples_n; sample_i++){
+					lua_pushnumber(L, *data++); lua_rawseti(L, -2, sample_i+1);
+				}
+			}
+			break;
+	}
 }
 
 // FUNCTIONS
@@ -311,7 +327,6 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 				SwsContext *sws_ctx = sws_getContext(stream->codec->width, stream->codec->height, stream->codec->pix_fmt,
 													stream->codec->width, stream->codec->height, AV_PIX_FMT_RGB24,
 													SWS_FAST_BILINEAR, NULL, NULL, NULL);
-				unsigned long data_size = stream->codec->width * stream->codec->height * 3;
 				// Stream data
 				AVPacket packet; av_init_packet(&packet); packet.size = 0; packet.data = NULL;
 				int got_frame;
@@ -332,21 +347,8 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							if(start > end || (start <= frame_i && end >= frame_i)){
 								// Send frame to Lua
 								lua_pushvalue(L, 2);
-								lua_createtable(L, data_size, 2);
-								lua_pushnumber(L, frame_i); lua_setfield(L, -2, "i");
-								lua_pushboolean(L, frame->key_frame); lua_setfield(L, -2, "key");
 								sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
-								unsigned long i = 0;
-								uint8_t *row;
-								for(unsigned int y = 0; y < frame->height; y++){
-									row = frame->data[0] + y * frame->linesize[0];
-									for(unsigned int x = 0; x < frame->width; x++){
-										lua_pushnumber(L, *(row)); lua_rawseti(L, -2, ++i);	// r
-										lua_pushnumber(L, *(row+1)); lua_rawseti(L, -2, ++i);	// g
-										lua_pushnumber(L, *(row+2)); lua_rawseti(L, -2, ++i);	// b
-										row += 3;
-									}
-								}
+								lua_pushframe(L, frame, frame_i, &picture);
 								if(lua_pcall(L, 1, 0, 0)){
 									av_free_packet(&packet);
 									sws_freeContext(sws_ctx);
@@ -376,21 +378,8 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 						if(start > end || (start <= frame_i && end >= frame_i)){
 							// Send frame to Lua
 							lua_pushvalue(L, 2);
-							lua_createtable(L, data_size, 2);
-							lua_pushnumber(L, frame_i); lua_setfield(L, -2, "i");
-							lua_pushboolean(L, frame->key_frame); lua_setfield(L, -2, "key");
 							sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
-							unsigned long i = 0;
-							uint8_t *row;
-							for(unsigned int y = 0; y < frame->height; y++){
-								row = frame->data[0] + y * frame->linesize[0];
-								for(unsigned int x = 0; x < frame->width; x++){
-									lua_pushnumber(L, *(row)); lua_rawseti(L, -2, ++i);	// r
-									lua_pushnumber(L, *(row+1)); lua_rawseti(L, -2, ++i);	// g
-									lua_pushnumber(L, *(row+2)); lua_rawseti(L, -2, ++i);	// b
-									row += 3;
-								}
-							}
+							lua_pushframe(L, frame, frame_i, &picture);
 							if(lua_pcall(L, 1, 0, 0)){
 								sws_freeContext(sws_ctx);
 								avpicture_free(&picture);
@@ -429,12 +418,7 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							if(start > end || (start <= sample_i && end >= sample_i)){
 								// Send samples to Lua
 								lua_pushvalue(L, 2);
-								lua_createtable(L, frame->channels, 1);
-								lua_pushnumber(L, sample_i); lua_setfield(L, -2, "i");
-								for(unsigned int channel_i = 0; channel_i < frame->channels; channel_i++){
-									lua_pushsamples(L, frame->data[channel_i], frame->nb_samples, static_cast<AVSampleFormat>(frame->format));
-									lua_rawseti(L, -2, channel_i+1);
-								}
+								lua_pushsamples(L, frame, sample_i);
 								if(lua_pcall(L, 1, 0, 0)){
 									av_free_packet(&packet);
 									avcodec_free_frame(&frame);
@@ -460,12 +444,7 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 						if(start > end || (start <= sample_i && end >= sample_i)){
 							// Send samples to Lua
 							lua_pushvalue(L, 2);
-							lua_createtable(L, frame->channels, 1);
-							lua_pushnumber(L, sample_i); lua_setfield(L, -2, "i");
-							for(unsigned int channel_i = 0; channel_i < frame->channels; channel_i++){
-								lua_pushsamples(L, frame->data[channel_i], frame->nb_samples, static_cast<AVSampleFormat>(frame->format));
-								lua_rawseti(L, -2, channel_i+1);
-							}
+							lua_pushsamples(L, frame, sample_i);
 							if(lua_pcall(L, 1, 0, 0)){
 								avcodec_free_frame(&frame);
 								luaL_error2(L, lua_tostring(L,-1));
