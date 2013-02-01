@@ -52,20 +52,32 @@ int gcd(int a, int b){
 }
 
 // FUNCTIONS
-DEF_HEAD_1ARG(list_demuxers, 0)
-	lua_newtable(L);
+DEF_HEAD_1ARG(list_formats, 0)
+	// Count formats
 	unsigned int i = 0;
 	AVInputFormat *iformat = NULL;
+	while((iformat = av_iformat_next(iformat)) != NULL)
+		i++;
+	// Formats to Lua
+	lua_createtable(L, i, 0);
+	i = 0;
+	iformat = NULL;
 	while((iformat = av_iformat_next(iformat)) != NULL){
 		lua_pushstring(L, iformat->long_name); lua_rawseti(L, -2, ++i);
 	}
 	return 1;
 DEF_TAIL
 
-DEF_HEAD_1ARG(list_decoders, 0)
-	lua_newtable(L);
+DEF_HEAD_1ARG(list_codecs, 0)
+	// Count codecs
 	unsigned int i = 0;
 	AVCodec *codec = NULL;
+	while((codec = av_codec_next(codec)) != NULL)
+		i++;
+	// Codecs to Lua
+	lua_createtable(L, i, 0);
+	i = 0;
+	codec = NULL;
 	while((codec = av_codec_next(codec)) != NULL){
 		lua_pushstring(L, codec->long_name); lua_rawseti(L, -2, ++i);
 	}
@@ -110,20 +122,15 @@ DEF_HEAD_1ARG(demuxer_info, 1)
 	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
 	// Create demuxer information table
 	lua_createtable(L, 0, 8);
-	lua_pushnumber(L, va_format->format->nb_streams); lua_setfield(L, -2, "streams");
-	lua_pushstring(L, va_format->format->filename); lua_setfield(L, -2, "filename");
-	lua_pushstring(L, va_format->format->iformat->long_name); lua_setfield(L, -2, "container");
-	lua_pushnumber(L, va_format->format->start_time / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "start_time");
-	lua_pushnumber(L, va_format->format->duration / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "duration");
-	lua_pushnumber(L, va_format->format->bit_rate); lua_setfield(L, -2, "bitrate");
-	lua_pushnumber(L, va_format->format->nb_chapters); lua_setfield(L, -2, "chapters");
-	return 1;
-DEF_TAIL
-
-DEF_HEAD_1ARG(demuxer_get_chapters, 1)
-	// Get demuxer
-	VAFormat *va_format = reinterpret_cast<VAFormat*>(luaL_checkuserdata(L, 1, DEMUXER));
-	// Create chapters table
+	lua_createtable(L, av_dict_count(va_format->format->metadata), 0);
+	AVDictionaryEntry *entry = NULL;
+	for(unsigned int i = 1; (entry = av_dict_get(va_format->format->metadata, "", entry, AV_DICT_IGNORE_SUFFIX)); i++){
+		lua_createtable(L, 0, 2);
+		lua_pushstring(L, entry->key); lua_setfield(L, -2, "key");
+		lua_pushstring(L, entry->value); lua_setfield(L, -2, "value");
+		lua_rawseti(L, -2, i);
+	}
+	lua_setfield(L, -2, "metadata");
 	lua_createtable(L, va_format->format->nb_chapters, 0);
 	for(unsigned int chapter_i = 0; chapter_i < va_format->format->nb_chapters; chapter_i++){
 		AVChapter *chapter = va_format->format->chapters[chapter_i];
@@ -135,6 +142,13 @@ DEF_HEAD_1ARG(demuxer_get_chapters, 1)
 		lua_pushstring(L, entry ? entry->value : ""); lua_setfield(L, -2, "value");
 		lua_rawseti(L, -2, chapter_i+1);
 	}
+	lua_setfield(L, -2, "chapters");
+	lua_pushnumber(L, va_format->format->nb_streams); lua_setfield(L, -2, "streams");
+	lua_pushstring(L, va_format->format->filename); lua_setfield(L, -2, "filename");
+	lua_pushstring(L, va_format->format->iformat->long_name); lua_setfield(L, -2, "container");
+	lua_pushnumber(L, va_format->format->start_time / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "start_time");
+	lua_pushnumber(L, va_format->format->duration / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "duration");
+	lua_pushnumber(L, va_format->format->bit_rate); lua_setfield(L, -2, "bitrate");
 	return 1;
 DEF_TAIL
 
@@ -375,7 +389,7 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 					}
 					av_free_packet(&packet);
 				}
-				// Flush cached frames
+				// Flush cached samples
 
 				// TODO
 
@@ -454,7 +468,6 @@ inline void register_va_meta(lua_State *L){
 	lua_pushvalue(L, -1); lua_setfield(L, -2, "__index");
 	lua_pushcfunction(L, l_delete_demuxer); lua_setfield(L, -2, "__gc");
 	lua_pushcfunction(L, l_demuxer_info); lua_setfield(L, -2, "get_info");
-	lua_pushcfunction(L, l_demuxer_get_chapters); lua_setfield(L, -2, "get_chapters");
 	lua_pushcfunction(L, l_demuxer_get_stream); lua_setfield(L, -2, "get_stream");
 	lua_pop(L, 1);
 	luaL_newmetatable(L, ISTREAM);
@@ -467,8 +480,8 @@ inline void register_va_meta(lua_State *L){
 
 inline void register_va_lib(lua_State *L){
 	const luaL_Reg va[] = {
-		{"demuxers", l_list_demuxers},
-		{"decoders", l_list_decoders},
+		{"formats", l_list_formats},
+		{"codecs", l_list_codecs},
 		{"create_demuxer", l_create_demuxer},
 		{0, 0}
 	};

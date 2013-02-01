@@ -912,7 +912,7 @@ function table.tostring(t)
 	if type(t) ~= "table" then
 		error("table expected", 2)
 	end
-	local result, result_n = {}, 0
+	local result, result_n = {tostring(t)}, 1
 	local function table_print(t, space)
 		for i, v in pairs(t) do
 			if type(i) == "string" then
