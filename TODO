@@ -1,4 +1,4 @@
-* optimize frame range decoding
+* found frame/sample/subtitle indices & optimize frame range decoding
 
 * implent localization
 

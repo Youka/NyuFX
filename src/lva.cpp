@@ -52,11 +52,12 @@ void lua_pushrational(lua_State *L, AVRational a){
 	lua_pushnumber(L, a.den); lua_setfield(L, -2, "den");
 }
 
-void lua_pushframe(lua_State *L, uint64_t frame_i, bool key_frame, int width, int height, AVPicture *picture){
+void lua_pushframe(lua_State *L, int64_t frame_i, AVPictureType frame_type, int width, int height, AVPicture *picture){
 	// Create frame table
 	lua_createtable(L, width * height * 3, 2);
 	lua_pushnumber(L, frame_i); lua_setfield(L, -2, "i");
-	lua_pushboolean(L, key_frame); lua_setfield(L, -2, "key");
+	char frame_type_str[2] = {av_get_picture_type_char(frame_type), '\0'};
+	lua_pushstring(L, frame_type_str); lua_setfield(L, -2, "type");
 	// Push RGB data
 	unsigned long i = 0;
 	uint8_t *row;
@@ -122,7 +123,7 @@ DEF_HEAD_1ARG(create_demuxer, 1)
 	// Create demuxer
 	AVFormatContext *format = NULL;
 	if(avformat_open_input(&format, filename, NULL, NULL) < 0)
-		luaL_error2(L, wxString::Format("invalid file: \"%s\"", filename));
+		luaL_error2(L, "invalid file");
 	// Find stream information
 	if(avformat_find_stream_info(format, NULL) < 0){
 		avformat_close_input(&format);
@@ -199,9 +200,9 @@ DEF_HEAD_1ARG(demuxer_get_stream, 2)
 	if(DECODE_TYPE(stream->codec->codec_type)){
 		AVCodec *codec = avcodec_find_decoder(stream->codec->codec_id);
 		if(codec == NULL)
-			luaL_error2(L, wxString::Format("codec not found: %s", stream->codec->codec_name));
+			luaL_error2(L, "codec not found");
 		if(avcodec_open2(stream->codec, codec, NULL) < 0)
-			luaL_error2(L, wxString::Format("couldn't open codec: %s", codec->long_name));
+			luaL_error2(L, "couldn't open codec");
 	}
 	// Create userdata
 	VAStream *va_stream = lua_createuserdata<VAStream>(L, ISTREAM);
@@ -292,8 +293,9 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 	AVFormatContext *format = va_stream->va_format->format;
 	AVStream *stream = va_stream->stream;
 	// Set demuxer read pointer to stream start
-	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0 &&
-		av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_ANY | AVSEEK_FLAG_FRAME) < 0)
+	avcodec_flush_buffers(stream->codec);
+	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME) < 0 &&
+		av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_FRAME) < 0)
 		luaL_error2(L, "setting demuxer read pointer to stream start failed");
 	// Decode stream
 	switch(stream->codec->codec_type){
@@ -310,8 +312,8 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 				}
 				// Stream data
 				AVPacket packet, ref_packet;
+				av_init_packet(&packet); packet.size = 0; packet.data = NULL;
 				int decoded_bytes, got_frame;
-				uint64_t frame_i = 0;
 				// Read stream
 				while(av_read_frame(format, &packet) == 0){
 					if(packet.stream_index == stream->index){
@@ -332,14 +334,14 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							// Found frame
 							if(got_frame != 0){
 								// Filter by requested frames
-								if(start > end || (start <= frame_i && end >= frame_i)){
+								if(start > end || (start <= frame->coded_picture_number && end >= frame->coded_picture_number)){
 									// Send frame to Lua
 									lua_pushvalue(L, 2);
 									if(sws_ctx != NULL){
 										sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
-										lua_pushframe(L, frame_i, frame->key_frame, frame->width, frame->height, &picture);
+										lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, &picture);
 									}else
-										lua_pushframe(L, frame_i, frame->key_frame, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
+										lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
 									if(lua_pcall(L, 1, 0, 0)){
 										av_free_packet(&packet);
 										if(sws_ctx != NULL){
@@ -351,7 +353,6 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 									}
 									lua_gc(L, LUA_GCCOLLECT, 0);
 								}
-								frame_i++;
 							}
 						}while(ref_packet.size > 0);
 					}
@@ -372,14 +373,14 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 					// Found frame
 					if(got_frame != 0){
 						// Filter by requested frames
-						if(start > end || (start <= frame_i && end >= frame_i)){
+						if(start > end || (start <= frame->coded_picture_number && end >= frame->coded_picture_number)){
 							// Send frame to Lua
 							lua_pushvalue(L, 2);
 							if(sws_ctx != NULL){
 								sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
-								lua_pushframe(L, frame_i, frame->key_frame, frame->width, frame->height, &picture);
+								lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, &picture);
 							}else
-								lua_pushframe(L, frame_i, frame->key_frame, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
+								lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
 							if(lua_pcall(L, 1, 0, 0)){
 								if(sws_ctx != NULL){
 									sws_freeContext(sws_ctx);
@@ -390,7 +391,6 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							}
 							lua_gc(L, LUA_GCCOLLECT, 0);
 						}
-						frame_i++;
 					}
 				}while(got_frame != 0);
 				// Free image buffers & converter
