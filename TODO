@@ -1,4 +1,3 @@
-* fix audio samples to Lua
 * decode packet data completely
 * optimize frame range decoding
 
