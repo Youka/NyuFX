@@ -1,4 +1,3 @@
-* decode packet data completely
 * optimize frame range decoding
 
 * implent localization
