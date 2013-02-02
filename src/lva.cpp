@@ -280,15 +280,14 @@ DEF_HEAD_1ARG(stream_info, 1)
 	return 1;
 DEF_TAIL
 
-DEF_HEAD_2ARG(stream_get_frames, 2, 4)
-	// Get stream, callback function and frames range
+DEF_HEAD_1ARG(stream_get_frames, 2)
+	// Get stream & callback function
 	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
 	if(va_stream->va_format == NULL)
 		luaL_error2(L, "stream invalid (demuxer already deleted)");
 	if(!DECODE_TYPE(va_stream->stream->codec->codec_type))
 		luaL_error2(L, "stream invalid (not decodable type)");
 	luaL_argcheck(L, lua_isfunction(L,2), 2, "function expected");
-	double start = luaL_optnumber(L, 3, 1), end = luaL_optnumber(L, 4, 0);
 	// Demuxer pointers
 	AVFormatContext *format = va_stream->va_format->format;
 	AVStream *stream = va_stream->stream;
@@ -312,7 +311,6 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 				}
 				// Stream data
 				AVPacket packet, ref_packet;
-				av_init_packet(&packet); packet.size = 0; packet.data = NULL;
 				int decoded_bytes, got_frame;
 				// Read stream
 				while(av_read_frame(format, &packet) == 0){
@@ -333,26 +331,23 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							ref_packet.size -= decoded_bytes; ref_packet.data += decoded_bytes;
 							// Found frame
 							if(got_frame != 0){
-								// Filter by requested frames
-								if(start > end || (start <= frame->coded_picture_number && end >= frame->coded_picture_number)){
-									// Send frame to Lua
-									lua_pushvalue(L, 2);
+								// Send frame to Lua
+								lua_pushvalue(L, 2);
+								if(sws_ctx != NULL){
+									sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
+									lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, &picture);
+								}else
+									lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
+								if(lua_pcall(L, 1, 0, 0)){
+									av_free_packet(&packet);
 									if(sws_ctx != NULL){
-										sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
-										lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, &picture);
-									}else
-										lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
-									if(lua_pcall(L, 1, 0, 0)){
-										av_free_packet(&packet);
-										if(sws_ctx != NULL){
-											sws_freeContext(sws_ctx);
-											avpicture_free(&picture);
-										}
-										avcodec_free_frame(&frame);
-										luaL_error2(L, lua_tostring(L,-1));
+										sws_freeContext(sws_ctx);
+										avpicture_free(&picture);
 									}
-									lua_gc(L, LUA_GCCOLLECT, 0);
+									avcodec_free_frame(&frame);
+									luaL_error2(L, lua_tostring(L,-1));
 								}
+								lua_gc(L, LUA_GCCOLLECT, 0);
 							}
 						}while(ref_packet.size > 0);
 					}
@@ -372,25 +367,22 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 					}
 					// Found frame
 					if(got_frame != 0){
-						// Filter by requested frames
-						if(start > end || (start <= frame->coded_picture_number && end >= frame->coded_picture_number)){
-							// Send frame to Lua
-							lua_pushvalue(L, 2);
+						// Send frame to Lua
+						lua_pushvalue(L, 2);
+						if(sws_ctx != NULL){
+							sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
+							lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, &picture);
+						}else
+							lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
+						if(lua_pcall(L, 1, 0, 0)){
 							if(sws_ctx != NULL){
-								sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, picture.data, picture.linesize);
-								lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, &picture);
-							}else
-								lua_pushframe(L, frame->coded_picture_number, frame->pict_type, frame->width, frame->height, reinterpret_cast<AVPicture*>(frame));
-							if(lua_pcall(L, 1, 0, 0)){
-								if(sws_ctx != NULL){
-									sws_freeContext(sws_ctx);
-									avpicture_free(&picture);
-								}
-								avcodec_free_frame(&frame);
-								luaL_error2(L, lua_tostring(L,-1));
+								sws_freeContext(sws_ctx);
+								avpicture_free(&picture);
 							}
-							lua_gc(L, LUA_GCCOLLECT, 0);
+							avcodec_free_frame(&frame);
+							luaL_error2(L, lua_tostring(L,-1));
 						}
+						lua_gc(L, LUA_GCCOLLECT, 0);
 					}
 				}while(got_frame != 0);
 				// Free image buffers & converter
@@ -436,27 +428,24 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							ref_packet.size -= decoded_bytes; ref_packet.data += decoded_bytes;
 							// Found samples
 							if(got_frame != 0){
-								// Filter by requested samples
-								if(start > end || (start <= sample_i && end >= sample_i)){
-									// Send samples to Lua
-									lua_pushvalue(L, 2);
-									if(swr_ctx != NULL){
-										uint8_t *s16_data;
-										av_samples_alloc(&s16_data, NULL, frame->channels, frame->nb_samples, AV_SAMPLE_FMT_S16, 1);
-										swr_convert(swr_ctx, &s16_data, frame->nb_samples, (const uint8_t**)frame->data, frame->nb_samples);
-										lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, s16_data);
-										av_free(s16_data);
-									}else
-										lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, frame->data[0]);
-									if(lua_pcall(L, 1, 0, 0)){
-										av_free_packet(&packet);
-										if(swr_ctx != NULL)
-											swr_free(&swr_ctx);
-										avcodec_free_frame(&frame);
-										luaL_error2(L, lua_tostring(L,-1));
-									}
-									lua_gc(L, LUA_GCCOLLECT, 0);
+								// Send samples to Lua
+								lua_pushvalue(L, 2);
+								if(swr_ctx != NULL){
+									uint8_t *s16_data;
+									av_samples_alloc(&s16_data, NULL, frame->channels, frame->nb_samples, AV_SAMPLE_FMT_S16, 1);
+									swr_convert(swr_ctx, &s16_data, frame->nb_samples, (const uint8_t**)frame->data, frame->nb_samples);
+									lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, s16_data);
+									av_free(s16_data);
+								}else
+									lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, frame->data[0]);
+								if(lua_pcall(L, 1, 0, 0)){
+									av_free_packet(&packet);
+									if(swr_ctx != NULL)
+										swr_free(&swr_ctx);
+									avcodec_free_frame(&frame);
+									luaL_error2(L, lua_tostring(L,-1));
 								}
+								lua_gc(L, LUA_GCCOLLECT, 0);
 								sample_i += frame->nb_samples;
 							}
 						}while(ref_packet.size > 0);
@@ -475,26 +464,23 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 					}
 					// Found samples
 					if(got_frame != 0){
-						// Filter by requested samples
-						if(start > end || (start <= sample_i && end >= sample_i)){
-							// Send samples to Lua
-							lua_pushvalue(L, 2);
-							if(swr_ctx != NULL){
-								uint8_t *s16_data;
-								av_samples_alloc(&s16_data, NULL, frame->channels, frame->nb_samples, AV_SAMPLE_FMT_S16, 1);
-								swr_convert(swr_ctx, &s16_data, frame->nb_samples, (const uint8_t**)frame->data, frame->nb_samples);
-								lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, s16_data);
-								av_free(s16_data);
-							}else
-								lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, frame->data[0]);
-							if(lua_pcall(L, 1, 0, 0)){
-								if(swr_ctx != NULL)
-									swr_free(&swr_ctx);
-								avcodec_free_frame(&frame);
-								luaL_error2(L, lua_tostring(L,-1));
-							}
-							lua_gc(L, LUA_GCCOLLECT, 0);
+						// Send samples to Lua
+						lua_pushvalue(L, 2);
+						if(swr_ctx != NULL){
+							uint8_t *s16_data;
+							av_samples_alloc(&s16_data, NULL, frame->channels, frame->nb_samples, AV_SAMPLE_FMT_S16, 1);
+							swr_convert(swr_ctx, &s16_data, frame->nb_samples, (const uint8_t**)frame->data, frame->nb_samples);
+							lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, s16_data);
+							av_free(s16_data);
+						}else
+							lua_pushsamples(L, sample_i, frame->channels, frame->nb_samples, frame->data[0]);
+						if(lua_pcall(L, 1, 0, 0)){
+							if(swr_ctx != NULL)
+								swr_free(&swr_ctx);
+							avcodec_free_frame(&frame);
+							luaL_error2(L, lua_tostring(L,-1));
 						}
+						lua_gc(L, LUA_GCCOLLECT, 0);
 						sample_i += frame->nb_samples;
 					}
 				}while(got_frame != 0);
@@ -513,7 +499,6 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 				// Stream data
 				AVPacket packet, ref_packet;
 				int decoded_bytes, got_sub;
-				unsigned long subtitle_i = 0;
 				// Read stream
 				while(av_read_frame(format, &packet) == 0){
 					if(packet.stream_index == stream->index){
@@ -528,19 +513,15 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 							ref_packet.size -= decoded_bytes; ref_packet.data += decoded_bytes;
 							// Found subtitle
 							if(got_sub != 0){
-								// Filter by requested lines
-								if(start > end || (start <= subtitle_i && end >= subtitle_i)){
-									// Send subtitle to Lua
-									lua_pushvalue(L, 2);
-									lua_pushstring(L, subtitle.rects[0]->ass);
-									if(lua_pcall(L, 1, 0, 0)){
-										avsubtitle_free(&subtitle);
-										av_free_packet(&packet);
-										luaL_error2(L, lua_tostring(L,-1));
-									}
-									lua_gc(L, LUA_GCCOLLECT, 0);
+								// Send subtitle to Lua
+								lua_pushvalue(L, 2);
+								lua_pushstring(L, subtitle.rects[0]->ass);
+								if(lua_pcall(L, 1, 0, 0)){
+									avsubtitle_free(&subtitle);
+									av_free_packet(&packet);
+									luaL_error2(L, lua_tostring(L,-1));
 								}
-								subtitle_i++;
+								lua_gc(L, LUA_GCCOLLECT, 0);
 								avsubtitle_free(&subtitle);
 							}
 						}while(ref_packet.size > 0);
@@ -555,18 +536,14 @@ DEF_HEAD_2ARG(stream_get_frames, 2, 4)
 						luaL_error2(L, "couldn't decode subtitle");
 					// Found subtitle
 					if(got_sub != 0){
-						// Filter by requested lines
-						if(start > end || (start <= subtitle_i && end >= subtitle_i)){
-							// Send subtitle to Lua
-							lua_pushvalue(L, 2);
-							lua_pushstring(L, subtitle.rects[0]->ass);
-							if(lua_pcall(L, 1, 0, 0)){
-								avsubtitle_free(&subtitle);
-								luaL_error2(L, lua_tostring(L,-1));
-							}
-							lua_gc(L, LUA_GCCOLLECT, 0);
+						// Send subtitle to Lua
+						lua_pushvalue(L, 2);
+						lua_pushstring(L, subtitle.rects[0]->ass);
+						if(lua_pcall(L, 1, 0, 0)){
+							avsubtitle_free(&subtitle);
+							luaL_error2(L, lua_tostring(L,-1));
 						}
-						subtitle_i++;
+						lua_gc(L, LUA_GCCOLLECT, 0);
 						avsubtitle_free(&subtitle);
 					}
 				}while(got_sub != 0);

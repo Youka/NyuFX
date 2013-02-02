@@ -1,5 +1,3 @@
-* found frame/sample/subtitle indices & optimize frame range decoding
-
 * implent localization
 
 * rewrite templates
