@@ -18,7 +18,7 @@ wchar_t* utf8_to_utf16(const char *s){
 	return ws;
 }
 
-FILE* _utf8open(const char* filename, const char* mode){
+FILE* _utf8fopen(const char* filename, const char* mode){
 	// Wide-char buffers
 	wchar_t *wfilename;
 	wchar_t wmode[4];
@@ -34,7 +34,7 @@ FILE* _utf8open(const char* filename, const char* mode){
 	return f;
 }
 
-FILE* _utf8reopen(const char* filename, const char* mode, FILE *file){
+FILE* _utf8freopen(const char* filename, const char* mode, FILE *file){
 	// Wide-char buffers
 	wchar_t *wfilename;
 	wchar_t wmode[4];

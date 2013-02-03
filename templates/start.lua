@@ -1,3 +1,4 @@
+-- Roumaji
 function roumaji(line, l)
 
 	--TODO
@@ -5,6 +6,7 @@ function roumaji(line, l)
 	io.write_line(l)
 end
 
+-- Kanji
 function kanji(line, l)
 
 	--TODO
@@ -12,6 +14,7 @@ function kanji(line, l)
 	io.write_line(l)
 end
 
+-- Subtitle
 function sub(line, l)
 
 	--TODO
@@ -19,14 +22,15 @@ function sub(line, l)
 	io.write_line(l)
 end
 
+-- Process
 for li, line in ipairs(lines) do
 	if not line.comment then
-		if line.styleref.alignment >= 7 then
+		if line.styleref.alignment > 6 then
 			roumaji( line, table.copy(line) )
-		elseif line.styleref.alignment <= 3 then
-			sub( line, table.copy(line) )
-		else
+		elseif line.styleref.alignment > 3 then
 			kanji( line, table.copy(line) )
+		else
+			sub( line, table.copy(line) )
 		end
 	end
 	io.progressbar(li / #lines)
