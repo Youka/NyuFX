@@ -52,7 +52,7 @@ void Options::CreateElements(){
 	this->line = new wxStaticLine(this);
 	// Information
 	this->info_label = new wxStaticText(this, wxID_ANY, _("Language change requires a program restart"));
-	this->info_label->SetFont(wxFont(6, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL));
+	this->info_label->SetFont(wxFont(7, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL));
 	// Close button
 	this->accept = new wxButton(this, wxID_CLOSE, _("Accept"), wxDefaultPosition, wxSize(-1,22));
 	this->accept->SetCursor(wxCURSOR_HAND);

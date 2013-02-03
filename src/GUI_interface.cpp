@@ -35,6 +35,10 @@ GUI::~GUI(){
 }
 
 void GUI::SetMeta(){
+	// Disable logging
+	EnableLogging(false);
+	// Enable tooltips
+	ConfigTooltips(1000, 5000, 0, 200);
 	// Load configuration settings
 	Config::Load();
 	// Set language to display
@@ -49,10 +53,6 @@ void GUI::SetMeta(){
 		SetLanguage(wxLANGUAGE_CHINESE);
 	else
 		SetLanguage(wxLANGUAGE_ENGLISH);
-	// Enable tooltips
-	ConfigTooltips(1000, 5000, 0, 200);
-	// Disable logging
-	EnableLogging(false);
 }
 
 void GUI::CreateMenu(){

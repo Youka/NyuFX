@@ -487,7 +487,7 @@ void GUI::OnHelp(wxCommandEvent& event){
 		help->Iconize(false);
 }
 void GUI::OnAbout(wxCommandEvent& event){
-	this->SetTransparent(127);
+	this->SetTransparent(196);
 	About(this).ShowModal();
 	this->SetTransparent(255);
 }

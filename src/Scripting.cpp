@@ -82,11 +82,10 @@ Scripting::Scripting(wxTextCtrl *log, wxGauge *progressbar){
 
 bool Scripting::DoFile(wxString file){
 	if( luaL_dofile(this->L, file.ToUTF8()) ){
-		wxMessageBox( wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
+		if(lua_status(this->L) != LUA_YIELD)
+			wxMessageBox( wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 		return false;
-	}else if(lua_status(this->L) == LUA_YIELD)
-		return false;
-	else
+	}else
 		return true;
 }
 
@@ -103,11 +102,10 @@ bool Scripting::CallInit(unsigned int arg_n, ...){
 		va_end(va_l);
 		// Call function
 		if(lua_pcall(this->L, arg_n, 0, 0)){
-			wxMessageBox( wxT("Init: ") + wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
+			if(lua_status(this->L) != LUA_YIELD)
+				wxMessageBox( wxT("Init: ") + wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 			return false;
-		}else if(lua_status(this->L) == LUA_YIELD)
-			return false;
-		else
+		}else
 			return true;
 	// Wasn't a function -> clean & error
 	}else{
@@ -124,11 +122,10 @@ bool Scripting::CallExit(){
 	if(lua_isfunction(this->L,-1)){
 		// Call function
 		if(lua_pcall(this->L, 0, 0, 0)){
-			wxMessageBox( wxT("Exit: ") + wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
+			if(lua_status(this->L) != LUA_YIELD)
+				wxMessageBox( wxT("Exit: ") + wxString::FromUTF8(lua_tostring(this->L,-1)), _("Lua error"), wxOK | wxCENTRE | wxICON_ERROR);
 			return false;
-		}else if(lua_status(this->L) == LUA_YIELD)
-			return false;
-		else
+		}else
 			return true;
 	// Wasn't a function -> clean & error
 	}else{
