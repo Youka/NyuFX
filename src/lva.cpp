@@ -291,11 +291,11 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 	// Demuxer pointers
 	AVFormatContext *format = va_stream->va_format->format;
 	AVStream *stream = va_stream->stream;
-	// Set demuxer read pointer to stream start
+	// Flush decoder cache & set demuxer read pointer to stream start
 	avcodec_flush_buffers(stream->codec);
-	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME) < 0 &&
-		av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_FRAME) < 0)
-		luaL_error2(L, "setting demuxer read pointer to stream start failed");
+	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD) < 0 &&
+		av_seek_frame(format, stream->index, 0, 0) < 0)
+		luaL_error2(L, "rewinding stream failed");
 	// Decode stream
 	switch(stream->codec->codec_type){
 		case AVMEDIA_TYPE_VIDEO:{
@@ -514,14 +514,15 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 							// Found subtitle
 							if(got_sub != 0){
 								// Send subtitle to Lua
-								lua_pushvalue(L, 2);
-								lua_pushstring(L, subtitle.rects[0]->ass);
-								if(lua_pcall(L, 1, 0, 0)){
-									avsubtitle_free(&subtitle);
-									av_free_packet(&packet);
-									luaL_error2(L, lua_tostring(L,-1));
+								for(unsigned int i = 0; i < subtitle.num_rects; i++){
+									lua_pushvalue(L, 2);
+									lua_pushstring(L, subtitle.rects[i]->ass);
+									if(lua_pcall(L, 1, 0, 0)){
+										avsubtitle_free(&subtitle);
+										luaL_error2(L, lua_tostring(L,-1));
+									}
+									lua_gc(L, LUA_GCCOLLECT, 0);
 								}
-								lua_gc(L, LUA_GCCOLLECT, 0);
 								avsubtitle_free(&subtitle);
 							}
 						}while(ref_packet.size > 0);
@@ -537,13 +538,15 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 					// Found subtitle
 					if(got_sub != 0){
 						// Send subtitle to Lua
-						lua_pushvalue(L, 2);
-						lua_pushstring(L, subtitle.rects[0]->ass);
-						if(lua_pcall(L, 1, 0, 0)){
-							avsubtitle_free(&subtitle);
-							luaL_error2(L, lua_tostring(L,-1));
+						for(unsigned int i = 0; i < subtitle.num_rects; i++){
+							lua_pushvalue(L, 2);
+							lua_pushstring(L, subtitle.rects[i]->ass);
+							if(lua_pcall(L, 1, 0, 0)){
+								avsubtitle_free(&subtitle);
+								luaL_error2(L, lua_tostring(L,-1));
+							}
+							lua_gc(L, LUA_GCCOLLECT, 0);
 						}
-						lua_gc(L, LUA_GCCOLLECT, 0);
 						avsubtitle_free(&subtitle);
 					}
 				}while(got_sub != 0);
