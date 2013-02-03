@@ -842,54 +842,56 @@ function table.copy(old_t)
 	return new_t
 end
 
-function table.list(...)
+function table.stack(...)
+	-- Attribute
+	local stack
 	-- Member functions
 	local ListFuncs = {}
 	ListFuncs.__index = ListFuncs
 	function ListFuncs:push(value)
 		if value ~= nil then
-			self.stack = {self.stack, value}
+			stack = {stack, value}
 		end
 	end
 	function ListFuncs:pop()
-		if self.stack ~= nil then
-			local value = self.stack[2]
-			self.stack = self.stack[1]
+		if stack then
+			local value = stack[2]
+			stack = stack[1]
 			return value
 		end
 	end
 	function ListFuncs:iter()
-		local stack = self.stack
+		local stack2 = stack
 		return function()
-			if stack ~= nil then
-				local value = stack[2]
-				stack = stack[1]
+			if stack2 then
+				local value = stack2[2]
+				stack2 = stack2[1]
 				return value
 			end
 		end
 	end
 	function ListFuncs:invert()
-		local stack = nil
+		local new_stack
 		for value in self:iter() do
-			stack = {stack, value}
+			new_stack = {new_stack, value}
 		end
-		self.stack = stack
+		stack = new_stack
 	end
 	function ListFuncs:totable()
-		local n = 0
+		local i = 0
 		for _ in self:iter() do
-			n = n + 1
+			i = i + 1
 		end
-		local t = table.create(n, 0)
-		n = 0
+		local t = table.create(i, 0)
+		i = 0
 		for value in self:iter() do
-			n = n + 1
-			t[n] = value
+			i = i + 1
+			t[i] = value
 		end
 		return t
 	end
 	-- Object creation
-	local obj = setmetatable({stack = nil}, ListFuncs)
+	local obj = setmetatable({}, ListFuncs)
 	-- Initialization
 	for _, value in ipairs(arg) do
 		obj:push(value)
