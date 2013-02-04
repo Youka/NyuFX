@@ -75,7 +75,7 @@ void EditorBase::ConfigureEditor(){
 	// No text wrapping
 	this->editor->SetWrapMode(wxSTC_WRAP_NONE);
 	// Windows end-of-line
-	this->editor->SetEOLMode(wxSTC_EOL_CRLF);
+	this->editor->SetEOLMode(wxSTC_EOL_LF);
 	// Caret visibility
 	this->editor->SetVisiblePolicy(wxSTC_VISIBLE_STRICT|wxSTC_VISIBLE_SLOP, 1);
 	this->editor->SetXCaretPolicy(wxSTC_CARET_EVEN|wxSTC_VISIBLE_STRICT|wxSTC_CARET_SLOP, 1);

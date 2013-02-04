@@ -129,8 +129,9 @@ DEF_HEAD_1ARG(create_demuxer, 1)
 		avformat_close_input(&format);
 		luaL_error2(L, "couldn't find stream information");
 	}
-	// Enable timestamps to file packets
-	format->flags |= AVFMT_FLAG_GENPTS;
+	/*// Enable timestamps to file packets
+	if(!(format->flags & AVFMT_FLAG_GENPTS))
+		format->flags |= AVFMT_FLAG_GENPTS;*/
 	// Create userdata
 	VAFormat *va_format = lua_createuserdata<VAFormat>(L, DEMUXER);
 	va_format->format = format;
