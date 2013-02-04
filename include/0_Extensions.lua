@@ -870,6 +870,13 @@ function table.stack(...)
 			end
 		end
 	end
+	function ListFuncs:size()
+		local n = 0
+		for _ in self:iter() do
+			n = n + 1
+		end
+		return n
+	end
 	function ListFuncs:invert()
 		local new_stack
 		for value in self:iter() do
@@ -878,15 +885,11 @@ function table.stack(...)
 		stack = new_stack
 	end
 	function ListFuncs:totable()
-		local i = 0
-		for _ in self:iter() do
-			i = i + 1
-		end
-		local t = table.create(i, 0)
-		i = 0
+		local t = table.create(self:size(), 0)
+		local n = 0
 		for value in self:iter() do
-			i = i + 1
-			t[i] = value
+			n = n + 1
+			t[n] = value
 		end
 		return t
 	end

@@ -179,9 +179,9 @@ DEF_HEAD_1ARG(demuxer_info, 1)
 	lua_pushnumber(L, va_format->format->nb_streams); lua_setfield(L, -2, "streams");
 	lua_pushstring(L, va_format->format->filename); lua_setfield(L, -2, "filename");
 	lua_pushstring(L, va_format->format->iformat->long_name); lua_setfield(L, -2, "container");
-	lua_pushnumber(L, va_format->format->start_time / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "start_time");
 	lua_pushnumber(L, va_format->format->duration / static_cast<double>(AV_TIME_BASE)); lua_setfield(L, -2, "duration");
 	lua_pushnumber(L, va_format->format->bit_rate); lua_setfield(L, -2, "bitrate");
+	lua_pushnumber(L, avio_size(va_format->format->pb)); lua_setfield(L, -2, "filesize");
 	return 1;
 DEF_TAIL
 
@@ -240,7 +240,6 @@ DEF_HEAD_1ARG(stream_info, 1)
 			lua_pushstring(L, SAFE_NAME(av_get_profile_name(stream->codec->codec, stream->codec->profile))); lua_setfield(L, -2, "profile");
 			lua_pushnumber(L, stream->codec->level); lua_setfield(L, -2, "level");
 			lua_pushrational(L, stream->r_frame_rate); lua_setfield(L, -2, "framerate");
-			lua_pushrational(L, stream->time_base); lua_setfield(L, -2, "time_base");
 			lua_pushnumber(L, stream->start_time * av_q2d_safe(stream->time_base)); lua_setfield(L, -2, "start_time");
 			lua_pushnumber(L, stream->duration * av_q2d_safe(stream->time_base)); lua_setfield(L, -2, "duration");
 			lua_pushnumber(L, stream->nb_frames); lua_setfield(L, -2, "frames");
@@ -285,14 +284,11 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 	VAStream *va_stream = reinterpret_cast<VAStream*>(luaL_checkuserdata(L, 1, ISTREAM));
 	if(va_stream->va_format == NULL)
 		luaL_error2(L, "stream invalid (demuxer already deleted)");
-	if(!DECODE_TYPE(va_stream->stream->codec->codec_type))
-		luaL_error2(L, "stream invalid (not decodable type)");
 	luaL_argcheck(L, lua_isfunction(L,2), 2, "function expected");
 	// Demuxer pointers
 	AVFormatContext *format = va_stream->va_format->format;
 	AVStream *stream = va_stream->stream;
-	// Flush decoder cache & set demuxer read pointer to stream start
-	avcodec_flush_buffers(stream->codec);
+	// Set demuxer read pointer to stream start
 	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD) < 0 &&
 		av_seek_frame(format, stream->index, 0, 0) < 0)
 		luaL_error2(L, "rewinding stream failed");
@@ -326,6 +322,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 									avpicture_free(&picture);
 								}
 								avcodec_free_frame(&frame);
+								avcodec_flush_buffers(stream->codec);
 								luaL_error2(L, "couldn't decode frame");
 							}
 							ref_packet.size -= decoded_bytes; ref_packet.data += decoded_bytes;
@@ -345,6 +342,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 										avpicture_free(&picture);
 									}
 									avcodec_free_frame(&frame);
+									avcodec_flush_buffers(stream->codec);
 									luaL_error2(L, lua_tostring(L,-1));
 								}
 								lua_gc(L, LUA_GCCOLLECT, 0);
@@ -363,6 +361,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 							avpicture_free(&picture);
 						}
 						avcodec_free_frame(&frame);
+						avcodec_flush_buffers(stream->codec);
 						luaL_error2(L, "couldn't decode frame");
 					}
 					// Found frame
@@ -380,6 +379,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 								avpicture_free(&picture);
 							}
 							avcodec_free_frame(&frame);
+							avcodec_flush_buffers(stream->codec);
 							luaL_error2(L, lua_tostring(L,-1));
 						}
 						lua_gc(L, LUA_GCCOLLECT, 0);
@@ -423,6 +423,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 								if(swr_ctx != NULL)
 									swr_free(&swr_ctx);
 								avcodec_free_frame(&frame);
+								avcodec_flush_buffers(stream->codec);
 								luaL_error2(L, "couldn't decode samples");
 							}
 							ref_packet.size -= decoded_bytes; ref_packet.data += decoded_bytes;
@@ -443,6 +444,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 									if(swr_ctx != NULL)
 										swr_free(&swr_ctx);
 									avcodec_free_frame(&frame);
+									avcodec_flush_buffers(stream->codec);
 									luaL_error2(L, lua_tostring(L,-1));
 								}
 								lua_gc(L, LUA_GCCOLLECT, 0);
@@ -460,6 +462,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 						if(swr_ctx != NULL)
 							swr_free(&swr_ctx);
 						avcodec_free_frame(&frame);
+						avcodec_flush_buffers(stream->codec);
 						luaL_error2(L, "couldn't decode samples");
 					}
 					// Found samples
@@ -478,6 +481,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 							if(swr_ctx != NULL)
 								swr_free(&swr_ctx);
 							avcodec_free_frame(&frame);
+							avcodec_flush_buffers(stream->codec);
 							luaL_error2(L, lua_tostring(L,-1));
 						}
 						lua_gc(L, LUA_GCCOLLECT, 0);
@@ -508,6 +512,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 							// Decode subtitle
 							if((decoded_bytes = avcodec_decode_subtitle2(stream->codec, &subtitle, &got_sub, &ref_packet)) < 0){
 								av_free_packet(&packet);
+								avcodec_flush_buffers(stream->codec);
 								luaL_error2(L, "couldn't decode subtitle");
 							}
 							ref_packet.size -= decoded_bytes; ref_packet.data += decoded_bytes;
@@ -518,7 +523,9 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 									lua_pushvalue(L, 2);
 									lua_pushstring(L, subtitle.rects[i]->ass);
 									if(lua_pcall(L, 1, 0, 0)){
+										av_free_packet(&packet);
 										avsubtitle_free(&subtitle);
+										avcodec_flush_buffers(stream->codec);
 										luaL_error2(L, lua_tostring(L,-1));
 									}
 									lua_gc(L, LUA_GCCOLLECT, 0);
@@ -533,8 +540,10 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 				packet.size = 0; packet.data = NULL;
 				do{
 					// Decode subtitle
-					if(avcodec_decode_subtitle2(stream->codec, &subtitle, &got_sub, &packet) < 0)
+					if(avcodec_decode_subtitle2(stream->codec, &subtitle, &got_sub, &packet) < 0){
+						avcodec_flush_buffers(stream->codec);
 						luaL_error2(L, "couldn't decode subtitle");
+					}
 					// Found subtitle
 					if(got_sub != 0){
 						// Send subtitle to Lua
@@ -543,6 +552,7 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 							lua_pushstring(L, subtitle.rects[i]->ass);
 							if(lua_pcall(L, 1, 0, 0)){
 								avsubtitle_free(&subtitle);
+								avcodec_flush_buffers(stream->codec);
 								luaL_error2(L, lua_tostring(L,-1));
 							}
 							lua_gc(L, LUA_GCCOLLECT, 0);
@@ -550,6 +560,28 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 						avsubtitle_free(&subtitle);
 					}
 				}while(got_sub != 0);
+			}
+			break;
+		default:{
+				// Stream data
+				AVPacket packet;
+				// Read stream
+				while(av_read_frame(format, &packet) == 0){
+					if(packet.stream_index == stream->index){
+						// Send packet to Lua
+						lua_pushvalue(L, 2);
+						char *packet_str = (char*)av_malloc(packet.size+1);
+						memcpy(packet_str, packet.data, packet.size); packet_str[packet.size] = '\0';
+						lua_pushstring(L, packet_str);
+						av_free(packet_str);
+						if(lua_pcall(L, 1, 0, 0)){
+							av_free_packet(&packet);
+							luaL_error2(L, lua_tostring(L,-1));
+						}
+						lua_gc(L, LUA_GCCOLLECT, 0);
+					}
+					av_free_packet(&packet);
+				}
 			}
 			break;
 	}
