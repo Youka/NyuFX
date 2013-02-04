@@ -288,13 +288,13 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 	// Demuxer pointers
 	AVFormatContext *format = va_stream->va_format->format;
 	AVStream *stream = va_stream->stream;
-	// Set demuxer read pointer to stream start
-	if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD) < 0 &&
-		av_seek_frame(format, stream->index, 0, 0) < 0)
-		luaL_error2(L, "rewinding stream failed");
 	// Decode stream
 	switch(stream->codec->codec_type){
 		case AVMEDIA_TYPE_VIDEO:{
+				// Set demuxer read pointer to video stream start
+				if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD) < 0 &&
+					av_seek_frame(format, stream->index, 0, 0) < 0)
+					luaL_error2(L, "rewinding video stream failed");
 				// Allocate image buffers & converter
 				AVFrame *frame = avcodec_alloc_frame();
 				AVPicture picture;
@@ -394,6 +394,10 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 			}
 			break;
 		case AVMEDIA_TYPE_AUDIO:{
+				// Set demuxer read pointer to audio stream start
+				if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD) < 0 &&
+					av_seek_frame(format, stream->index, 0, 0) < 0)
+					luaL_error2(L, "rewinding audio stream failed");
 				// Allocate samples buffer & converter
 				AVFrame *frame = avcodec_alloc_frame();
 				SwrContext *swr_ctx = NULL;
@@ -498,6 +502,10 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 				// Just SSA/ASS supported
 				if(stream->codec->codec_id != AV_CODEC_ID_SSA)
 					luaL_error2(L, "not supported subtitle format (SSA/ASS only)");
+				// Set demuxer read pointer to subtitle stream start
+				if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_BYTE) < 0 &&
+					av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BYTE) < 0)
+					luaL_error2(L, "rewinding subtitle stream failed");
 				// Subtitle buffer
 				AVSubtitle subtitle;
 				// Stream data
@@ -563,6 +571,10 @@ DEF_HEAD_1ARG(stream_get_frames, 2)
 			}
 			break;
 		default:{
+				// Set demuxer read pointer to data stream start
+				if(av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_BYTE) < 0 &&
+					av_seek_frame(format, stream->index, 0, AVSEEK_FLAG_BYTE) < 0)
+					luaL_error2(L, "rewinding data stream failed");
 				// Stream data
 				AVPacket packet;
 				// Read stream
