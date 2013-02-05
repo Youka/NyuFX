@@ -15,7 +15,7 @@ NyuFX has a project file for MSVC++10 (see ***src/NyuFX.vcxproj***).
 
 * Open the project file.
 * Change the dependency to ***wxWidgets*** in the NyuFX project settings. Fix the *include*, *library* and *resources* path to your own wxWidgets 2.9.4 built.
-* Change the dependency to ***FFmpeg*** in the NyuFX project settings. Fix the *include* and *library* path to your own FFmpeg 1.1 built.
+* Change the dependency to ***FFmpeg*** in the NyuFX project settings. Fix the *include* and *library* path to your own FFmpeg 1.1 built. A recommend build configuration you find in ***src/FFmpeg 1.1/config.txt***.
 * Build the project map.
 
 

@@ -1,0 +1,1 @@
+print(convert.ass_to_rgb("&HF02094&"))

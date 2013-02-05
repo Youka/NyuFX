@@ -1,0 +1,1 @@
+print(table.max({1, a = true}))

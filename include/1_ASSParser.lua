@@ -792,9 +792,7 @@ function LoadASS(content)
 		error("string expected", 2)
 	end
 	-- Define global ASS tables
-	meta = {}
-	styles = {}
-	lines = {}
+	meta, styles, lines = {}, {}, {}
 	-- Parse lines
 	for line in content:gmatch("[^\n]+") do
 		ParseLine(line)

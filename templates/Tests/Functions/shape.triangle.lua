@@ -1,0 +1,1 @@
+print(shape.triangle(60))

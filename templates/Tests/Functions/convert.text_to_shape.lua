@@ -1,0 +1,1 @@
+print(convert.text_to_shape(lines[1].text, lines[1].styleref))

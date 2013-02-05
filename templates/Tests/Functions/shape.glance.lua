@@ -1,0 +1,1 @@
+print(shape.glance(5, 2, 50))

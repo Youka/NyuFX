@@ -1,0 +1,1 @@
+print(utils.text_extents(lines[1].text, lines[1].styleref))

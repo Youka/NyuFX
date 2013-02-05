@@ -825,6 +825,7 @@ function table.append(t1, t2)
 			t1[i] = v
 		end
 	end
+	return t1
 end
 
 function table.copy(old_t)
@@ -840,6 +841,17 @@ function table.copy(old_t)
 		end
 	end
 	return new_t
+end
+
+function table.max(t)
+	if type(t) ~= "table" then
+		error("table expected", 2)
+	end
+	local n = 0
+	for _ in pairs(t) do
+		n = n + 1
+	end
+	return n
 end
 
 function table.stack(...)
@@ -900,17 +912,6 @@ function table.stack(...)
 		obj:push(value)
 	end
 	return obj
-end
-
-function table.max(t)
-	if type(t) ~= "table" then
-		error("table expected", 2)
-	end
-	local n = 0
-	for _ in pairs(t) do
-		n = n + 1
-	end
-	return n
 end
 
 function table.tostring(t)

@@ -1,0 +1,1 @@
+print(shape.ring(100,80))

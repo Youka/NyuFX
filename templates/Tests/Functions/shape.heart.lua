@@ -1,0 +1,1 @@
+print(shape.heart(50, 0))

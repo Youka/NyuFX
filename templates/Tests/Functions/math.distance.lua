@@ -1,0 +1,1 @@
+print(math.distance(20, 30))
