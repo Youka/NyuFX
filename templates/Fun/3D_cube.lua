@@ -72,7 +72,7 @@ for s, e, i, n in utils.frames(0, 10000, 40) do
 			local deg = math.deg(
 				math.acos(normal[3] / math.distance(normal[1], normal[2], normal[3]))
 			)
-			-- At last increase rectangle size 8-fold to shrink it next by \p4 for subpixel precision
+			-- At last increase rectangle size 8-fold to shrink it next by \p4 tag for subpixel precision
 			for point_i = 1, #rect do
 				rect[point_i][1] = rect[point_i][1] * 8
 				rect[point_i][2] = rect[point_i][2] * 8

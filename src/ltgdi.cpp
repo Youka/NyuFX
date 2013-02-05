@@ -365,7 +365,7 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 				EndPath(*dc);
 				luaL_error2(L, "couldn't restore old path");
 			}
-		if( !ExtTextOutW(*dc, 0, 0, ETO_RTLREADING, NULL, wtext, wcslen(wtext), NULL) ){
+		if( !ExtTextOutW(*dc, 0, 0, 0x0, NULL, wtext, wcslen(wtext), NULL) ){
 			EndPath(*dc);
 			luaL_error2(L, "couldn't draw text path");
 		}
