@@ -52,26 +52,18 @@ for s, e, i, n in utils.frames(0, 30000, 40) do
 	local x_rotation = i/n * 720
 	local y_rotation = i/n * 720
 	local z_rotation = i/n * 360
-	-- Iterate through cube rectangles (copy = original not changed)
+	-- Iterate through cube rectangles (copy)
 	for rect_i, rect in ipairs(table.copy(cube)) do
 		-- Rotate rectangle points
 		for point_i = 1, #rect do
 			rect[point_i] = math.rotate(math.rotate(math.rotate(rect[point_i], "x", x_rotation), "y", y_rotation), "z", z_rotation)
 		end
 		-- Calculate rectangle normal vector
-		local vec_right = {rect[2][1] - rect[1][1], rect[2][2] - rect[1][2], rect[2][3] - rect[1][3]}
-		local vec_down = {rect[4][1] - rect[1][1], rect[4][2] - rect[1][2], rect[4][3] - rect[1][3]}
-		local normal = {
-			vec_right[2] * vec_down[3] - vec_right[3] * vec_down[2],
-			vec_right[3] * vec_down[1] - vec_right[3] * vec_down[3],
-			vec_right[1] * vec_down[2] - vec_right[2] * vec_down[1]
-		}
+		local normal = math.ortho({rect[2][1] - rect[1][1], rect[2][2] - rect[1][2], rect[2][3] - rect[1][3]}, {rect[4][1] - rect[1][1], rect[4][2] - rect[1][2], rect[4][3] - rect[1][3]})
 		-- Further process only for visible frontface
 		if normal[3] > 0 then
 			-- Calculate degree viewer <-> rectangle
-			local deg = math.deg(
-				math.acos(normal[3] / math.distance(normal[1], normal[2], normal[3]))
-			)
+			local deg = math.degree(normal, {0, 0, 1})
 			-- At last increase rectangle size 8-fold to shrink it next by \p4 tag for subpixel precision
 			for point_i = 1, #rect do
 				rect[point_i][1] = rect[point_i][1] * 8

@@ -254,6 +254,22 @@ function math.bezier(pct, p)
 	return point
 end
 
+function math.degree(vec1, vec2)
+	if type(vec1) ~= "table" or type(vec2) ~= "table" then
+		error("table and table expected", 2)
+	elseif type(vec1[1]) ~= "number" or type(vec1[2]) ~= "number" or type(vec1[3]) ~= "number" or
+			type(vec2[1]) ~= "number" or type(vec2[2]) ~= "number" or type(vec2[3]) ~= "number" then
+		error("invalid table content", 2)
+	end
+	local degree = math.deg(
+			math.acos(
+				(vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3]) /
+				(math.distance(vec1[1], vec1[2], vec1[3]) * math.distance(vec2[1], vec2[2], vec2[3]))
+			)
+	)
+	return	(vec1[1]*vec2[2] - vec1[2]*vec2[1]) < 0 and -degree or degree
+end
+
 function math.distance( w, h, d )
 	if type(w) ~= "number" or type(h) ~= "number" or (type(d) ~= "number" and type(d) ~= "nil") then
 		error("number, number and optional number expected", 2)
@@ -275,6 +291,20 @@ function math.ellipse(x, y, w, h, a)
 	end
 	local ra = math.rad(a)
 	return x + w/2 * math.cos(ra), y + h/2 * math.sin(ra)
+end
+
+function math.ortho(vec1, vec2)
+	if type(vec1) ~= "table" or type(vec2) ~= "table" then
+		error("table and table expected", 2)
+	elseif type(vec1[1]) ~= "number" or type(vec1[2]) ~= "number" or type(vec1[3]) ~= "number" or
+			type(vec2[1]) ~= "number" or type(vec2[2]) ~= "number" or type(vec2[3]) ~= "number" then
+		error("invalid table content", 2)
+	end
+	return {
+		vec1[2] * vec2[3] - vec1[3] * vec2[2],
+		vec1[3] * vec2[1] - vec1[1] * vec2[3],
+		vec1[1] * vec2[2] - vec1[2] * vec2[1]
+	}
 end
 
 function math.randomsteps(start, ends, step)
@@ -623,32 +653,14 @@ function shape.tooutline(shape, size)
 		end
 		figures[fi] = new_figure
 	end
-	-- Vector functions for further calculations
+	-- Vector sizer for local use
 	local function vec_sizer(vec, size)
-		local len = math.distance(vec[1], vec[2])
+		local len = math.distance(vec[1], vec[2], vec[3])
 		if len == 0 then
-			return {0, 0}
+			return {0, 0, 0}
 		else
-			return {vec[1] / len * size, vec[2] / len * size}
+			return {vec[1] / len * size, vec[2] / len * size, vec[3] / len * size}
 		end
-	end
-	local vecz = {0, 0, 1}
-	local function vec_ortho(vec)
-		local vec3d = {vec[1], vec[2], 0}
-		return {
-			vec3d[2] * vecz[3] - vec3d[3] * vecz[2],
-			vec3d[3] * vecz[1] - vec3d[1] * vecz[3]
-		}
-	end
-	local function vec_cross_deg(vec1, vec2)
-		local degree = math.deg(
-				math.acos(
-					(vec1[1] * vec2[1] + vec1[2] * vec2[2]) /
-					(math.distance(vec1[1], vec1[2]) * math.distance(vec2[1], vec2[2]))
-				)
-		)
-		local dir = vec1[1]*vec2[2] - vec1[2]*vec2[1]
-		return	dir > 0 and degree or dir < 0 and -degree or 0
 	end
 	-- Stroke figures
 	local stroke_figures = {table.create(figures_n, 0),table.create(figures_n, 0)}	-- inner + outer
@@ -696,10 +708,10 @@ function shape.tooutline(shape, size)
 					end
 				end
 				-- Calculate orthogonal vectors to both neighbour points
-				local o_vec1 = vec_sizer( vec_ortho({point[1]-pre_point[1], point[2]-pre_point[2]}), size )
-				local o_vec2 = vec_sizer( vec_ortho({post_point[1]-point[1], post_point[2]-point[2]}), size )
+				local o_vec1 = vec_sizer( math.ortho({point[1]-pre_point[1], point[2]-pre_point[2], 0}, {0, 0, 1}), size )
+				local o_vec2 = vec_sizer( math.ortho({post_point[1]-point[1], post_point[2]-point[2], 0}, {0, 0, 1}), size )
 				-- Calculate degree & circumference between orthogonal vectors
-				local degree = vec_cross_deg(o_vec1, o_vec2)
+				local degree = math.degree(o_vec1, o_vec2)
 				local circ = math.abs(math.rad(degree)) * size
 				-- Add first edge point
 				outline_n = outline_n + 1
@@ -709,7 +721,7 @@ function shape.tooutline(shape, size)
 				if circ > max_circ then
 					local circ_rest = circ % max_circ
 					for cur_circ = circ_rest > 0 and circ_rest or max_circ, circ, max_circ do
-						local curve_vec = math.rotate({o_vec1[1], o_vec1[2], 0}, "z", cur_circ / circ * degree)
+						local curve_vec = math.rotate(o_vec1, "z", cur_circ / circ * degree)
 						outline_n = outline_n + 1
 						outline[outline_n] = {math.floor(point[1] + curve_vec[1]), math.floor(point[2] + curve_vec[2])}
 					end
