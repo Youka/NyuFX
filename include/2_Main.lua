@@ -55,7 +55,7 @@ Dialogue: 0,0:00:00.00,0:00:10.00,Default,,0000,0000,0000,,Test]]
 		local template = content:gsub("\nDialogue:", "\nComment:"):gsub("\n+$", "")
 		tmp_ofile:write(template)
 	end
-	LoadASS(content)
+	io.load_ass(content)
 end
 
 -- Execution exit function
@@ -130,18 +130,5 @@ function io.write_line(line)
 	if tmp_ofile then
 		tmp_ofile:write(text)
 		produced_lines = produced_lines + 1
-	end
-end
-
-function io.load_ass(filename)
-	if type(filename) ~= "string" then
-		error("string expected", 2)
-	end
-	local file, err = io.open(filename, "r")
-	if file then
-		LoadASS(file:read("*a"))
-		file:close()
-	else
-		error(err, 2)
 	end
 end

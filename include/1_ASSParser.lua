@@ -153,7 +153,7 @@ lines
 ]]--
 
 -- ASS parser
-function LoadASS(content)
+function io.load_ass(content)
 	-- Unicode string trimming
 	local function trim(text)
 		-- Text to character table
@@ -213,45 +213,32 @@ function LoadASS(content)
 			else
 				meta.comment = line:match(meta_comment)
 			end
-		end
-		if line:find(meta_title) then
+		elseif line:find(meta_title) then
 			meta.title = line:match(meta_title)
-		end
-		if line:find(meta_scripttype) then
+		elseif line:find(meta_scripttype) then
 			meta.script_type = line:match(meta_scripttype)
-		end
-		if line:find(meta_wrapstyle) then
+		elseif line:find(meta_wrapstyle) then
 			meta.wrap_style = tonumber(line:match(meta_wrapstyle))
-		end
-		if line:find(meta_width) then
+		elseif line:find(meta_width) then
 			meta.width = tonumber(line:match(meta_width))
-		end
-		if line:find(meta_height) then
+		elseif line:find(meta_height) then
 			meta.height = tonumber(line:match(meta_height))
-		end
-		if line:find(meta_scalebands) then
+		elseif line:find(meta_scalebands) then
 			meta.scaled_border_and_shadow = line:match(meta_scalebands) == "yes"
-		end
-		if line:find(meta_ratio) then
+		elseif line:find(meta_ratio) then
 			meta.ratio = tonumber(line:match(meta_ratio))
-		end
-		if line:find(meta_zoom) then
+		elseif line:find(meta_zoom) then
 			meta.zoom = tonumber(line:match(meta_zoom))
-		end
-		if line:find(meta_position) then
+		elseif line:find(meta_position) then
 			meta.position = tonumber(line:match(meta_position))
-		end
-		if line:find(meta_laststyle) then
+		elseif line:find(meta_laststyle) then
 			meta.last_style = line:match(meta_laststyle)
-		end
-		if line:find(meta_audio) then
+		elseif line:find(meta_audio) then
 			meta.audio = line:match(meta_audio)
-		end
-		if line:find(meta_video) then
+		elseif line:find(meta_video) then
 			meta.video = line:match(meta_video)
-		end
 		-- Styles
-		if line:find(style_line) then
+		elseif line:find(style_line) then
 			-- Extract style
 			local style = table.create(0,23)
 			style.name, style.fontname, style.fontsize,
@@ -309,18 +296,14 @@ function LoadASS(content)
 			style.margin_v = tonumber(style.margin_v)
 			style.encoding = tonumber(style.encoding)
 			styles[#styles+1] = style
-		end
 		-- Lines
-		local c_line = line:find(comment_line)
-		local d_line = line:find(dialog_line)
-		if c_line or d_line then
+		elseif line:find(comment_line) or line:find(dialog_line) then
 			-- Extract dialog
 			local dialog = table.create(0,11)
-			if c_line then
+			if line:find(comment_line) then
 				dialog.comment = true
 				dialog.layer, dialog.start_time, dialog.end_time, dialog.style, dialog.actor, dialog.margin_r, dialog.margin_l, dialog.margin_v, dialog.effect, dialog.k_text =
 				line:match(comment_line)
-
 			else
 				dialog.comment = false
 				dialog.layer, dialog.start_time, dialog.end_time, dialog.style, dialog.actor, dialog.margin_r, dialog.margin_l, dialog.margin_v, dialog.effect, dialog.k_text =
@@ -790,6 +773,14 @@ function LoadASS(content)
 	-- Check function argument
 	if type(content) ~= "string" then
 		error("string expected", 2)
+	end
+	-- Try to open content as file
+	if content:len() < 256 then
+		local file = io.open(content, "r")
+		if file then
+			content = file:read("*a")
+			file:close()
+		end
 	end
 	-- Define global ASS tables
 	meta, styles, lines = {}, {}, {}

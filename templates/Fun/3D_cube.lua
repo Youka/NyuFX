@@ -43,16 +43,16 @@ local cube = {
 		{100, 100, 100}
 	}
 }
--- Frame-wise cube building (10s, 25 FPS)
+-- Frame-wise cube building (30s, 25 FPS)
 local line = lines[1]
-for s, e, i, n in utils.frames(0, 10000, 40) do
+for s, e, i, n in utils.frames(0, 30000, 40) do
 	line.start_time = s
 	line.end_time = e
 	-- Define rotations
 	local x_rotation = i/n * 720
 	local y_rotation = i/n * 720
 	local z_rotation = i/n * 360
-	-- Iterate through cube rectangles (copy)
+	-- Iterate through cube rectangles (copy = original not changed)
 	for rect_i, rect in ipairs(table.copy(cube)) do
 		-- Rotate rectangle points
 		for point_i = 1, #rect do
