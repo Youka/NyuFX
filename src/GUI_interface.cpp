@@ -45,8 +45,8 @@ void GUI::SetMeta(){
 	wxString *language = Config::Language();
 	if(*language == wxT("german"))
 		SetLanguage(wxLANGUAGE_GERMAN);
-	else if(*language == wxT("japanese"))
-		SetLanguage(wxLANGUAGE_JAPANESE);
+	else if(*language == wxT("french"))
+		SetLanguage(wxLANGUAGE_FRENCH);
 	else if(*language == wxT("arabic"))
 		SetLanguage(wxLANGUAGE_ARABIC);
 	else if(*language == wxT("chinese"))

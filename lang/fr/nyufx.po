@@ -1,0 +1,401 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: NyuFX 1.6\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Spyne\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: French\n"
+
+msgid "Lua editor"
+msgstr "Éditeur Lua"
+
+msgid "Choose sound file"
+msgstr "Choisir un fichier audio"
+
+msgid "Select all text in focus"
+msgstr "Sélectionner tout le texte dans la cible"
+
+msgid "Help"
+msgstr "Aide"
+
+msgid "Open file for focused editor"
+msgstr "Ouvrir le fichier pour l'éditeur ciblé"
+
+msgid "Set progressbar to 0%"
+msgstr "Barre de progression à 0%"
+
+msgid "Thanks to:"
+msgstr "Merci à :"
+
+msgid "Zooms one level nearer to editor content"
+msgstr "Zooms un niveau plus proches du contenu de l'éditeur"
+
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid "Unfolds all lines in Lua editor"
+msgstr "Déplier toutes les lignes dans l'éditeur Lua"
+
+msgid "Paste"
+msgstr "Coller"
+
+msgid "Open Lua file"
+msgstr "Ouvrir un fichier Lua"
+
+msgid "Toggle editors visibility"
+msgstr "Basculer la visibilité des éditeurs"
+
+msgid "HTML & PDF documents in 'docs' folder"
+msgstr "HTML & documents PDF dans le dossier 'docs'"
+
+msgid "Copy"
+msgstr "Copier"
+
+msgid "Search and replace text"
+msgstr "Rechercher et remplacer du texte"
+
+msgid "Copy selection to clipboard"
+msgstr "Copier la sélection dans le presse-papiers"
+
+msgid "Taskicon?"
+msgstr "Icône de tâche ?"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Generate"
+msgstr "Générer"
+
+msgid "Reload"
+msgstr "Recharger"
+
+msgid "Font"
+msgstr "Police"
+
+msgid "Application options"
+msgstr "Options de l'application"
+
+msgid "View"
+msgstr "Affichage"
+
+msgid "Paste clipboard"
+msgstr "Coller depuis le presse-papiers"
+
+msgid "Reload opened file for focused editor"
+msgstr "Recharger le fichier ouvert pour l'éditeur ciblé"
+
+msgid "Choose"
+msgstr "Choisir"
+
+msgid "Zooms one level farther to editor content"
+msgstr "Zooms un niveau plus loin du contenu de l'éditeur"
+
+msgid "Open include folder"
+msgstr "Ouvrir le dossier 'include'"
+
+msgid "Process error"
+msgstr "Erreur de processus"
+
+msgid "Replace"
+msgstr "Remplacer"
+
+msgid "Website:"
+msgstr "Site Web :"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Help browser"
+msgstr "Navigateur d'aide"
+
+msgid "Auto-Style"
+msgstr "Auto-Style"
+
+msgid "Show/Hide"
+msgstr "Afficher/Masquer"
+
+msgid "Forward in history"
+msgstr "Avancer dans l'historique"
+
+msgid "NONE"
+msgstr "NONE"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Go to line..."
+msgstr "Aller à la ligne..."
+
+msgid "Stop page loading"
+msgstr "Arrêter le chargement de la page"
+
+msgid "File not exists!"
+msgstr "Le fichier n'existe pas !"
+
+msgid "Zoom out"
+msgstr "Zoom arrière"
+
+msgid "Current URL"
+msgstr "URL actuelle"
+
+msgid "Output options"
+msgstr "Options de sortie"
+
+msgid "Cut selection to clipboard"
+msgstr "Couper la sélection dans le presse-papiers"
+
+msgid "Reset"
+msgstr "Réinitialiser"
+
+msgid "ASS editor"
+msgstr "Éditeur ASS"
+
+msgid "Clear log text"
+msgstr "Effacer le texte du journal"
+
+msgid "Abort"
+msgstr "Interrompre"
+
+msgid "Toggle view for ASS editor"
+msgstr "Basculer la vue pour l'éditeur ASS"
+
+msgid "Quit"
+msgstr "Quitter"
+
+msgid "Editor view"
+msgstr "Vue de l'éditeur"
+
+msgid "Tools"
+msgstr "Outils"
+
+msgid "Lua error"
+msgstr "Erreur Lua"
+
+msgid "Clear file of focused editor"
+msgstr "Effacer le fichier de l'éditeur ciblé"
+
+msgid "Start process!"
+msgstr "Démarrer le processus !"
+
+msgid "Choose line number"
+msgstr "Choisir le numéro de la ligne"
+
+msgid "Moves caret to line"
+msgstr "Déplacer le curseur à la ligne"
+
+msgid "Go to Lua line..."
+msgstr "Aller à la ligne Lua..."
+
+msgid "Undo"
+msgstr "Annuler"
+
+msgid "Log"
+msgstr "Historique d'événements"
+
+msgid "Help for NyuFX usage"
+msgstr "Aide pour l'utilisation de NyuFX"
+
+msgid "After process command"
+msgstr "Après exécution de la commande"
+
+msgid "Minimize program to taskicon? (otherwise to taskbar)"
+msgstr ""
+"Minimiser le programme en icône de tâche ? (Autrement dans la barre des "
+"tâches)"
+
+msgid "Load page"
+msgstr "Charger la page"
+
+msgid "Do you really want to abort process?"
+msgstr "Voulez-vous vraiment interrompre le processus ?"
+
+msgid "Open folders of NyuFX"
+msgstr "Ouvrir les dossiers de NyuFX"
+
+msgid "Back in history"
+msgstr "Retour dans l'historique"
+
+msgid "File saved?"
+msgstr "Fichier enregistré ?"
+
+msgid "Currently terminating process!"
+msgstr "Termine actuellement le processus !"
+
+msgid "Toggle view for Lua editor"
+msgstr "Basculer la vue pour l'éditeur Lua"
+
+msgid "Edit"
+msgstr "Édition"
+
+msgid "Search and replace - Lua editor"
+msgstr "Rechercher et remplacer - Éditeur Lua"
+
+msgid "Search and replace - ASS editor"
+msgstr "Rechercher et remplacer - Éditeur ASS"
+
+msgid "'Exit' function is missing!"
+msgstr "'Exit' fonction est manquante !"
+
+msgid "Open ASS file"
+msgstr "Ouvrir un fichier ASS"
+
+msgid "Programmer:"
+msgstr "Programmeur :"
+
+msgid "Delete selection"
+msgstr "Supprimer la sélection"
+
+msgid "Choose output file"
+msgstr "Choisir le fichier de sortie"
+
+msgid "Redo action"
+msgstr "Rétablir l'action"
+
+msgid "Couldn't run thread!"
+msgstr "Impossible de démarrer le fil d'instruction !"
+
+msgid "Go to ASS line..."
+msgstr "Aller à la ligne ASS..."
+
+msgid "Output by 'print' function"
+msgstr "Sortie par la fonction 'print'"
+
+msgid "Folds all lines in Lua editor"
+msgstr "Replier toutes les lignes dans l'éditeur Lua"
+
+msgid "New"
+msgstr "Nouveau"
+
+msgid "Open tools folder"
+msgstr "Ouvrir le dossier 'tools'"
+
+msgid "Language change requires a program restart"
+msgstr "Le changement de langue nécessite un redémarrage du programme"
+
+msgid "Save ASS file"
+msgstr "Enregistrer le fichier ASS"
+
+msgid "GUI language"
+msgstr "GUI langage"
+
+msgid "Style text"
+msgstr "Style de texte"
+
+msgid "About"
+msgstr "À propos"
+
+msgid "'Init' function is missing!"
+msgstr "'Init' fonction est manquante !"
+
+msgid "Karaoke effect creation with pixel & vector utilities."
+msgstr "Création d'effet karaoké avec pixel & utilitaires vecteur."
+
+msgid "Informations about NyuFX"
+msgstr "Informations sur NyuFX"
+
+msgid "Save file of focused editor"
+msgstr "Enregistrer le fichier de l'éditeur de ciblé"
+
+msgid "Folders"
+msgstr "Dossiers"
+
+msgid "Unfold all"
+msgstr "Deplier tout"
+
+msgid "Active editor"
+msgstr "Éditeur actif"
+
+msgid "Save Lua file"
+msgstr "Enregistrer le fichier Lua"
+
+msgid "Progress"
+msgstr "Progression"
+
+msgid "Output file error"
+msgstr "Erreur du fichier de sortie"
+
+msgid "Open output file"
+msgstr "Ouvrir le fichier de sortie"
+
+msgid "Cut"
+msgstr "Couper"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Default font of both editors"
+msgstr "Police par défaut dans les deux éditeurs"
+
+msgid "Open templates folder"
+msgstr "Ouvrir le dossier 'templates'"
+
+msgid "Couldn't create thread!"
+msgstr "Impossible de créer le fil d'instruction !"
+
+msgid "Save file with specific target of focused editor"
+msgstr "Enregistrer le fichier avec le chemin spécifique de l'éditeur ciblé"
+
+msgid "Undo action"
+msgstr "Annuler l'action"
+
+msgid "Access error"
+msgstr "Erreur d'accès"
+
+msgid "Choose an output file"
+msgstr "Choisir un fichier de sortie"
+
+msgid "Output"
+msgstr "Sortie"
+
+msgid "Zoom in"
+msgstr "Zoom avant"
+
+msgid "Fold all"
+msgstr "Replier tout"
+
+msgid "Accept"
+msgstr "Accepter"
+
+msgid "Set by 'io.progressbar' function"
+msgstr "Définie par la fonction 'io.progressbar'"
+
+msgid "Not possible while a process is running!"
+msgstr "Impossible tant qu'un processus est en marche !"
+
+msgid "Sound file to play after generation"
+msgstr "Fichier audio à jouer après génération"
+
+msgid "Select all"
+msgstr "Sélectionner tout"
+
+msgid "Redo"
+msgstr "Rétablir"
+
+msgid "Save as..."
+msgstr "Enregistrer sous..."
+
+msgid "Sound"
+msgstr "Audio"
+
+msgid "Language"
+msgstr "Langage"
+
+msgid "Stop process!"
+msgstr "Arrêter le processus !"
+
+msgid "Close NyuFX"
+msgstr "Fermer NyuFX"
+
+msgid "File"
+msgstr "Fichier"
+
+msgid "Progressbar"
+msgstr "Barre de progression"
