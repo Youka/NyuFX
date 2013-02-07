@@ -17,6 +17,7 @@ stream:get_frames(function(samples)
 		samples_collection[samples_collection_n] = sample
 	end
 end)
+
 -- Amplitude shape parameters
 local shape_width, shape_height, amplitude_divisor = 700, 2, 250
 -- Frame-wise line creation (20s, 25 FPS)
@@ -45,7 +46,7 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 		amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]/amplitude_divisor+shape_height)
 	end
 	amplitude_shape = table.concat(amplitude_shape, " ")
-	-- Output amplitude shape
+	-- Create amplitude dialog line
 	line.text = string.format("{\\an7\\pos(2,198)\\bord0\\p1}%s", amplitude_shape)
 	io.write_line(line)
 end

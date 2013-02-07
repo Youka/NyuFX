@@ -866,66 +866,6 @@ function table.max(t)
 	return n
 end
 
-function table.stack(...)
-	-- Attribute
-	local stack
-	-- Member functions
-	local ListFuncs = {}
-	ListFuncs.__index = ListFuncs
-	function ListFuncs:push(value)
-		if value ~= nil then
-			stack = {stack, value}
-		end
-	end
-	function ListFuncs:pop()
-		if stack then
-			local value = stack[2]
-			stack = stack[1]
-			return value
-		end
-	end
-	function ListFuncs:iter()
-		local stack2 = stack
-		return function()
-			if stack2 then
-				local value = stack2[2]
-				stack2 = stack2[1]
-				return value
-			end
-		end
-	end
-	function ListFuncs:size()
-		local n = 0
-		for _ in self:iter() do
-			n = n + 1
-		end
-		return n
-	end
-	function ListFuncs:invert()
-		local new_stack
-		for value in self:iter() do
-			new_stack = {new_stack, value}
-		end
-		stack = new_stack
-	end
-	function ListFuncs:totable()
-		local t = table.create(self:size(), 0)
-		local n = 0
-		for value in self:iter() do
-			n = n + 1
-			t[n] = value
-		end
-		return t
-	end
-	-- Object creation
-	local obj = setmetatable({}, ListFuncs)
-	-- Initialization
-	for _, value in ipairs(arg) do
-		obj:push(value)
-	end
-	return obj
-end
-
 function table.tostring(t)
 	if type(t) ~= "table" then
 		error("table expected", 2)
