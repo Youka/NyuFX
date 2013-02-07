@@ -18,10 +18,12 @@ stream:get_frames(function(samples)
 	end
 end)
 
--- Amplitude shape parameters
-local shape_width, shape_height, amplitude_divisor = 700, 2, 250
--- Frame-wise line creation (20s, 25 FPS)
+-- Amplitudes shape parameters
+local shape_width, shape_height, amplitude_divisor = 700, 2, 300
+-- Samples per frame
 local frame_samples_max = math.floor(sample_rate / 25  * channels)
+local frame_samples_max_per_channel = frame_samples_max / channels
+-- Frame-wise line creation (20s, 25 FPS)
 local line = lines[1]
 for s, e, i, n in utils.frames(0, 20000, 40) do
 	line.start_time = s
@@ -33,20 +35,24 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 		frame_samples_n = frame_samples_n + 1
 		frame_samples[frame_samples_n] = samples_collection[start_sample_i + i]
 	end
-	-- Create amplitude shape
-	local amplitude_shape, amplitude_shape_n = {string.format("m 0 %d l", frame_samples[1]/amplitude_divisor)}, 1
-	for x = 1, shape_width do
-		amplitude_shape_n = amplitude_shape_n + 1
-		amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]/amplitude_divisor)
+	-- Create amplitudes for every channel
+	for channel = 0, channels-1 do
+		-- Create amplitudes shape
+		local amplitude_shape, amplitude_shape_n = {string.format("m 0 %d l", frame_samples[1+channel]/amplitude_divisor)}, 1
+		local amplitude
+		for x = 1, shape_width do
+			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_max_per_channel-1)) * channels + channel]
+			amplitude_shape_n = amplitude_shape_n + 1
+			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, amplitude/amplitude_divisor)
+		end
+		for x = shape_width, 0, -1 do
+			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_max_per_channel-1)) * channels + channel]
+			amplitude_shape_n = amplitude_shape_n + 1
+			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, amplitude/amplitude_divisor+shape_height)
+		end
+		amplitude_shape = table.concat(amplitude_shape, " ")
+		-- Create amplitudes dialog line
+		line.text = string.format("{\\an7\\pos(2,%d)\\bord0\\p1}%s", 100 + channel * 200, amplitude_shape)
+		io.write_line(line)
 	end
-	amplitude_shape_n = amplitude_shape_n + 1
-	amplitude_shape[amplitude_shape_n] = string.format("%d %d", shape_width, frame_samples[frame_samples_n]/amplitude_divisor+shape_height)
-	for x = shape_width, 0, -1 do
-		amplitude_shape_n = amplitude_shape_n + 1
-		amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]/amplitude_divisor+shape_height)
-	end
-	amplitude_shape = table.concat(amplitude_shape, " ")
-	-- Create amplitude dialog line
-	line.text = string.format("{\\an7\\pos(2,198)\\bord0\\p1}%s", amplitude_shape)
-	io.write_line(line)
 end
