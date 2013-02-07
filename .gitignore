@@ -10,7 +10,7 @@ src/Lua5.1.5/Lua5.1.5.sdf
 src/Lua5.1.5/Lua5.1.5.suo
 src/Lua5.1.5/Lua5.1.5.vcxproj.user
 
-testの/
+test/
 tools/
 
 config.ini
