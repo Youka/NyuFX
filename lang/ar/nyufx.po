@@ -4,10 +4,396 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: Alkoon\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "X-Generator: Poedit 1.5.4\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"Language: Arabic\n"
+
+msgid "Lua editor"
+msgstr "محرر سكربت لوا"
+
+msgid "Choose sound file"
+msgstr "اختار الملف"
+
+msgid "Select all text in focus"
+msgstr "تحديد جميع النص"
+
+msgid "Help"
+msgstr "مساعدة"
+
+msgid "Open file for focused editor"
+msgstr "فتح الملف لمركز المحرر"
+
+msgid "Set progressbar to 0%"
+msgstr "إعادة شريط التقدم إلى الصفر"
+
+msgid "Thanks to:"
+msgstr "الشكر الجزيل لـ"
+
+msgid "Zooms one level nearer to editor content"
+msgstr "تقريب إلى أقرب نقطة في المحرر"
+
+msgid "Open"
+msgstr "افتح"
+
+msgid "Unfolds all lines in Lua editor"
+msgstr "كشف جميع الاسطر في محرر اللوا"
+
+msgid "Paste"
+msgstr "لصق"
+
+msgid "Open Lua file"
+msgstr "افتح سكربت لوا"
+
+msgid "Toggle editors visibility"
+msgstr ""
+
+msgid "HTML & PDF documents in 'docs' folder"
+msgstr "ملفات الهوتمل"
+
+msgid "Copy"
+msgstr "نسخ"
+
+msgid "Search and replace text"
+msgstr "البحث واستبدال النص"
+
+msgid "Copy selection to clipboard"
+msgstr "نسخ المحدد إلى الحافظة"
+
+msgid "Taskicon?"
+msgstr "أيقونة المهمة"
+
+msgid "Options"
+msgstr "خيارات"
+
+msgid "Generate"
+msgstr "توليد"
+
+msgid "Reload"
+msgstr "تحميل"
+
+msgid "Font"
+msgstr "خط"
+
+msgid "Application options"
+msgstr "خيارات التطبيق"
+
+msgid "View"
+msgstr "مشاهدة"
+
+msgid "Paste clipboard"
+msgstr "لصق الحافظة"
+
+msgid "Reload opened file for focused editor"
+msgstr "إعادة تحميل الملف المفتوح للمحرر"
+
+msgid "Choose"
+msgstr "اختار"
+
+msgid "Zooms one level farther to editor content"
+msgstr "تكبير إلى أبعد مستوى لمحتوى المحرر"
+
+msgid "Open include folder"
+msgstr "فتح الملف المتضمن"
+
+msgid "Process error"
+msgstr "خطأ في العملية"
+
+msgid "Replace"
+msgstr "استبدال"
+
+msgid "Website:"
+msgstr "موقع الكتروني"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Help browser"
+msgstr "المساعدة"
+
+msgid "Auto-Style"
+msgstr "النمط العادي"
+
+msgid "Show/Hide"
+msgstr "إخفاء/إظهار"
+
+msgid "Forward in history"
+msgstr "إلى أمام التاريخ"
+
+msgid "NONE"
+msgstr "لا شيء!"
+
+msgid "Close"
+msgstr "أغلق"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Go to line..."
+msgstr "إذهب إلى السطر..."
+
+msgid "Stop page loading"
+msgstr "إيقاف تحميل الصفحة"
+
+msgid "File not exists!"
+msgstr "!الملف غير موجود"
+
+msgid "Zoom out"
+msgstr "تصغير"
+
+msgid "Current URL"
+msgstr "مسار الـ URL"
+
+msgid "Output options"
+msgstr "خيارات الإخراج"
+
+msgid "Cut selection to clipboard"
+msgstr "قص المحدد إلى الحافظة"
+
+msgid "Reset"
+msgstr "إعادة الأمور لسابقتها"
+
+msgid "ASS editor"
+msgstr "محرر ملف التوقيت"
+
+msgid "Clear log text"
+msgstr "مسح السجل"
+
+msgid "Abort"
+msgstr "إحباط"
+
+msgid "Toggle view for ASS editor"
+msgstr "تبديل العرض لمحرر سكربت التوقيت"
+
+msgid "Quit"
+msgstr "خروج"
+
+msgid "Editor view"
+msgstr "مشاهدة المحرر"
+
+msgid "Tools"
+msgstr "أداوت"
+
+msgid "Lua error"
+msgstr "خطأ بالسكربت"
+
+msgid "Clear file of focused editor"
+msgstr "تنظيف مركز المحرر"
+
+msgid "Start process!"
+msgstr "ابدأ بالعملية"
+
+msgid "Choose line number"
+msgstr "اختر رقم السطر"
+
+msgid "Moves caret to line"
+msgstr "تحريك العلامة إلى السطر"
+
+msgid "Go to Lua line..."
+msgstr "إذهب إلى سطر ملف اللوا.."
+
+msgid "Undo"
+msgstr "تراجع"
+
+msgid "Log"
+msgstr "سجل"
+
+msgid "Help for how to use the tool"
+msgstr "مساعدة بكيفية استخدام الاداة"
+
+msgid "AFTER PROGRESS"
+msgstr "بعد العملية"
+
+msgid "Minimize program to taskicon? (otherwise to taskbar)"
+msgstr "تصغير البرنامج الى شريط مالهام"
+
+msgid "Load page"
+msgstr "تحميل الصفحة"
+
+msgid "Do you really want to abort process?"
+msgstr "هل تريد حقًا إلغاء العملية؟"
+
+msgid "Open folders of NyuFX"
+msgstr "فتح ملفات الاداة"
+
+msgid "Back in history"
+msgstr " الرجوع إلى الوراء"
+
+msgid "File saved?"
+msgstr "الملف المحفوظ؟"
+
+msgid "Currently terminating process!"
+msgstr "إنها العلملية حاليا"
+
+msgid "Toggle view for Lua editor"
+msgstr "تبديل العرض لمحرر سكربت اللوا"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Search and replace - Lua editor"
+msgstr "بحث واستبدال في محرر سكربت لوا"
+
+msgid "Search and replace - ASS editor"
+msgstr "بحث واستبدال في محرر سكربت التوقيت"
+
+msgid "'Exit' function is missing!"
+msgstr "وظيفة الاخراج مفقود"
+
+msgid "Open ASS file"
+msgstr "فتح ملف التوقيت"
+
+msgid "Programmer:"
+msgstr "المبرمج:"
+
+msgid "Delete selection"
+msgstr "حذف المحدد"
+
+msgid "Choose output file"
+msgstr "مكان حفظ الملف"
+
+msgid "Redo action"
+msgstr "إعادة العملية"
+
+msgid "Couldn't run thread!"
+msgstr "لا يمكن التشغيل"
+
+msgid "Go to ASS line..."
+msgstr "إذهب إلى السطر لملف التوقيت..."
+
+msgid "Output by 'print' function"
+msgstr "ملف الاخراج بواسطة دالة الطباعة"
+
+msgid "Folds all lines in Lua editor"
+msgstr "طي جميع الاسطر في محرر السكربت"
+
+msgid "New"
+msgstr "جديد"
+
+msgid "Open tools folder"
+msgstr "فتح ملف الادوات"
+
+msgid "Language change requires a program restart"
+msgstr "تغيير اللغة يتطلب إعادة التشغيل"
+
+msgid "Save ASS file"
+msgstr "حفظ ملف التوقيت"
+
+msgid "GUI language"
+msgstr "لغة واجهة الأداة"
+
+msgid "Style text"
+msgstr "نمط النص"
+
+msgid "About"
+msgstr "بخصوص"
+
+msgid "'Init' function is missing!"
+msgstr "الدالة مفقودة"
+
+msgid "Karaoke effect creation with pixel & vector utilities."
+msgstr "إنشاء تأثير الكاراوكي مع خاصية البكسل و خواص أخرى"
+
+msgid "Informations about NyuFX"
+msgstr "معلومات عن الأداة"
+
+msgid "Save file of focused editor"
+msgstr "حفظ الملف من المحرر "
+
+msgid "Folders"
+msgstr "الملفات"
+
+msgid "Unfold all"
+msgstr "كسف الكل"
+
+msgid "Active editor"
+msgstr "المحرر النشط"
+
+msgid "Save Lua file"
+msgstr "حفظ ملف اللوا"
+
+msgid "Progress"
+msgstr "عملية التطبيق"
+
+msgid "Output file error"
+msgstr "خطأ بالملف المخرج"
+
+msgid "Open output file"
+msgstr "فتح ملف الإخراج"
+
+msgid "Cut"
+msgstr "قطع"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Default font of both editors"
+msgstr "الخط الأفتراضي لكلا المحرران"
+
+msgid "Open templates folder"
+msgstr "فتح ملف القوالب"
+
+msgid "Couldn't create thread!"
+msgstr "تعذر إنشاء الصفحة!"
+
+msgid "Save file with specific target of focused editor"
+msgstr "حفظ الملف مع مركز محدد"
+
+msgid "Undo action"
+msgstr "التراجع عن الإجراء"
+
+msgid "Access error"
+msgstr "منفذ خاطئ"
+
+msgid "Choose an output file"
+msgstr "اخيار مكان حفظ الملف"
+
+msgid "Output"
+msgstr "الإخراج"
+
+msgid "Zoom in"
+msgstr "تكبير"
+
+msgid "Fold all"
+msgstr "طي الكل"
+
+msgid "Accept"
+msgstr "الموافقة"
+
+msgid "Set by 'io.progressbar' function"
+msgstr "وضعية دالة شريط التقدم"
+
+msgid "Not possible while a process is running!"
+msgstr "لا يمكن حاليا فالعملية قيد التشغيل"
+
+msgid "Sound file to play after generation"
+msgstr "لتشغيل ملف "
+
+msgid "Select all"
+msgstr "تحديد الكل"
+
+msgid "Redo"
+msgstr "إعادة"
+
+msgid "Save as..."
+msgstr "حفظ الملف كـ.."
+
+msgid "Sound"
+msgstr "الصوت"
+
+msgid "Language"
+msgstr "اختيار اللغة"
+
+msgid "Stop process!"
+msgstr "إيقاف العملية!"
+
+msgid "Close NyuFX"
+msgstr "إغلاق الأداة"
+
+msgid "File"
+msgstr "ملف"
+
+msgid "Progressbar"
+msgstr "شريط التقدم"

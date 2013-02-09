@@ -1,4 +1,2 @@
-* rewrite own path flattener (accepting non-closed path other than GDI)
 * rewrite templates
 * update documentation
-* implent localization
