@@ -143,11 +143,13 @@ DEF_TAIL
 DEF_HEAD_1ARG(flatten_path, 1)
 	if( !FlattenPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) ) )
 		luaL_error2(L, "path flattening failed");
+	return 1;
 DEF_TAIL
 
 DEF_HEAD_1ARG(abort_path, 1)
 	if( !AbortPath( *reinterpret_cast<HDC*>(luaL_checkuserdata(L, 1, TGDI)) ) )
 		luaL_error2(L, "path abortion failed");
+	return 1;
 DEF_TAIL
 
 DEF_HEAD_1ARG(path_box, 1)
@@ -188,6 +190,9 @@ DEF_HEAD_1ARG(widen_path, 2)
 			luaL_error2(L, "couldn't widen path");
 	}else
 		luaL_error2(L, "invalid width");
+	// Return context
+	lua_pushvalue(L, 1);
+	return 1;
 DEF_TAIL
 
 DEF_HEAD_1ARG(get_path, 1)
@@ -371,6 +376,9 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 		}
 		EndPath(*dc);
 	}
+	// Return context
+	lua_pushvalue(L, 1);
+	return 1;
 DEF_TAIL
 
 DEF_HEAD_2ARG(get_pixels, 1, 2)

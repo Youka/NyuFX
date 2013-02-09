@@ -71,8 +71,7 @@ function convert.shape_to_pixels(shape)
 			return string.format("%d %d", x + shift_x, y + shift_y)
 		end)
 		-- Get pixels
-		ctx:add_path(shape)
-		pixel_palette = ctx:get_pixels(true)
+		pixel_palette = ctx:add_path(shape):get_pixels(true)
 	end)
 	if not success then
 		error("invalid shape", 2)
@@ -105,8 +104,7 @@ function convert.text_to_shape(text, style)
 			local shape_collection, shape_collection_n = table.create(text:ulen(),0), 0
 			local current_x = 0
 			for uchar_i, uchar in text:uchars() do
-				ctx:add_path(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
-				shape = ctx:get_path()
+				shape = ctx:add_path(uchar, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding):get_path()
 				ctx:abort_path()
 				shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 					return string.format("%d %d", x + current_x, y)
@@ -118,8 +116,7 @@ function convert.text_to_shape(text, style)
 			shape = table.concat(shape_collection, " ")
 		-- Text without spacing
 		else
-			ctx:add_path(text, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding)
-			shape = ctx:get_path()
+			shape = ctx:add_path(text, style.fontname, style.fontsize * 64, style.bold, style.italic, style.underline, style.strikeout, style.encoding):get_path()
 		end
 		-- Scale correctly
 		local scale_x, scale_y = style.scale_x / 100 / 8, style.scale_y / 100 / 8
@@ -385,8 +382,7 @@ function shape.bounding(shape)
 		shape = shape:gsub("(%-?%d+)%s+(%-?%d+)", function(x, y)
 			return string.format("%d %d", x * 8, y * 8)
 		end)
-		ctx:add_path(shape)
-		min_x, min_y, max_x, max_y = ctx:path_box()
+		min_x, min_y, max_x, max_y = ctx:add_path(shape):path_box()
 		min_x, min_y, max_x, max_y = math.floor(min_x/8), math.floor(min_y/8), math.floor(max_x/8), math.floor(max_y/8)
 	end)
 	if not success then
@@ -516,9 +512,7 @@ function shape.split(shape, len)
 		-- Graphic context
 		local ctx = tgdi.create_context()
 		-- Flatten path
-		ctx:add_path(shape)
-		ctx:flatten_path()
-		shape = ctx:get_path()
+		shape = ctx:add_path(shape):flatten_path():get_path()
 	end)
 	if not success then
 		error("invalid shape", 2)
