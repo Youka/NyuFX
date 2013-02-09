@@ -8,8 +8,7 @@ for i = 1, image.width * image.height * (image.has_alpha and 4 or 3) do
 end
 -- Get text pixels
 local ctx = tgdi.create_context()
-ctx:add_path("Hello world!", "Times New Roman", 90*8, true, false, false, false, 1)
-local pixel_palette = ctx:get_pixels(true)
+local pixel_palette = ctx:add_path("Hello world!", "Times New Roman", 90*8, true, false, false, false, 1):get_pixels(true)
 -- Draw pixels to image
 local x, y = 10, 4
 for pixel_y = 0, pixel_palette.height-1 do

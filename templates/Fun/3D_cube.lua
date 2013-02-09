@@ -61,8 +61,8 @@ for s, e, i, n in utils.frames(0, 30000, 40) do
 		local ortho = math.ortho({rect[2][1] - rect[1][1], rect[2][2] - rect[1][2], rect[2][3] - rect[1][3]}, {rect[4][1] - rect[1][1], rect[4][2] - rect[1][2], rect[4][3] - rect[1][3]})
 		-- Further process only for visible frontface
 		if ortho[3] > 0 then
-			-- Calculate degree viewer <-> rectangle
-			local deg = math.degree(ortho, {0, 0, 1})
+			-- Calculate degree light direction <-> rectangle (fixed to 0-90 degree)
+			local deg = math.trim(math.abs(math.degree(ortho, {0, -0.5, 1})), 0, 90)
 			-- Create rectangle dialog line
 			line.text = string.format("{\\an7\\pos(300,200)\\bord0\\1c%s\\p1}m %d %d l %d %d %d %d %d %d"
 									, utils.interpolate(deg / 90, "&HFFFFFF&", "&H000000&")
