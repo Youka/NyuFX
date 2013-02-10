@@ -3,7 +3,7 @@ local image = table.create(480*100*4, 3)
 image.width = 480
 image.height = 100
 image.has_alpha = true
-for i = 1, image.width * image.height * (image.has_alpha and 4 or 3) do
+for i = 1, image.width * image.height * 4 do
 	image[i] = 0
 end
 -- Get text pixels
