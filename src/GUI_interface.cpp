@@ -42,17 +42,13 @@ void GUI::SetMeta(){
 	// Load configuration settings
 	Config::Load();
 	// Set language to display
+	SetLanguage(wxLANGUAGE_ENGLISH);
 	wxString *language = Config::Language();
-	if(*language == wxT("german"))
-		SetLanguage(wxLANGUAGE_GERMAN);
-	else if(*language == wxT("french"))
-		SetLanguage(wxLANGUAGE_FRENCH);
-	else if(*language == wxT("arabic"))
-		SetLanguage(wxLANGUAGE_ARABIC);
-	else if(*language == wxT("chinese"))
-		SetLanguage(wxLANGUAGE_CHINESE);
-	else
-		SetLanguage(wxLANGUAGE_ENGLISH);
+	for(unsigned char cur_lang = wxLANGUAGE_ABKHAZIAN; cur_lang <= wxLANGUAGE_ZULU; cur_lang++)
+		if(*language == wxLocale::GetLanguageName(cur_lang)){
+			SetLanguage(static_cast<wxLanguage>(cur_lang));
+			break;
+		}
 }
 
 void GUI::CreateMenu(){
@@ -109,7 +105,9 @@ void GUI::CreateMenu(){
 	this->toolMenu = new wxMenu;
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &this->tools, wxT("*.exe"), wxDIR_FILES);
 	wxDir::GetAllFiles(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\tools\\"), &this->tools, wxT("*.lnk"), wxDIR_FILES);
-	for(unsigned int i = 0; i < this->tools.GetCount() && i < 30; i++){
+	if(this->tools.GetCount() > 30)
+		this->tools.RemoveAt(30, this->tools.GetCount()-30);
+	for(unsigned int i = 0; i < this->tools.GetCount(); i++){
 		this->toolMenu->Append(ID_MENU_TOOL+i, this->tools[i].AfterLast('\\').BeforeLast('.'), this->tools[i]);
 		this->Connect(ID_MENU_TOOL+i, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUI::OnTool));
 	}

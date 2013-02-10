@@ -16,7 +16,7 @@ void Options::CreateElements(){
 	this->language_label = new wxStaticText(this, wxID_ANY, _("Language"));
 	this->language_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	this->language_label->SetToolTip(_("GUI language"));
-	const wxString supported_langs[] = {wxT("english"), wxT("german"), wxT("arabic"), wxT("french"), wxT("chinese")};
+	const wxString supported_langs[] = {wxT("English"), wxT("German"), wxT("Arabic"), wxT("French"), wxT("Chinese")};
 	this->languages = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, sizeof(supported_langs) / sizeof(wxString), supported_langs, wxCB_READONLY);
 	if( this->languages->FindString(*Config::Language(), true) == wxNOT_FOUND )
 		this->languages->SetValue(supported_langs[0]);

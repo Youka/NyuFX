@@ -72,6 +72,9 @@
     <ClCompile Include="Scripting.cpp">
       <Filter>Progress</Filter>
     </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">

@@ -74,6 +74,7 @@
     <ClCompile Include="OutputCtrl.cpp" />
     <ClCompile Include="Replace.cpp" />
     <ClCompile Include="SaveSymbol.cpp" />
+    <ClCompile Include="System.cpp" />
     <ClCompile Include="TaskIcon.cpp" />
     <ClCompile Include="Generator.cpp" />
     <ClCompile Include="ltable2.cpp" />
