@@ -1,6 +1,8 @@
 #include "Options.h"
 #include "Config.h"
 #include "GUI.h"
+#include <wx/stdpaths.h>
+#include <wx/dir.h>
 
 #define GET_GUI reinterpret_cast<GUI*>(this->GetParent())
 
@@ -12,15 +14,30 @@ Options::Options(wxWindow *wnd) : wxDialog(wnd, wxID_ANY, _("Options"), wxDefaul
 }
 
 void Options::CreateElements(){
+	// Get supported languages
+	wxArrayString supported_langs;
+	{
+		wxArrayString lang_dirs;
+		wxDir dir(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\lang\\"));
+		wxString sub_dir;
+		bool got = dir.GetFirst(&sub_dir, wxEmptyString, wxDIR_DIRS);
+		while(got){
+			lang_dirs.Add(sub_dir);
+			got = dir.GetNext(&sub_dir);
+		}
+		for(size_t dir_i = 0; dir_i < lang_dirs.GetCount(); dir_i++)
+			for(unsigned char cur_lang = wxLANGUAGE_ABKHAZIAN; cur_lang <= wxLANGUAGE_ZULU; cur_lang++)
+				if(lang_dirs[dir_i] == wxLocale::GetLanguageCanonicalName(cur_lang).Left(2)){
+					supported_langs.Add(wxLocale::GetLanguageName(cur_lang));
+					break;
+				}
+	}
 	// Language
 	this->language_label = new wxStaticText(this, wxID_ANY, _("Language"));
 	this->language_label->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	this->language_label->SetToolTip(_("GUI language"));
-	const wxString supported_langs[] = {wxT("English"), wxT("German"), wxT("Arabic"), wxT("French"), wxT("Chinese")};
-	this->languages = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, sizeof(supported_langs) / sizeof(wxString), supported_langs, wxCB_READONLY);
-	if( this->languages->FindString(*Config::Language(), true) == wxNOT_FOUND )
-		this->languages->SetValue(supported_langs[0]);
-	else
+	this->languages = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, supported_langs, wxCB_READONLY);
+	if( this->languages->FindString(*Config::Language(), true) != wxNOT_FOUND )
 		this->languages->SetValue(*Config::Language());
 	this->languages->SetCursor(wxCURSOR_HAND);
 	// Sound
