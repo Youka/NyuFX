@@ -1,6 +1,7 @@
 ;Includes
 !include "MUI.nsh"  ;Modern look
 !include "winmessages.nsh"	;Windows messages
+!include "Sections.nsh"	;Section utilities
 
 ;Program information
 !define PROG_NAME "NyuFX"
@@ -95,7 +96,7 @@ Section ""
 SectionEnd
 
 ;Components
-Section "Shortcut" s1
+Section /o "Shortcut" s1
   CreateShortCut "$DESKTOP\NyuFX.lnk" "$INSTDIR\NyuFX.exe"
 SectionEnd
 
@@ -104,16 +105,64 @@ Section "Examples" s2
   File /r "${SOURCEDIR}\templates\*.*"
 SectionEnd
 
-Section "ASSDraw3" s3
+Section /o "ASSDraw3" s3
   SetOutPath "$INSTDIR\tools"
   File "${SOURCEDIR}\tools\ASSDraw3.exe"
   File "${SOURCEDIR}\tools\ASSDraw3.chm"
 SectionEnd
 
+SectionGroup /e "Language" s4
+Section "English" s5
+  SetOutPath "$INSTDIR"
+  File "${SOURCEDIR}\installer\en\config.ini"
+SectionEnd
+Section "German" s6
+  SetOutPath "$INSTDIR"
+  File "${SOURCEDIR}\installer\de\config.ini"
+SectionEnd
+Section "Arabic" s7
+  SetOutPath "$INSTDIR"
+  File "${SOURCEDIR}\installer\ar\config.ini"
+SectionEnd
+Section "French" s8
+  SetOutPath "$INSTDIR"
+  File "${SOURCEDIR}\installer\fr\config.ini"
+SectionEnd
+Section "Chinese" s9
+  SetOutPath "$INSTDIR"
+  File "${SOURCEDIR}\installer\zh\config.ini"
+SectionEnd
+SectionGroupEnd
+
+Function .onInit
+  !insertmacro SetSectionFlag ${s4} ${SF_RO}
+  !insertmacro UnselectSection ${s6}
+  !insertmacro UnselectSection ${s7}
+  !insertmacro UnselectSection ${s8}
+  !insertmacro UnselectSection ${s9}
+  StrCpy $1 ${s5}
+FunctionEnd
+
+Function .onSelChange
+  !insertmacro StartRadioButtons $1
+    !insertmacro RadioButton ${s5}
+    !insertmacro RadioButton ${s6}
+	!insertmacro RadioButton ${s7}
+	!insertmacro RadioButton ${s8}
+	!insertmacro RadioButton ${s9}
+  !insertmacro EndRadioButtons
+FunctionEnd
+
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${s1} "Create a desktop shortcut"
   !insertmacro MUI_DESCRIPTION_TEXT ${s2} "Add example scripts"
   !insertmacro MUI_DESCRIPTION_TEXT ${s3} "Add tool 'ASSDraw3'"
+  !insertmacro MUI_DESCRIPTION_TEXT ${s4} "Choose a startup language"
+  !insertmacro MUI_DESCRIPTION_TEXT ${s5} "Start with english"
+  !insertmacro MUI_DESCRIPTION_TEXT ${s6} "Start with german"
+  !insertmacro MUI_DESCRIPTION_TEXT ${s7} "Start with arabic"
+  !insertmacro MUI_DESCRIPTION_TEXT ${s8} "Start with french"
+  !insertmacro MUI_DESCRIPTION_TEXT ${s9} "Start with chinese"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;Uninstall
