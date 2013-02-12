@@ -42,6 +42,7 @@ cube[6] = {
 	math.rotate(cube[1][3], "x", -90),
 	math.rotate(cube[1][4], "x", -90)
 }
+
 -- Frame-wise cube building (30s, 25 FPS)
 local line = lines[1]
 for s, e, i, n in utils.frames(0, 30000, 40) do
