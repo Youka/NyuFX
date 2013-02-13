@@ -115,18 +115,18 @@ void Options::OnButton(wxCommandEvent& event){
 	*Config::Minimize2Icon() = this->minimize2icon->IsChecked();
 	*Config::Font() = this->fontface->GetValue();
 	*Config::FontSize() = this->fontsize->GetValue();
-	// ...update taskicon immediatly and...
-	if(GET_GUI->taskicon == 0 && this->minimize2icon->GetValue() == true)
+	// ...update taskicon & editors font immediatly, ...
+	if(GET_GUI->taskicon == 0 && this->minimize2icon->IsChecked() == true)
 		GET_GUI->taskicon = new TaskIcon(GET_GUI);
-	else if(GET_GUI->taskicon != 0 && this->minimize2icon->GetValue() == false){
+	else if(GET_GUI->taskicon != 0 && this->minimize2icon->IsChecked() == false){
 		GET_GUI->taskicon->Destroy();
 		GET_GUI->taskicon = 0;
 	}
-	GET_GUI->lua_editor->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, this->fontsize->GetValue());
 	GET_GUI->lua_editor->editor->StyleSetFaceName(wxSTC_STYLE_DEFAULT, this->fontface->GetValue());
+	GET_GUI->lua_editor->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, this->fontsize->GetValue());
 	GET_GUI->lua_editor->LoadStyle();
-	GET_GUI->ass_editor->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, this->fontsize->GetValue());
 	GET_GUI->ass_editor->editor->StyleSetFaceName(wxSTC_STYLE_DEFAULT, this->fontface->GetValue());
+	GET_GUI->ass_editor->editor->StyleSetSize(wxSTC_STYLE_DEFAULT, this->fontsize->GetValue());
 	GET_GUI->ass_editor->LoadStyle();
 	// ...destroy dialog
 	this->ProcessEvent( wxCloseEvent(wxEVT_CLOSE_WINDOW) );

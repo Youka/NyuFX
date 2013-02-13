@@ -82,10 +82,10 @@ void LuaEditor::OnBrace(wxStyledTextEvent& event){
 	char key = static_cast<char>(this->editor->GetCharAt( pos ));
 	// Brace search
 	int hit = wxSTC_INVALID_POSITION;
-	if( pre_key == '(' || pre_key == '{' || pre_key == '[' )
-		hit = pos - 1;
-	else if( key == ')' || key == '}' || key == ']')
+	if( key == '(' || key == '{' || key == '[' )
 		hit = pos;
+	else if( pre_key == ')' || pre_key == '}' || pre_key == ']' )
+		hit = pos - 1;
 	// Brace action
 	if(hit != wxSTC_INVALID_POSITION){
 		int match = this->editor->BraceMatch( hit );
