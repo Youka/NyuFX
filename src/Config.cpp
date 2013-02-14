@@ -7,7 +7,7 @@
 // Configuration attributes
 wxString in_lua, in_ass, out_ass, cmd, language = wxT("English"), sound, font = wxT("Segoe UI");
 bool auto_run = false;
-unsigned long fontsize = 10;
+unsigned long fontsize = 9;
 bool minimize2icon = false;
 
 namespace Config{
