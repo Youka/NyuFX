@@ -20,9 +20,8 @@ end)
 
 -- Amplitudes shape parameters
 local shape_width, shape_height, amplitude_divisor = 700, 2, 300
--- Samples per frame (per channel)
-local frame_samples_max = math.floor(sample_rate / 25)
 -- Frame-wise line creation (20s, 25 FPS)
+local frame_samples_max = math.floor(sample_rate / 25)
 local line = lines[1]
 for s, e, i, n in utils.frames(0, 20000, 40) do
 	line.start_time = s

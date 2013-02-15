@@ -245,7 +245,7 @@ DEF_HEAD_2ARG(text_extents, 4, 9)
 	wxString text = wxString::FromUTF8(luaL_checkstring(L, 2));	// text
 	const wchar_t *wtext = text.wc_str();
 	wxString face = wxString::FromUTF8(luaL_checkstring(L, 3));	// font face
-	const wchar_t *wface = text.wc_str();
+	const wchar_t *wface = face.wc_str();
 	int size = luaL_checknumber(L, 4);	// font size
 	bool bold = luaL_optboolean(L, 5, false);	// bold?
 	bool italic = luaL_optboolean(L, 6, false);	// italic?
@@ -349,7 +349,7 @@ DEF_HEAD_3ARG(add_path, 2, 4, 9)
 		wxString text = wxString::FromUTF8(luaL_checkstring(L, 2));	// text
 		const wchar_t *wtext = text.wc_str();
 		wxString face = wxString::FromUTF8(luaL_checkstring(L, 3));	// font face
-		const wchar_t *wface = text.wc_str();
+		const wchar_t *wface = face.wc_str();
 		int size = luaL_checknumber(L, 4);	// font size
 		bool bold = luaL_optboolean(L, 5, false);	// bold?
 		bool italic = luaL_optboolean(L, 6, false);	// italic?
