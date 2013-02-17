@@ -9,7 +9,7 @@ class DropEditorFile : public wxFileDropTarget{
 		// Store reference to drop targets
 		DropEditorFile(wxTextCtrl *title, wxStyledTextCtrl *editor) : title(title), editor(editor){}
 		// Handle file drop
-		virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames){
+		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames){
 			wxString filename = filenames[0];
 			wxFFile file;
 			if(file.Open(filename, "r")){

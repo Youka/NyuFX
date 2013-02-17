@@ -8,7 +8,7 @@ class DropOutputFile : public wxFileDropTarget{
 		// Store reference to drop target
 		DropOutputFile(wxTextCtrl *filetarget) : file(filetarget){}
 		// Handle file drop
-		virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames){
+		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames){
 			this->file->SetValue(filenames[0]);
 			this->file->SetInsertionPointEnd();
 			return true;

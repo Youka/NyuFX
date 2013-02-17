@@ -50,7 +50,7 @@
     <Link>
       <AdditionalDependencies>comctl32.lib;rpcrt4.lib;winmm.lib;wsock32.lib;wxmsw29u_stc.lib;wxscintilla.lib;wxmsw29u_webview.lib;wxmsw29u_adv.lib;wxmsw29u_core.lib;wxbase29u.lib;wxregexu.lib;wxpng.lib;wxjpeg.lib;wxzlib.lib;Lua5.1.5.lib;libavcodec.a;libavformat.a;libavutil.a;libswscale.a;libswresample.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>Release;E:\PROJEKTE\Librarys\wxWidgets-2.9.4\lib\vc_lib;E:\PROJEKTE\Librarys\ffmpeg-1.1\build\msvc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <UACExecutionLevel>HighestAvailable</UACExecutionLevel>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
