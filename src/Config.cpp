@@ -5,7 +5,7 @@
 #include <wx/fileconf.h>
 
 // Configuration attributes
-wxString in_lua, in_ass, out_ass, cmd, language = wxT("English"), sound, font = wxT("Segoe UI");
+wxString in_lua, in_ass, out_ass, cmd, language = wxT("English"), sound, font = wxT("Courier New");
 bool auto_run = false;
 unsigned long fontsize = 9;
 bool minimize2icon = false;
