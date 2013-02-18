@@ -1,6 +1,6 @@
 function amplitudes_to_magnitudes(samples)
 	-- Complex numbers
-	local C
+	local complex_t
 	do
 		local complex = {}
 		local function tocomplex(a, b)
@@ -21,12 +21,12 @@ function amplitudes_to_magnitudes(samples)
 			return setmetatable({r = c1.r * c2.r - c1.i * c2.i, i = c1.r * c2.i + c1.i * c2.r}, complex)
 		end
 		complex.__index = complex
-		C = setmetatable({r = 0, i = 0}, complex)
+		complex_t = function(r, i)
+			return setmetatable({r = r, i = i}, complex)
+		end
 	end
 	local function polar(theta)
-		local c = C + math.cos(theta)
-		c.i = math.sin(theta)
-		return c
+		return complex_t(math.cos(theta), math.sin(theta))
 	end
 	local function magnitude(c)
 		return math.sqrt(c.r^2 + c.i^2)
@@ -77,13 +77,12 @@ function amplitudes_to_magnitudes(samples)
 	-- Amplitudes to complex numbers
 	local data = table.create(#samples, 0)
 	for si, sample in ipairs(samples) do
-		data[si] = sample + C
+		data[si] = complex_t(sample, 0)
 	end
 	-- Process FFT
 	fft(data)
 	-- Complex numbers to magnitudes
 	for i = 1, #data do
-		print( string.format("(%s,%s)", tostring(data[i].r), tostring(data[i].i)) )	-- Test output (can be removed)
 		data[i] = magnitude(data[i])
 	end
 	return data
