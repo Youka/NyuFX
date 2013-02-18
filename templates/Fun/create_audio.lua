@@ -1,9 +1,12 @@
 -- Number to bytes in little-endian
 function ntob(n, bytes)
-	local hex = string.format("%0" .. bytes*2 .. "x", n)
+	if n < 0 then
+		n = n + 2^(bytes * 8 - 1)
+	end
 	local bin = {}
-	for pos = #hex-1, #hex-bytes*2, -2 do
-		bin[#bin+1] = tonumber(hex:sub(pos,pos+1), 16)
+	for i = 1, bytes do
+		bin[#bin+1] = n % 256
+		n = math.floor(n / 256)
 	end
 	return string.char(unpack(bin))
 end
