@@ -369,7 +369,7 @@ msgid "Karaoke effect creation with pixel & vector utilities."
 msgstr "Karaoke Effekt Erstellung mit Pixel & Vektor Werkzeugen."
 
 msgid "Choose"
-msgstr "Wähle"
+msgstr "Wählen"
 
 msgid "Select all"
 msgstr "Alles auswählen"

@@ -53,4 +53,6 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 		line.text = string.format("{\\an7\\pos(2,%d)\\bord0\\p1}%s", 100 + channel * 200, amplitude_shape)
 		io.write_line(line)
 	end
+	-- Frame creation progress
+	io.progressbar(i/n)
 end
