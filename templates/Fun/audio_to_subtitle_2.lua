@@ -134,18 +134,21 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 		end
 		-- Convert samples/amplitudes to magnitudes
 		frame_samples = amplitudes_to_magnitudes(frame_samples)
+
+		-- TODO: order magnitudes to spectrum table (hint: max magnitude = 1.06181e+007)
+
 		-- Create magnitudes shape
-		local magnitude_shape, magnitude_shape_n = {string.format("m 0 %d l", frame_samples[1]/magnitude_divisor)}, 1
+		local magnitude_shape, magnitude_shape_n = {string.format("m 0 %d l", -frame_samples[1]/magnitude_divisor)}, 1
 		local magnitude
 		for x = 1, shape_width do
 			magnitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_max-1))]
 			magnitude_shape_n = magnitude_shape_n + 1
-			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, magnitude/magnitude_divisor)
+			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, -magnitude/magnitude_divisor)
 		end
 		for x = shape_width, 0, -1 do
 			magnitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_max-1))]
 			magnitude_shape_n = magnitude_shape_n + 1
-			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, magnitude/magnitude_divisor+shape_height)
+			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, -magnitude/magnitude_divisor+shape_height)
 		end
 		magnitude_shape = table.concat(magnitude_shape, " ")
 		-- Create magnitudes dialog line

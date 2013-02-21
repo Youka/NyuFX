@@ -979,7 +979,7 @@ function utils.text_extents(text, style)
 		-- Graphic context
 		local ctx = tgdi.create_context()
 		-- Extents with spacing
-		if style.spacing > 0 then
+		if style.spacing > 0 and text:ulen() > 0 then
 			local spaced_width = 0
 			for uchar_i, uchar in text:uchars() do
 				width, height, ascent, descent, internal_lead, external_lead =

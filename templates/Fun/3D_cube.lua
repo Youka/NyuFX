@@ -1,4 +1,4 @@
---Cube rectangles
+-- Cube rectangles
 local cube = {nil, nil, nil, nil, nil, nil}
 -- Front rectangle (frontface has points clockwise; 1 pixel overhang to fill gaps)
 cube[1] = {

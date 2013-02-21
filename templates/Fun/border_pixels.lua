@@ -32,14 +32,14 @@ end
 -- Border pixels output
 for _, pixel in ipairs(text_border_pixels) do
 	local x, y = math.floor(line.left) + pixel.x, math.floor(line.top) + pixel.y
-	local alpha = convert.a_to_ass(pixel.a)
-	line.text = string.format("{\\an7\\pos(%d,%d)\\1a%s\\1c%s\\bord0\\p1}m 0 0 l 1 0 1 1 0 1", x, y, alpha, line.styleref.color3)
+	local alpha = pixel.a == 255 and "" or "\\1a" .. convert.a_to_ass(pixel.a)
+	line.text = string.format("{\\an7\\pos(%d,%d)%s\\1c%s\\bord0\\p1}m 0 0 l 1 0 1 1 0 1", x, y, alpha, line.styleref.color3)
 	io.write_line(line)
 end
 -- Fill pixels output
 for _, pixel in ipairs(text_pixels) do
 	local x, y = math.floor(line.left) + pixel.x, math.floor(line.top) + pixel.y
-	local alpha = convert.a_to_ass(pixel.a)
-	line.text = string.format("{\\an7\\pos(%d,%d)\\1a%s\\1c%s\\bord0\\p1}m 0 0 l 1 0 1 1 0 1", x, y, alpha, line.styleref.color1)
+	local alpha = pixel.a == 255 and "" or "\\1a" .. convert.a_to_ass(pixel.a)
+	line.text = string.format("{\\an7\\pos(%d,%d)%s\\1c%s\\bord0\\p1}m 0 0 l 1 0 1 1 0 1", x, y, alpha, line.styleref.color1)
 	io.write_line(line)
 end
