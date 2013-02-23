@@ -39,12 +39,12 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 		local amplitude_shape, amplitude_shape_n = {string.format("m 0 %d l", -frame_samples[1]/amplitude_divisor)}, 1
 		local amplitude
 		for x = 1, shape_width do
-			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_max-1))]
+			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]
 			amplitude_shape_n = amplitude_shape_n + 1
 			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, -amplitude/amplitude_divisor)
 		end
 		for x = shape_width, 0, -1 do
-			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_max-1))]
+			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]
 			amplitude_shape_n = amplitude_shape_n + 1
 			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, -amplitude/amplitude_divisor+shape_height)
 		end

@@ -1,7 +1,7 @@
 -- Number to bytes in little-endian
 function ntob(n, bytes)
 	if n < 0 then
-		n = n + 2^(bytes * 8 - 1)
+		n = n + 2^(bytes*8)
 	end
 	local bin = {}
 	for i = 1, bytes do
@@ -46,11 +46,11 @@ file:write(ntob(1764000,4))	-- 441000 samples (10 seconds) * 2 channels * 2 byte
 for i = 1, 441000 do
 	local wave_pct = (i-1) % 44100 / 44099
 	-- Channel 1
-	local wave_amplitude = math.sin(wave_pct * math.pi * 100)	-- 100 waves per second
+	local wave_amplitude = math.sin(wave_pct * math.pi * 2 * 100)	-- 100 waves per second
 	local s16 = math.floor((wave_amplitude + 1) / 2 * 65535 - 32768)
 	file:write(ntob(s16,2))
 	-- Channel 2
-	wave_amplitude = math.sin(wave_pct * math.pi * 1000)	-- 1000 waves per second
+	wave_amplitude = math.sin(wave_pct * math.pi * 2 * 1000)	-- 1000 waves per second
 	s16 = math.floor((wave_amplitude + 1) / 2 * 65535 - 32768)
 	file:write(ntob(s16,2))
 end
