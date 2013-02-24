@@ -76,14 +76,15 @@ function amplitudes_to_magnitudes(samples)
 		end
 	end
 	-- Amplitudes to complex numbers
-	local data = table.create(#samples, 0)
-	for si, sample in ipairs(samples) do
-		data[si] = complex_t(sample, 0)
+	local data, data_n = table.create(#samples, 0), 0
+	for _, sample in ipairs(samples) do
+		data_n = data_n + 1
+		data[data_n] = complex_t(sample, 0)
 	end
 	-- Process FFT
 	fft(data)
 	-- Complex numbers to magnitudes
-	for i = 1, #data do
+	for i = 1, data_n do
 		data[i] = magnitude(data[i])
 	end
 	return data
@@ -110,7 +111,7 @@ stream:get_frames(function(samples)
 end)
 
 -- Magnitudes shape parameters
-local shape_width, shape_height, magnitude_divisor = 700, 2, 10000
+local shape_width, shape_weight, magnitude_multiplicator = 700, 2, -1
 -- Samples per frame with exponent to 2
 local frame_samples_max = math.floor(sample_rate / 25)
 local exp = 1
@@ -125,32 +126,27 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 	line.end_time = e
 	-- Create magnitudes for every channel
 	for channel = 0, channels-1 do
-		-- Extract channel samples for frame
+		-- Extract channel samples for frame and scale for following conversion
 		local frame_samples, frame_samples_n = {}, 0
 		local start_sample_i = 1 + channel + math.floor(line.start_time / 1000 * sample_rate) * channels
 		for i = 0, frame_samples_max-1 do
 			frame_samples_n = frame_samples_n + 1
-			frame_samples[frame_samples_n] = samples_collection[start_sample_i + i * channels]
+			frame_samples[frame_samples_n] = samples_collection[start_sample_i + i * channels] / 32768
 		end
 		-- Convert samples/amplitudes to magnitudes
 		frame_samples = amplitudes_to_magnitudes(frame_samples)
-		-- Just the half of magnitudes are needed
-		frame_samples_n = frame_samples_n / 2
-		for i = 1, frame_samples_n do
-			frame_samples[i] = frame_samples[i + frame_samples_n]
-		end
 		-- Create magnitudes shape
-		local magnitude_shape, magnitude_shape_n = {string.format("m 0 %d l", -frame_samples[1]/magnitude_divisor)}, 1
+		local magnitude_shape, magnitude_shape_n = {string.format("m 0 %d l", frame_samples[1] * magnitude_multiplicator)}, 1
 		local magnitude
 		for x = 1, shape_width do
 			magnitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]
 			magnitude_shape_n = magnitude_shape_n + 1
-			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, -magnitude/magnitude_divisor)
+			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, magnitude * magnitude_multiplicator)
 		end
 		for x = shape_width, 0, -1 do
 			magnitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]
 			magnitude_shape_n = magnitude_shape_n + 1
-			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, -magnitude/magnitude_divisor+shape_height)
+			magnitude_shape[magnitude_shape_n] = string.format("%d %d", x, magnitude * magnitude_multiplicator + shape_weight)
 		end
 		magnitude_shape = table.concat(magnitude_shape, " ")
 		-- Create magnitudes dialog line

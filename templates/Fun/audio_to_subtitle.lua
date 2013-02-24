@@ -19,7 +19,7 @@ stream:get_frames(function(samples)
 end)
 
 -- Amplitudes shape parameters
-local shape_width, shape_height, amplitude_divisor = 700, 2, 300
+local shape_width, shape_weight, amplitude_multiplicator = 700, 2, 100 / -32768
 -- Frame-wise line creation (20s, 25 FPS)
 local frame_samples_max = math.floor(sample_rate / 25)
 local line = lines[1]
@@ -28,25 +28,25 @@ for s, e, i, n in utils.frames(0, 20000, 40) do
 	line.end_time = e
 	-- Create amplitudes for every channel
 	for channel = 0, channels-1 do
-		-- Extract channel samples for frame
+		-- Extract channel samples for frame and scale correctly
 		local frame_samples, frame_samples_n = {}, 0
 		local start_sample_i = 1 + channel + math.floor(line.start_time / 1000 * sample_rate) * channels
 		for i = 0, frame_samples_max-1 do
 			frame_samples_n = frame_samples_n + 1
-			frame_samples[frame_samples_n] = samples_collection[start_sample_i + i * channels]
+			frame_samples[frame_samples_n] = samples_collection[start_sample_i + i * channels] * amplitude_multiplicator
 		end
 		-- Create amplitudes shape
-		local amplitude_shape, amplitude_shape_n = {string.format("m 0 %d l", -frame_samples[1]/amplitude_divisor)}, 1
+		local amplitude_shape, amplitude_shape_n = {string.format("m 0 %d l", frame_samples[1])}, 1
 		local amplitude
 		for x = 1, shape_width do
 			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]
 			amplitude_shape_n = amplitude_shape_n + 1
-			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, -amplitude/amplitude_divisor)
+			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, amplitude)
 		end
 		for x = shape_width, 0, -1 do
 			amplitude = frame_samples[1 + math.floor(x/shape_width * (frame_samples_n-1))]
 			amplitude_shape_n = amplitude_shape_n + 1
-			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, -amplitude/amplitude_divisor+shape_height)
+			amplitude_shape[amplitude_shape_n] = string.format("%d %d", x, amplitude+shape_weight)
 		end
 		amplitude_shape = table.concat(amplitude_shape, " ")
 		-- Create amplitudes dialog line
