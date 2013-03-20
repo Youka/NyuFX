@@ -767,7 +767,7 @@ U-00000800 ・U-0000FFFF: 	1110xxxx 10xxxxxx 10xxxxxx
 U-00010000 ・U-001FFFFF: 	11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 U-00200000 ・U-03FFFFFF: 	111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 U-04000000 ・U-7FFFFFFF: 	1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
-]]--
+]]
 function string.ucharrange(s, i)
 	if type(s) ~= "string" or type(i) ~= "number" or i < 1 or i > s:len() then
 		error("string and valid number expected", 2)

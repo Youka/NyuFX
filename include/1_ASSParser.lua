@@ -368,12 +368,7 @@ function io.load_ass(content)
 				-- Text
 				syl.text, syl.prespace, syl.postspace = trim(text)
 				-- Inline fx
-				local inline_fx = string.match(pre_tag .. post_tag, "\\%-([^\\]*)")
-				if inline_fx then
-					syl.inline_fx = inline_fx
-				else
-					syl.inline_fx = ""
-				end
+				syl.inline_fx = string.match(pre_tag .. post_tag, "\\%-([^\\]*)") or ""
 				-- Indices
 				if syl.prespace > 0 then word_i = word_i + 1 end
 				syl.word_i = word_i
@@ -741,26 +736,11 @@ function io.load_ass(content)
 			end
 		end
 		-- Sort lines by time
+		local function sort_func(line1, line2)
+			return line1.start_time < line2.start_time
+		end
 		for si, style in pairs(line_styles) do
-			-- Collect and order start times
-			local start_times, start_times_n = table.create(#style,0), 0
-			for li, line in ipairs(style) do
-				start_times_n = start_times_n + 1
-				start_times[start_times_n] = line.start_time
-			end
-			table.sort(start_times)
-			-- Order lines by start times
-			local old_style = table.copy(style)
-			for ti, start_time in ipairs(start_times) do
-				for li = 1, #old_style do
-					local line = old_style[li]
-					if line and start_time == line.start_time then
-						style[ti] = table.copy(line)
-						old_style[li] = nil
-						break
-					end
-				end
-			end
+			table.sort(style, sort_func)
 		end
 		-- Insert calculated in- & outfade times
 		for si, style in pairs(line_styles) do
