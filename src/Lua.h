@@ -57,10 +57,10 @@ static void *luaL_checkuserdata(lua_State *L, int i, const char* type){
 }
 
 template <class T> static T *lua_createuserdata(lua_State *L, const char* meta_name){
-		T *ud = reinterpret_cast<T*>(lua_newuserdata(L, sizeof(T)));
-		luaL_newmetatable(L, meta_name);
-		lua_setmetatable(L, -2);
-		return ud;
+	T *ud = reinterpret_cast<T*>(lua_newuserdata(L, sizeof(T)));
+	luaL_newmetatable(L, meta_name);
+	lua_setmetatable(L, -2);
+	return ud;
 }
 
 // Lua table functions
@@ -124,7 +124,11 @@ template <class T> static T *luaL_checktable(lua_State *L, int i){
 		T *table = new T[len];
 		for(int ii = 1; ii <= len; ii++){
 			lua_rawgeti(L, i, ii);
-			luaL_argcheck(L, lua_isnumber(L,-1), i, reinterpret_cast<char*>("invalid table"));
+			if(!lua_isnumber(L,-1)){
+				delete[] table;
+				lua_pop(L,1);
+				luaL_argerror(L, i, "invalid table");
+			}
 			table[ii-1] = lua_tonumber(L, -1);
 			lua_pop(L,1);
 		}
