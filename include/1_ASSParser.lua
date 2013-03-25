@@ -154,56 +154,30 @@ lines
 
 -- ASS parser
 function io.load_ass(content)
-	-- Unicode string trimming
+	-- String trimming
 	local function trim(text)
-		-- Text to character table
-		local chars, chars_n = table.create(text:ulen(),0), 0
-		for ci, char in text:uchars() do
-			chars_n = chars_n + 1
-			chars[chars_n] = char
-		end
-		-- Count prespace
-		local prespace = 0
-		for ci = 1, chars_n do
-			if chars[ci] ~= " " and chars[ci] ~= "\t" then
-				prespace = ci-1
-				break
-			elseif ci == chars_n then
-				prespace = chars_n
-			end
-		end
-		-- Count postspace
-		local postspace = 0
-		if prespace ~= chars_n then
-			for ci = chars_n, 1, -1 do
-				if chars[ci] ~= " " and chars[ci] ~= "\t" then
-					postspace = chars_n - ci
-					break
-				elseif ci == 1 then
-					postspace = chars_n
-				end
-			end
-		end
+		-- Get prespace, postspace and text between
+		local prespace, subtext, postspace = text:match("([ \t]*)([^ \t]*)([ \t]*)")
 		-- Return trimmed text and spaces
-		return text:sub(1+prespace,-1-postspace), prespace, postspace
+		return subtext, prespace:len(), postspace:len()
 	end
 	-- Searching patterns
-	local meta_comment = ";%s*(.*)"
-	local meta_title = "Title:%s*(.*)"
-	local meta_scripttype = "ScriptType:%s*(.*)"
-	local meta_wrapstyle = "WrapStyle:%s*(%d)"
-	local meta_width = "PlayResX:%s*(%d+)"
-	local meta_height = "PlayResY:%s*(%d+)"
-	local meta_scalebands = "ScaledBorderAndShadow:%s*(.*)"
-	local meta_ratio = "Video Aspect Ratio:%s*(%d+%.?%d*)"
-	local meta_zoom = "Video Zoom:%s*(%d+)"
-	local meta_position = "Video Position:%s*(%d+)"
-	local meta_laststyle = "Last Style Storage:%s*(.*)"
-	local meta_audio = "Audio File:%s*(.*)"
-	local meta_video = "Video File:%s*(.*)"
-	local style_line = "Style:%s*(.-),(.-),(%d+%.?%d*),(.-),(.-),(.-),(.-),(%-?%d+),(%-?%d+),(%-?%d+),(%-?%d+),(%d+%.?%d*),(%d+%.?%d*),(%-?%d+%.?%d*),(%-?%d+%.?%d*),(%-?%d+),(%d+%.?%d*),(%-?%d+%.?%d*),(%d),(%d+),(%d+),(%d+),(%d+)"
-	local dialog_line = "Dialogue:%s*(%d+),(.-),(.-),(.-),(.-),(%d+),(%d+),(%d+),(.-),(.*)"
-	local comment_line = "Comment:%s*(%d+),(.-),(.-),(.-),(.-),(%d+),(%d+),(%d+),(.-),(.*)"
+	local meta_comment = "^;%s*(.*)$"
+	local meta_title = "^Title:%s*(.*)$"
+	local meta_scripttype = "^ScriptType:%s*(.*)$"
+	local meta_wrapstyle = "^WrapStyle:%s*(%d)$"
+	local meta_width = "^PlayResX:%s*(%d+)$"
+	local meta_height = "^PlayResY:%s*(%d+)$"
+	local meta_scalebands = "^ScaledBorderAndShadow:%s*(.*)$"
+	local meta_ratio = "^Video Aspect Ratio:%s*(%d+%.?%d*)$"
+	local meta_zoom = "^Video Zoom:%s*(%d+)$"
+	local meta_position = "^Video Position:%s*(%d+)$"
+	local meta_laststyle = "^Last Style Storage:%s*(.*)$"
+	local meta_audio = "^Audio File:%s*(.*)$"
+	local meta_video = "^Video File:%s*(.*)$"
+	local style_line = "^Style:%s*(.-),(.-),(%d+%.?%d*),(.-),(.-),(.-),(.-),(%-?%d+),(%-?%d+),(%-?%d+),(%-?%d+),(%d+%.?%d*),(%d+%.?%d*),(%-?%d+%.?%d*),(%-?%d+%.?%d*),(%-?%d+),(%d+%.?%d*),(%-?%d+%.?%d*),(%d),(%d+),(%d+),(%d+),(%d+)$"
+	local dialog_line = "^Dialogue:%s*(%d+),(.-),(.-),(.-),(.-),(%d+),(%d+),(%d+),(.-),(.*)$"
+	local comment_line = "^Comment:%s*(%d+),(.-),(.-),(.-),(.-),(%d+),(%d+),(%d+),(.-),(.*)$"
 	-- Parse ASS line
 	local function ParseLine(line)
 		-- Meta
