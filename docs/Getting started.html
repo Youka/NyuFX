@@ -1,0 +1,75 @@
+<html>
+<head>
+	<title>Getting started</title>
+	<style type="text/css">
+		a:link, a:visited, a:focus{
+			text-decoration: none;
+			font-weight: bold;
+			color: black;
+		}
+		h2{
+			text-decoration: underline;
+			margin: 20px 0px 0px 0px;
+		}
+		p{
+			margin: 0px 0px 0px 10px;
+		}
+		ul{
+			margin: 0px 0px 0px 0px;
+		}
+	</style>
+</head>
+<body bgcolor="#F0F0F0">
+
+<a name="top"></a>
+<table style="border-style: ridge; border-width: thick; border-color: blue; background-color: white"><tr><td>
+<ol style="padding-left: 25px; margin-right: 5px; margin-bottom: 0px; font-weight: bold; font-size: 20px;">
+<li><a href="#learn">Learn ASS and Lua</a></li>
+<li><a href="#learn2">Learn NyuFX functions and ASS values</a></li>
+<li><a href="#create">Create your first project</a></li>
+<li><a href="#play">Play with examples</a></li>
+</ol>
+</td></tr></table>
+<hr style="margin: 20px 0px 20px 0px; border-width: 10px; border-style: double; border-color: grey">
+<a name="learn"><h2><a href="#top">1. Learn ASS and Lua</a></h2></a>
+<p>First of all, you need to know <b><u>how</u></b> you're creating <b><u>what</u></b>, or in other words:
+<p>Without any idea about the language for effect description or the format of result, you can't do anything!
+<br><br>
+<p>The language to describe effects is scripting language <font color=blue>Lua</font>. It's an interpreted language, so you're executing text files instead of an executable.
+<p>The language offers you to define <u>what</u> you want in <u>which case</u>, <u>how often</u>, <u>attended to</u> this or that...
+<p>You're more free. You're not limited to buttons, sliders or text fields with just a few commands in a completely graphical interface.
+<p>Regrettably there aren't many tutorials about Lua out there because it's mostly used by already experienced programmers to extend programs like games.
+<p>Recommended tutorials:<br>
+<ul>
+<li><a href="http://www.inf.puc-rio.br/~roberto/pil2/">Official Lua book</a></li>
+<li><a href="http://lua-users.org/wiki/TutorialDirectory">Lua tutorial directory</a></li>
+<li><a href="http://www.lua.org/pil/">Lua PIL</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Lua_%28programming_language%29">Lua wikipedia entry</a></li>
+<li><a href="http://luatut.com/">LuaTut</a></li>
+</ul>
+<br>
+<p>The resulting file will be in subtitle format ASS (Advanced Substation Alpha). This format allows time-specific styled text and drawings as video overlay.
+<p>Many combinations of style tags with well calculated parameters allow great effects.
+<p>Because NyuFX should be used by already experienced ASS typesetters, an explanation isn't needed.
+<a name="learn2"><h2><a href="#top">2. Learn NyuFX functions and ASS values</a></h2></a>
+<p>After Lua and ASS isn't a problem anymore, the connection to NyuFX follows.
+<p>Read the documentation about NyuFX functions and parsed ASS values. It's the extension of the Lua environment that finally makes NyuFX to a karaoke effect generator.
+<a name="create"><h2><a href="#top">3. Create your first project</a></h2></a>
+<ol style="margin: 0px 0px 0px 0px; padding-left: 30px;">
+<li>Open NyuFX.</li>
+<li>Press <b>F3</b> to open the NyuFX templates folder.</li>
+<li>Drag file "start.lua" onto Lua editor field and drop it. Templates folder can be closed now.</li>
+<li>Drag any .ass file with karaoke time data onto ASS editor field and drop it.</li>
+<li>Click on "Choose" button to choose the target for the output file (same folder like karaoke time file is a good target).</li>
+<li>Click on "Generate" button to generate the output file. Wait for finish.</li>
+<li>Click on "Open" button to open the output file by associated program.</li>
+<li>You see what "start.lua" does: just a copy of lines without karaoke tags.</li>
+<li>Your turn: Replace <i>TODO</i> with your code for effects and save it as new file (same folder like karaoke time file is a good target).</li>
+<li>Workflow begins: Change code, click "Generate", wait, click "Open", view and decide, change code, ... until all fits.</li>
+</ol>
+<a name="play"><h2><a href="#top">4. Play with examples</a></h2></a>
+<p>In the NyuFX templates folder are some examples. For absolute beginners until advanced users.
+<p>Load and execute some of them, look into the code, reuse parts of them, learn by doing.
+
+</body>
+</html>

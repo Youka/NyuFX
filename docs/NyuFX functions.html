@@ -1,0 +1,630 @@
+<html>
+<head>
+	<title>NyuFX function list</title>
+	<style type="text/css">
+		a:link, a:visited, a:focus{
+			text-decoration: none;
+			font-weight: bold;
+			color: black;
+		}
+		.index_element{
+			border-style: groove;
+			border-color: red;
+			border-width: medium;
+		}
+		.index_title{
+			font-weight: bold;
+			text-decoration:underline;
+			font-size: 18px;
+		}
+		p{
+			margin: 0px 20px 0px 20px;
+		}
+		pre{
+			margin: 0px 0px 0px 0px;
+		}
+		hr{
+			border:dashed #A0A0FF 4px;
+			background-color:#000000;
+			margin: 30px 0px 30px 0px;
+		}
+		.example_box{
+			background-color: white;
+			border-style: groove;
+			border-color: grey;
+			border-width: medium;
+		}
+	</style>
+</head>
+<body bgcolor="#E0E0E0">
+
+<table bgcolor=#D0D0FF style="border-style: groove; border-color: red; border-width: thick; border-collapse:collapse;">
+<tr><td class="index_element"><span class="index_title">Basic</span><br>
+<p><a href="#pack">pack</a>
+<p><a href="#print">print</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Conversion</span><br>
+<p><a href="#convert_a_to_ass">convert.a_to_ass</a>
+<p><a href="#convert_ass_to_a">convert.ass_to_a</a>
+<p><a href="#convert_rgb_to_ass">convert.rgb_to_ass</a>
+<p><a href="#convert_ass_to_rgb">convert.ass_to_rgb</a>
+<p><a href="#convert_text_to_pixels">convert.text_to_pixels</a>
+<p><a href="#convert_text_to_shape">convert.text_to_shape</a>
+<p><a href="#convert_shape_to_pixels">convert.shape_to_pixels</a>
+<p><a href="#convert_image_to_pixels">convert.image_to_pixels</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Input/Output</span><br>
+<p><a href="#io_load_ass">io.load_ass</a>
+<p><a href="#io_progressbar">io.progressbar</a>
+<p><a href="#io_write_line">io.write_line</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Math</span><br>
+<p><a href="#math_bezier">math.bezier</a>
+<p><a href="#math_distance">math.distance</a>
+<p><a href="#math_ellipse">math.ellipse</a>
+<p><a href="#math_randomsteps">math.randomsteps</a>
+<p><a href="#math_randomway">math.randomway</a>
+<p><a href="#math_rotate">math.rotate</a>
+<p><a href="#math_round">math.round</a>
+<p><a href="#math_trim">math.trim</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Shapes</span><br>
+<p><a href="#shape_bounding">shape.bounding</a>
+<p><a href="#shape_ellipse">shape.ellipse</a>
+<p><a href="#shape_filter">shape.filter</a>
+<p><a href="#shape_glance">shape.glance</a>
+<p><a href="#shape_heart">shape.heart</a>
+<p><a href="#shape_move">shape.move</a>
+<p><a href="#shape_rectangle">shape.rectangle</a>
+<p><a href="#shape_split">shape.split</a>
+<p><a href="#shape_star">shape.star</a>
+<p><a href="#shape_tooutline">shape.tooutline</a>
+<p><a href="#shape_triangle">shape.triangle</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Strings</span><br>
+<p><a href="#string_ucharrange">string.ucharrange</a>
+<p><a href="#string_uchars">string.uchars</a>
+<p><a href="#string_ulen">string.ulen</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Tables</span><br>
+<p><a href="#table_append">table.append</a>
+<p><a href="#table_copy">table.copy</a>
+<p><a href="#table_max">table.max</a>
+<p><a href="#table_tostring">table.tostring</a>
+</td></tr>
+<tr><td class="index_element"><span class="index_title">Utils</span><br>
+<p><a href="#utils_distributor">utils.distributor</a>
+<p><a href="#utils_frames">utils.frames</a>
+<p><a href="#utils_interpolate">utils.interpolate</a>
+<p><a href="#utils_textextents">utils.textextents</a>
+</td></tr>
+</table>
+<br>
+<font size=5><b><u>Legend:</u></b></font><br>
+<b><font size=4><font color=#00E000>RETURN_VALUES = </font> <a href="#">FUNCTION</a>(<font color=#FF0000>ARGUMENTS[, OPTIONAL]</font>)</font></b><br>
+FUNCTION DESCRIPTION<br>
+<table class="example_box"><tr><td>
+<pre>FUNCTION USAGE EXAMPLE
+>>LOG OUTPUT</pre>
+</td></tr></table>
+<i>FUNCTION USAGE TIPS</i>
+<hr>
+<a name="pack"><b><font size=4><font color=#00E000>PACKED_TUPLE = </font> <a href="#">pack</a>(<font color=#FF0000>...</font>)</font></b></a><br>
+Opponent of unpack function. Puts given values into a table.<br>
+<table class="example_box"><tr><td>
+<pre>local vals = pack(5,4,3,2,1)
+print( vals[4] )
+>>2</pre>
+</td></tr></table>
+<i>Non information gets lost by functions with unknown number of return values.</i><br>
+<br>
+<a name="print"><b><font size=4><a href="#">print</a>(<font color=#FF0000>...</font>)</font></b></a><br>
+Converts values to strings and writes them to interface log.<br>
+<table class="example_box"><tr><td>
+<pre>print("Hello from GUI!", true, 123)</pre>
+</td></tr></table>
+<i>Useful for debugging. Print problematic values for error analysing.</i>
+<hr>
+<a name="convert_a_to_ass"><b><font size=4><font color=#00E000>ASS_ALPHA = </font> <a href="#">convert.a_to_ass</a>(<font color=#FF0000>ALPHA</font>)</font></b></a><br>
+Converts given numeric alpha data into ASS alpha format.<br>
+<table class="example_box"><tr><td>
+<pre>print( convert.a_to_ass(0) )
+>>&Hff&</pre>
+</td></tr></table>
+<i>Always needed for input of external alpha data to ASS format.</i><br>
+<br>
+<a name="convert_ass_to_a"><b><font size=4><font color=#00E000>ALPHA = </font> <a href="#">convert.ass_to_a</a>(<font color=#FF0000>ASS_ALPHA</font>)</font></b></a><br>
+Converts given ASS alpha string into numeric alpha data.<br>
+<table class="example_box"><tr><td>
+<pre>local a = convert.ass_to_a("&HFF&")
+print("Alpha: " .. a)
+>>Alpha: 0</pre>
+</td></tr></table>
+<i>Conversion allows to call mathematical methods on alpha channels.</i><br>
+<br>
+<a name="convert_rgb_to_ass"><b><font size=4><font color=#00E000>ASS_RGB = </font> <a href="#">convert.rgb_to_ass</a>(<font color=#FF0000>R, G, B</font>)</font></b></a><br>
+Converts given numeric RGB data into ASS color format.<br>
+<table class="example_box"><tr><td>
+<pre>print( convert.rgb_to_ass(255, 0, 0) )
+>>&H0000ff&</pre>
+</td></tr></table>
+<i>Always needed for input of external color data to ASS format.</i><br>
+<br>
+<a name="convert_ass_to_rgb"><b><font size=4><font color=#00E000>R, G, B = </font> <a href="#">convert.ass_to_rgb</a>(<font color=#FF0000>ASS_RGB</font>)</font></b></a><br>
+Converts given ASS color string into numeric RGB data.<br>
+<table class="example_box"><tr><td>
+<pre>local r, g, b = convert.ass_to_rgb("&H00FF00&")
+print("Red: " .. r .. "\nGreen: " .. g .. "\nBlue: " .. b)
+>>Red: 0
+>>Green: 255
+>>Blue: 0</pre>
+</td></tr></table>
+<i>Conversion allows to call mathematical methods on colors.</i><br>
+<br>
+<a name="convert_text_to_pixels"><b><font size=4><font color=#00E000>PIXELS = </font> <a href="#">convert.text_to_pixels</a>(<font color=#FF0000>TEXT, STYLE[, OFF_X, OFF_Y]</font>)</font></b></a><br>
+Converts text with given style information and subpixel offset to a table with pixel data. Pixel informations are .x (horizontal position), .y (vertical position) and .a (alpha/transparency).<br>
+<table class="example_box"><tr><td>
+<pre>local line = table.copy(lines[1])
+line.style = "p" --Style for pixels with f.e. \an7, \bord0, \shad0, ...
+for pi, pixel in ipairs( convert.text_to_pixels(line.text, line.styleref, line.left % 1, line.top % 1) ) do
+	local x, y = math.floor(line.left) + pixel.x, math.floor(line.top) + pixel.y
+	local alpha = (pixel.a == 255 and "") or ("\\1a" .. convert.a_to_ass(pixel.a))
+	line.text = string.format("{\\pos(%d,%d)%s\\p1}m 0 0 l 1 0 1 1 0 1", x, y, alpha)
+	io.write_line(line)
+end</pre>
+</td></tr></table>
+<i>Easy creation of text decaying or light effects.</i><br>
+<br>
+<a name="convert_text_to_shape"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">convert.text_to_shape</a>(<font color=#FF0000>TEXT, STYLE</font>)</font></b></a><br>
+Converts text with given style information to an ASS shape command.<br>
+Important: Shape has 8-fold size!<br>
+<table class="example_box"><tr><td>
+<pre>local line = table.copy(lines[1])
+line.text = string.format("{\\an7\\pos(%.3f,%.3f)\\p4}%s", line.left, line.top, convert.text_to_shape(line.text, line.styleref))
+io.write_line(line)</pre>
+</td></tr></table>
+<i>Permits creation of text masks or deforming.</i><br>
+<br>
+<a name="convert_shape_to_pixels"><b><font size=4><font color=#00E000>PIXELS = </font> <a href="#">convert.shape_to_pixels</a>(<font color=#FF0000>SHAPE[, DOWNSCALE]</font>)</font></b></a><br>
+Converts ASS shape command to a table with pixel data. Pixel informations are .x (horizontal position), .y (vertical position) and .a (alpha/transparency).<br>
+If downscale is true, given shape will be downscaled by factor 8 for rendering.<br>
+<table class="example_box"><tr><td>
+<pre>local line = table.copy(lines[1])
+line.style = "p" --Style for pixels with f.e. \an7, \bord0, \shad0, ...
+local rect = shape.rectangle(1,1)
+for pi, pixel in ipairs( convert.shape_to_pixels("m 0 0 l 30 0 30 30 0 30") ) do
+	local x, y = math.round(line.left + pixel.x), math.round(line.top + pixel.y)
+	local alpha = (pixel.a == 255 and "") or ("\\1a" .. convert.a_to_ass(pixel.a))
+	line.text = string.format("{\\pos(%d,%d)%s\\p1}%s", x, y, alpha, rect)
+	io.write_line(line)
+end</pre>
+</td></tr></table>
+<i>Even shapes can decay. Use downscale for text shapes!</i><br>
+<br>
+<a name="convert_image_to_pixels"><b><font size=4><font color=#00E000>PIXELS = </font> <a href="#">convert.image_to_pixels</a>(<font color=#FF0000>IMAGE_FILE</font>)</font></b></a><br>
+Reads an image to a table with pixel data. Pixel informations are .x (horizontal position), .y (vertical position), .r (red), .g (green), .b (blue) and .a (alpha/transparency).<br>
+Supported image types: BMP, ICO, TGA, JPEG, PNG.<br>
+<table class="example_box"><tr><td>
+<pre>local line = table.copy(lines[1])
+line.style = "p" --Style for pixels with f.e. \an7, \bord0, \shad0, ...
+local img = convert.image_to_pixels("templates\\3_Function tests\\shield.png")
+local rect = shape.rectangle(1,1)
+for pi, pixel in ipairs(img) do
+	if pixel.a > 0 then
+		local x, y = 300 + pixel.x, 200 + pixel.y
+		local color = convert.rgb_to_ass(pixel.r, pixel.g, pixel.b)
+		local alpha = (pixel.a == 255 and "") or ("\\1a" .. convert.a_to_ass(pixel.a))
+		line.text = string.format("{\\pos(%d, %d)\\1c%s%s\\p1}%s", x, y, color, alpha, rect)
+		io.write_line(line)
+	end
+end</pre>
+</td></tr></table>
+<i>Small pictures with size 150x150 or less can move along karaoke text.</i>
+<hr>
+<a name="io_load_ass"><b><font size=4><a href="#">io.load_ass</a>(<font color=#FF0000>ASS</font>)</font></b></a><br>
+Defines global 'meta', 'styles' and 'lines' tables, filled with values which describe the content of given .ass file or ASS text itself.<br>
+<table class="example_box"><tr><td>
+<pre>io.load_ass( "templates\\3_Function tests\\in.ass" )
+io.load_ass( [[
+PlayResX: 704
+PlayResY: 396
+Style: Default,Arial,30,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,8,10,10,10,1
+Comment: 0,0:00:00.00,0:00:10.00,Default,,0000,0000,0000,,Test
+]] )</pre>
+</td></tr></table>
+<i>Makes it possible to reload new .ass file contents to Lua and working with more than one .ass file.</i><br>
+<br>
+<a name="io_progressbar"><b><font size=4><a href="#">io.progressbar</a>(<font color=#FF0000>PERCENT</font>)</font></b></a><br>
+Sets progressbar to given percent decimal number.<br>
+<table class="example_box"><tr><td>
+<pre>io.progressbar(0.5)</pre>
+</td></tr></table>
+<i>Update progressbar during the whole process to know how long you've to wait.</i><br>
+<br>
+<a name="io_write_line"><b><font size=4><a href="#">io.write_line</a>(<font color=#FF0000>LINE</font>)</font></b></a><br>
+Writes given dialog line to final output file in text format.<br>
+<table class="example_box"><tr><td>
+<pre>io.write_line(lines[1])</pre>
+</td></tr></table>
+<i>Most important function. Never modify it!</i>
+<hr>
+<a name="math_bezier"><b><font size=4><font color=#00E000>POINT = </font> <a href="#">math.bezier</a>(<font color=#FF0000>PERCENT, POINTS</font>)</font></b></a><br>
+Calculates a point on bezier curve. Points is a table which containts tables with 2-3 numbers. Percent decimal number defines position on curve.<br>
+<table class="example_box"><tr><td>
+<pre>local point = math.bezier(0.3, {
+	{0, 0, 0},
+	{10, 20, -5},
+	{20, -20, 5},
+	{30, 0, 0}
+})
+print( point[1] .. " / " .. point[2] .. " / " .. point[3] )
+>>9 / 5.04 / -1.26</pre>
+</td></tr></table>
+<i>Bezier curves allow non-linear movements and look mostly better than multiple linear moves.</i><br>
+<br>
+<a name="math_distance"><b><font size=4><font color=#00E000>LENGTH = </font> <a href="#">math.distance</a>(<font color=#FF0000>WIDTH, HEIGHT[, DEPTH]</font>)</font></b></a><br>
+Calculates distance in 2D/3D room. Width, height and depth describing the vector in this room.<br>
+<table class="example_box"><tr><td>
+<pre>print( math.distance(8, 2) )
+print( math.distance(8, 2, -3) )
+>>8.2462112512353
+>>8.7749643873921</pre>
+</td></tr></table>
+<i>Calculating distances between a constant point and pixels or vector points could be used for lighting or other gradient effects.</i><br>
+<br>
+<a name="math_ellipse"><b><font size=4><font color=#00E000>NEW_X, NEW_Y = </font> <a href="#">math.ellipse</a>(<font color=#FF0000>X, Y, WIDTH, HEIGHT, ANGLE</font>)</font></b></a><br>
+Calculates a point on ellipse with given angle, center point x/y, width and height.<br>
+<table class="example_box"><tr><td>
+<pre>local x, y = math.ellipse(300, 200, 150, 100, 90)
+print( x .. " / " .. y )
+>>300 / 250</pre>
+</td></tr></table>
+<i>An ellipse can be a circle or an oval. Use it for round moves.</i><br>
+<br>
+<a name="math_randomsteps"><b><font size=4><font color=#00E000>RANDOM_NUMBER = </font> <a href="#">math.randomsteps</a>(<font color=#FF0000>START, END, STRIDE</font>)</font></b></a><br>
+Returns random number from start + x*stride until end.<br>
+<table class="example_box"><tr><td>
+<pre>for i=1, 3 do
+	print( math.randomsteps(-2, 2, 0.5) )
+end
+>>-0.5
+>>2
+>>-1.5</pre>
+</td></tr></table>
+<i>Random numbers with specific distances allow more control by distribution.</i><br>
+<br>
+<a name="math_randomway"><b><font size=4><font color=#00E000>DIRECTION = </font> <a href="#">math.randomway</a>()</font></b></a><br>
+Returns randomly -1 or 1 (50:50 chance).<br>
+<table class="example_box"><tr><td>
+<pre>for i=1, 3 do
+	print( math.randomway() )
+end
+>>-1
+>>1
+>>-1</pre>
+</td></tr></table>
+<i>Useful for random directions.</i><br>
+<br>
+<a name="math_rotate"><b><font size=4><font color=#00E000>ROTATED_POINT = </font> <a href="#">math.rotate</a>(<font color=#FF0000>POINT, AXIS, ANGLE</font>)</font></b></a><br>
+Allows to rotate a point in 3D room.<br>
+<table class="example_box"><tr><td>
+<pre>local p = math.rotate({0, 5, 0}, "x", 180)
+print( "X: " .. p[1] .. "\nY: " .. p[2] .. "\nZ: " .. p[3] )
+>>X: 0
+>>Y: -5
+>>Z: 6.1230317691119e-016</pre>
+</td></tr></table>
+<i>Replacement if rotation tags are already in use. In combination with frame-per-frame processing, it allows movement in 3D room.</i><br>
+<br>
+<a name="math_round"><b><font size=4><font color=#00E000>INTEGER = </font> <a href="#">math.round</a>(<font color=#FF0000>NUMBER</font>)</font></b></a><br>
+Rounds number to nearest integer.<br>
+<table class="example_box"><tr><td>
+<pre>print( math.round(0.3) )
+print( math.round(0.5) )
+>>0
+>>1</pre>
+</td></tr></table>
+<i>More precise for integer conversion than math.floor or math.ceil.</i><br>
+<br>
+<a name="math_trim"><b><font size=4><font color=#00E000>TRIMMED_NUMBER = </font> <a href="#">math.trim</a>(<font color=#FF0000>NUMBER, MIN, MAX</font>)</font></b></a><br>
+Trims a number between a minimum and maximal number.<br>
+<table class="example_box"><tr><td>
+<pre>print( math.trim(0.5, 0, 1) )
+print( math.trim(1.2, 0, 1) )
+>>0.5
+>>1</pre>
+</td></tr></table>
+<i>Easier than calculating a number, set it to a variable and check minimum and maximal case.</i>
+<hr>
+<a name="shape_bounding"><b><font size=4><font color=#00E000>MIN_X, MIN_Y, MAX_X, MAX_Y = </font> <a href="#">shape.bounding</a>(<font color=#FF0000>SHAPE</font>)</font></b></a><br>
+Returns bounding box of given shape.<br>
+<table class="example_box"><tr><td>
+<pre>print( string.format("Left-top: %d %d\nRight-bottom: %d %d", shape.bounding("m 10 5 l 25 5 25 42 10 42")) )
+>>Left-top: 10 5
+>>Right-bottom: 25 42</pre>
+</td></tr></table>
+<i>Gives a more precise information about text size by call with text shape than utils.textextents.</i><br>
+<br>
+<a name="shape_ellipse"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.ellipse</a>(<font color=#FF0000>WIDTH, HEIGHT</font>)</font></b></a><br>
+Returns a shape command of an ellipse with given width and height.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.ellipse(50, 80) )
+>>m 0 40 b 0 40 0 0 25 0 b 25 0 50 0 50 40 b 50 40 50 80 25 80 b 25 80 0 80 0 40</pre>
+</td></tr></table>
+<i>Create rounded stribes or arcs in combination with blurring for light effects.</i><br>
+<br>
+<a name="shape_filter"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.filter</a>(<font color=#FF0000>SHAPE, FILTER</font>)</font></b></a><br>
+Sends every point of a shape through given filter function to change them.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.filter("m 0 0 l 20 0 20 10 0 10", function(x, y)
+	return x+10, y+5
+end))
+>>m 10 5 l 30 5 30 15 10 15</pre>
+</td></tr></table>
+<i>Working with outline points can be used to deform the whole shape and make f.e. a wobble effect.</i><br>
+<br>
+<a name="shape_glance"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.glance</a>(<font color=#FF0000>EDGES, INNER_DISTANCE, OUTER_DISTANCE</font>)</font></b></a><br>
+Returns a shape command of a glance object with given number of outer edges. Edges have the distance to center of given outer distance. Control points for bezier curves between edges have the inner distance.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.glance(4, 0, 50) )
+>>m 50 0 b 50 50 50 50 100 50 b 50 50 50 50 50 100 b 50 50 50 50 0 50 b 50 50 50 50 50 0</pre>
+</td></tr></table>
+<i>Glance is similar to Star, but with curves instead of inner edges between the outer edges.</i><br>
+<br>
+<a name="shape_heart"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.heart</a>(<font color=#FF0000>SIZE, CENTER_Y_OFFSET</font>)</font></b></a><br>
+Returns a shape command of a heart object with given size (width&height) and vertical offset of center point.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.heart(120, 80) )
+>>m 60 120 b 108 88 120 72 120 56 b 120 32 88 0 60 120 b 32 0 0 32 0 56 b 0 72 12 88 60 120</pre>
+</td></tr></table>
+<i>An offset size*(2/3) results in a splitted heart.</i><br>
+<br>
+<a name="shape_move"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.move</a>(<font color=#FF0000>SHAPE, X, Y</font>)</font></b></a><br>
+Moves shape coordinates in given direction.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.move("m 0 0 l 30 0 30 20 0 20", -5, 10) )
+>>m -5 10 l 25 10 25 30 -5 30</pre>
+</td></tr></table>
+<i>Text shapes have to be shifted to screen position to use them as clip mask.</i><br>
+<br>
+<a name="shape_rectangle"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.rectangle</a>(<font color=#FF0000>WIDTH, HEIGHT</font>)</font></b></a><br>
+Returns a shape command of a rectangle with given width and height.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.rectangle(1, 1) )
+>>m 0 0 l 1 0 1 1 0 1 0 0</pre>
+</td></tr></table>
+<i>A rectangle with width=1 and height=1 is a pixel.</i><br>
+<br>
+<a name="shape_split"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.split</a>(<font color=#FF0000>SHAPE[, LINE_LENGTH]</font>)</font></b></a><br>
+Splits shape bezier curves into lines. Additional, it splits lines into shorter segments with maximum given length.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.split("m 0 0 l 300 0 b 300 200 0 200 0 0", 10) )
+>>m 0 0 l 10 0 20 0 30 0 40 0 50 0 60 0 70 0 80 0 90 0 100 0 110 0 120 0 130 0 140 0 150 0 160 0 170 0 180 0 190 0 200 0 210 0 220 0 230 0 240 0 250 0 260 0 270 0 280 0 290 0 300 0 300 8 299 18 298 25 297 35 295 41 293 51 291 57 287 66 285 70 280 79 278 83 272 91 269 95 263 103 260 106 253 113 250 115 242 121 238 123 230 129 227 131 218 135 214 137 205 141 202 142 192 145 188 146 178 148 174 148 164 149 160 149 150 150 146 150 136 149 132 149 122 148 118 147 108 145 105 144 95 141 91 139 82 135 79 133 70 129 66 127 58 121 55 119 47 113 44 110 37 103 34 99 28 91 26 87 20 79 18 75 13 66 11 60 7 51 5 45 3 35 2 28 1 18 1 10 0 0
+</pre>
+</td></tr></table>
+<i>Should be done before using shape.filter to work with more outline points for smoother deforming.</i><br>
+<br>
+<a name="shape_star"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.star</a>(<font color=#FF0000>EDGES, INNER_DISTANCE, OUTER_DISTANCE</font>)</font></b></a><br>
+Returns a shape command of a star object with given number of outer edges. Every second/inner edge has the inner distance to center, every outer edge the outer distance. <br>
+<table class="example_box"><tr><td>
+<pre>print( shape.star(5, 10, 30) )
+>>m 28 0 l 33 22 56 21 37 33 45 54 28 40 11 54 19 33 0 21 23 22 28 0</pre>
+</td></tr></table>
+<i>Different numbers of edges and edge distances allow individual n-angles.</i><br>
+<br>
+<a name="shape_tooutline"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.tooutline</a>(<font color=#FF0000>SHAPE, LINE_WIDTH</font>)</font></b></a><br>
+Converts shape command for filling to a shape command for stroking.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.tooutline("m 0 0 l 100 0 100 50 0 50", 5) )
+>>m 5 50 l 4 48 3 46 0 45 100 45 98 45 96 46 95 49 95 0 95 1 96 3 99 4 0 5 1 4 3 3 4 0 5 50 m -5 0 l -5 -2 -4 -4 -1 -5 100 -5 101 -5 103 -4 104 -1 105 50 104 51 103 53 100 54 0 55 -2 54 -4 53 -5 50 -5 0</pre>
+</td></tr></table>
+<i>Usable for border textures.</i><br>
+<br>
+<a name="shape_triangle"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.triangle</a>(<font color=#FF0000>SIDE_LENGTH</font>)</font></b></a><br>
+Returns a shape command of an equilateral triangle with given side length.<br>
+<table class="example_box"><tr><td>
+<pre>print( shape.triangle(50) )
+>>m 25 -7 l 0 36 50 36 25 -7</pre>
+</td></tr></table>
+<i>With \an5, the origin point is the center and z rotation works right.</i><br>
+<hr>
+<a name="string_ucharrange"><b><font size=4><font color=#00E000>RANGE = </font> <a href="#">string.ucharrange</a>(<font color=#FF0000>TEXT, INDEX</font>)</font></b></a><br>
+Returns the utf8 length of the character in given text at position of given index.<br>
+<table class="example_box"><tr><td>
+<pre>local hiragana_A = "\227\129\130" 
+print( string.ucharrange(hiragana_A, 1) )
+>>3</pre>
+</td></tr></table>
+<i>Useful to detect unicode characters as strings of multiple Lua characters.</i><br>
+<br>
+<a name="string_uchars"><b><font size=4><font color=#00E000>INDEX, CHAR = </font> <a href="#">string.uchars</a>(<font color=#FF0000>TEXT</font>)</font></b></a><br>
+Iterator function for generic for-loop. Returns every pass an unicode character and his index of given text.<br>
+<table class="example_box"><tr><td>
+<pre>local ako = "\227\129\130\227\129\147" 
+for ci, char in string.uchars(ako) do
+	print(char)
+end
+>>&#12353;
+>>&#12371;</pre>
+</td></tr></table>
+<i>The iterator alternative to the lines[i]chars table.</i><br>
+<br>
+<a name="string_ulen"><b><font size=4><font color=#00E000>LENGTH = </font> <a href="#">string.ulen</a>(<font color=#FF0000>TEXT</font>)</font></b></a><br>
+Returns the unicode length of given text.<br>
+<table class="example_box"><tr><td>
+<pre>local hiragana_A = "\227\129\130" 
+print( string.len(hiragana_A) )
+print( string.ulen(hiragana_A) )
+>>3
+>>1</pre>
+</td></tr></table>
+<i>The real length of a string which contains unicode characters.</i>
+<hr>
+<a name="table_append"><b><font size=4><a href="#">table.append</a>(<font color=#FF0000>TABLE1, TABLE2</font>)</font></b></a><br>
+Appends fields of second table to first table. Numeric indices will be appended, literal indices overwritten.<br>
+<table class="example_box"><tr><td>
+<pre>local t1, t2 = {1, 2, a = "A"}, {3, 4, a = "B"}
+table.append(t1, t2)
+for i, v in pairs(t1) do
+	print( i .. ": " .. v)
+end
+>>1: 1
+>>2: 2
+>>3: 3
+>>4: 4
+>>a: B</pre>
+</td></tr></table>
+<i>Fast fusion of two tables which had to be generated separately.</i><br>
+<br>
+<a name="table_copy"><b><font size=4><font color=#00E000>TABLECOPY = </font> <a href="#">table.copy</a>(<font color=#FF0000>TABLE</font>)</font></b></a><br>
+Returns a deep copy of given table.<br>
+<table class="example_box"><tr><td>
+<pre>local t1 = {"hi"}
+t2 = t1
+t2[1] = "hello"
+print( t1[1] )
+t3 = table.copy(t1)
+t3[1] = "bye"
+print( t1[1] )
+>>"hello"
+>>"hello"</pre>
+</td></tr></table>
+<i>Creates a full copy and the original stays unchanged.</i><br>
+<br>
+<a name="table_max"><b><font size=4><font color=#00E000>SIZE = </font> <a href="#">table.max</a>(<font color=#FF0000>TABLE</font>)</font></b></a><br>
+Returns the size of given table (numeric + literal indices).<br>
+<table class="example_box"><tr><td>
+<pre>local t = {a = 2, "hi"}
+print( table.maxn(t) )
+print( table.max(t) )
+>>1
+>>2</pre>
+</td></tr></table>
+<i>With this function you're knowing before how much passes a pairs call generates.</i><br>
+<br>
+<a name="table_tostring"><b><font size=4><font color=#00E000>DESCRIPTION = </font> <a href="#">table.tostring</a>(<font color=#FF0000>TABLE</font>)</font></b></a><br>
+Returns the given table as a text. Table contents are listed in a tree structure.<br>
+<table class="example_box"><tr><td>
+<pre>local t = {
+	11,
+	22,
+	type = "info",
+	{
+		name = "Paul",
+		true
+	}
+}
+print( table.tostring(t) )
+>>	[1] = 11
+>>	[2] = 22
+>>	[3] = table: 00B57680
+>>		[1] = true
+>>		["name"] = "Paul"
+>>	["type"] = "info"</pre>
+</td></tr></table>
+<i>Useful supplement to print function for debugging.</i>
+<hr>
+<a name="utils_distributor"><b><font size=4><font color=#00E000>DISTRIBUTOR_OBJECT = </font> <a href="#">utils.distributor</a>(<font color=#FF0000>TABLE</font>)</font></b></a><br>
+Returns a distributor object which holds given table.<br>
+<b><font size=4><font color=#00E000>ENTRY = </font> <a href="#">dist:get</a>()</font></b><br>
+Returns the next value of distributor table in row.<br>
+<table class="example_box"><tr><td>
+<pre>local dist = utils.distributor({"&H0000FF&", "&H00FF00&", "&HFF0000&"})
+for i=1, 4 do
+	print( dist:get() )
+end
+>>&H0000FF&
+>>&H00FF00&
+>>&HFF0000&
+>>&H0000FF&</pre>
+</td></tr></table>
+<i>Better multiple value flow than just using random picks.</i><br>
+<br>
+<a name="utils_frames"><b><font size=4><font color=#00E000>FRAME_START, FRAME_END, INDEX, FRAMES = </font> <a href="#">utils.frames</a>(<font color=#FF0000>START_TIME, END_TIME, STRIDE</font>)</font></b></a><br>
+Iterator function for generic for-loop. Arguments are the start time, end time and frame duration of a time zone. Returns every pass the current frame start time, end time, index and maximal number of frames.<br>
+<table class="example_box"><tr><td>
+<pre>for s, e, i, n in utils.frames(0, 100, 41.71) do
+	print("Frame " .. i .. "/" .. n .. ": " .. s .. " - " .. e)
+end
+>>Frame 1/3: 0 - 41.71
+>>Frame 2/3: 41.71 - 83.42
+>>Frame 3/3: 83.42 - 100</pre>
+</td></tr></table>
+<i>Frame-per-frame operations without many calculation.</i><br>
+<br>
+<a name="utils_interpolate"><b><font size=4><font color=#00E000>VALUE = </font> <a href="#">utils.interpolate</a>(<font color=#FF0000>PERCENT, VALUE1, VALUE2[, FILTER]</font>)</font></b></a><br>
+Interpolates given 2 values (ASS colors, ASS alpha channels or numbers) by percent value as decimal number. Filter can be "curve_up", "curve_down“ or a number (exponent) and influences the final percent value.<br>
+<table class="example_box"><tr><td>
+<pre>print( utils.interpolate(0.5, 10, 20) )
+print( utils.interpolate(0.5, "&H0000FF&", "&H00FF00&", "curve_up") )
+>>15
+>>&H00ff00&</pre>
+</td></tr></table>
+<i>Easy calculation of color/alpha gradients.</i><br>
+<br>
+<a name="utils_textextents"><b><font size=4><font color=#00E000>WIDTH, HEIGHT, ASCENT, DESCENT, INTLEAD, EXTLEAD = </font> <a href="#">utils.textextents</a>(<font color=#FF0000>TEXT, STYLE</font>)</font></b></a><br>
+Returns text size and font metric.<br>
+<table class="example_box"><tr><td>
+<pre>local text = "Test"
+local style = {
+	fontname = "Arial",
+	fontsize = 60,
+	bold = true,
+	italic = true,
+	underline = false,
+	strikeout = false,
+	encoding = 1,
+	scale_x = 100,
+	scale_y = 100,
+	spacing = 1,
+}
+local w, h, a, d, i, e = utils.textextents(text, style)
+print( "Width: " .. w .. "\nHeight: " .. h .. "\nAscent: " .. a .. "\nDescent: " .. d .. "\nInternal lead: " .. i .. "\nExternal lead: " .. e )
+>>Width: 114.40625
+>>Height: 60
+>>Ascent: 48.625
+>>Descent: 11.375
+>>Internal lead: 6.296875
+>>External lead: 1.75</pre>
+</td></tr></table>
+<i>Nearly always needed for operation with texts, but already used enough by preparing ASS values.</i>
+<hr>
+<h2 style="margin-bottom: 0px; margin-top: 0px">libjpeg license</h2>
+<font size=2>(used in <a href="#convert_image_to_pixels">convert.image_to_pixels</a>)</font>
+<pre>   The authors make NO WARRANTY or representation, either express or implied,
+   with respect to this software, its quality, accuracy, merchantability, or
+   fitness for a particular purpose.  This software is provided "AS IS", and you,
+   its user, assume the entire risk as to its quality and accuracy.
+   
+   This software is copyright (C) 1991-1998, Thomas G. Lane.
+   All Rights Reserved except as specified below.
+   
+   Permission is hereby granted to use, copy, modify, and distribute this
+   software (or portions thereof) for any purpose, without fee, subject to these
+   conditions:
+   (1) If any part of the source code for this software is distributed, then this
+   README file must be included, with this copyright and no-warranty notice
+   unaltered; and any additions, deletions, or changes to the original files
+   must be clearly indicated in accompanying documentation.
+   (2) If only executable code is distributed, then the accompanying
+   documentation must state that "this software is based in part on the work of
+   the Independent JPEG Group".
+   (3) Permission for use of this software is granted only if the user accepts
+   full responsibility for any undesirable consequences; the authors accept
+   NO LIABILITY for damages of any kind.
+   
+   These conditions apply to any software derived from or based on the IJG code,
+   not just to the unmodified library.  If you use our work, you ought to
+   acknowledge us.
+   
+   Permission is NOT granted for the use of any IJG author's name or company name
+   in advertising or publicity relating to this software or products derived from
+   it.  This software may be referred to only as "the Independent JPEG Group's
+   software".
+   
+   We specifically permit and encourage the use of this software as the basis of
+   commercial products, provided that all warranty or liability claims are
+   assumed by the product vendor.</pre>
+
+</body>
+</html>

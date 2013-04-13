@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>ASS override tags</title>
+</head>
+<body bgcolor="#E0E0E0">
+
+<b><u><font color="red">Legend</font></u></b><br>
+<b>Tags are bold</b><br>
+<i>Values to insert are italic</i><br>
+<font color=orange>Orange values are optional</font><br>
+Descriptions are normal<br>
+<br>
+<b><u><font color="red">Escape sequences</font></u></b>
+<table cellspacing=1>
+<tr><td><b>\N</b></td><td>Newline</td>
+<tr><td><b>\n</b></td><td>Wrap style 2: New Line; else: Empty Space</td>
+<tr><td><b>\h</b></td><td>Empty space</td>
+</table>
+<br>
+<b><u><font color="red">Override tags</font></u></b>
+<table>
+<tr><td><b>\b</b><i>0/1</i></td><td>Bold?</td></tr>
+<tr><td><b>\i</b><i>0/1</i></td><td>Italic?</td></tr>
+<tr><td><b>\u</b><i>0/1</i></td><td>Underline?</td></tr>
+<tr><td><b>\s</b><i>0/1</i></td><td>Strikeout?</td></tr>
+<tr><td><b>\bord</b><i>FLOAT NUMBER</i></td><td>Borderwidth</td></tr>
+<tr><td><b>\xbord</b><i>FLOAT NUMBER</i></td><td>Horizontal borderwidth</td></tr>
+<tr><td><b>\ybord</b><i>FLOAT NUMBER</i></td><td>Vertical borderwidth</td></tr>
+<tr><td><b>\shad</b><i>FLOATNUMBER</i></td><td>Shadow position offset (right-down)</td></tr>
+<tr><td><b>\xshad</b><i>FLOAT NUMBER</i></td><td>Shadow position offset (horizontal)</td></tr>
+<tr><td><b>\yshad</b><i>FLOATNUMBER</i></td><td>Shadow position offset (vertical)</td></tr>
+<tr><td><b>\be</b><i>INTEGER NUMBER</i></td><td>Cheap box blur</td></tr>
+<tr><td><b>\blur</b><i>FLOAT NUMBER</i></td><td>Expensive gaussian blur</td></tr>
+<tr><td><b>\1c</b><i><font color=blue>BLUE</font><font color=green>GREEN</font><font color=red>RED</font> (HEXADEZIMALCODE)</i></td><td>Inner color</td></tr>
+<tr><td><b>\2c</b><i><font color=blue>BLUE</font><font color=green>GREEN</font><font color=red>RED</font> (HEXADEZIMALCODE)</i></td><td>Karaoke color</td></tr>
+<tr><td><b>\3c</b><i><font color=blue>BLUE</font><font color=green>GREEN</font><font color=red>RED</font> (HEXADEZIMALCODE)</i></td><td>Border color</td></tr>
+<tr><td><b>\4c</b><i><font color=blue>BLUE</font><font color=green>GREEN</font><font color=red>RED</font> (HEXADEZIMALCODE)</i></td><td>Shadow color</td></tr>
+<tr><td><b>\c</b><i><font color=blue>BLUE</font><font color=green>GREEN</font><font color=red>RED</font> (HEXADEZIMALCODE)</i></td><td>Same as <b>\1c</b></td></tr>
+<tr><td><b>\1a</b><i><font color=white>ALPHA</font> (HEXADEZIMALCODE)</i></td><td>Inner transparency</td></tr>
+<tr><td><b>\2a</b><i><font color=white>ALPHA</font> (HEXADEZIMALCODE)</i></td><td>Karaoke transparency</td></tr>
+<tr><td><b>\3a</b><i><font color=white>ALPHA</font> (HEXADEZIMALCODE)</i></td><td>Border transparency</td></tr>
+<tr><td><b>\4a</b><i><font color=white>ALPHA</font> (HEXADEZIMALCODE)</i></td><td>Shadow transparency</td></tr>
+<tr><td><b>\alpha</b><i><font color=white>ALPHA</font> (HEXADEZIMALCODE)</i></td><td>Inner/Karaoke/Border/Shadow transparency</td></tr>
+<tr><td><b>\frz</b><i>FLOAT NUMBER</i></td><td>Rotation about z-axis</td></tr>
+<tr><td><b>\fr</b><i>FLOAT NUMBER</i></td><td>Same as <b>\frz</b></td></tr>
+<tr><td><b>\frx</b><i>FLOAT NUMBER</i></td><td>Rotation about x-axis</td></tr>
+<tr><td><b>\fry</b><i>FLOAT NUMBER</i></td><td>Rotation about y-axis</td></tr>
+<tr><td><b>\fax</b><i>FLOAT NUMBER</i></td><td>Shearing about x-axis</td></tr>
+<tr><td><b>\fay</b><i>FLOAT NUMBER</i></td><td>Shearing about y-axis</td></tr>
+<tr><td><b>\fscx</b><i>INTEGER NUMBER</i></td><td>Width in percent</td></tr>
+<tr><td><b>\fscy</b><i>INTEGER NUMBER</i></td><td>Height in percent</td></tr>
+<tr><td><b>\org(</b><i>X, Y<b></i>)</b></td><td>Orientation point for transformations</td></tr>
+<tr><td><b>\fn</b><i>NAME</i></td><td>Fontname</td></tr>
+<tr><td><b>\fs</b><i>INTEGER NUMBER</i></td><td>Fontsize</td></tr>
+<tr><td><b>\fe</b><i>INTEGER NUMBER</i></td><td>Fontencoding</td></tr>
+<tr><td><b>\fsp</b><i>INTEGER NUMBER</i></td><td>Spacing between characters</td></tr>
+<tr><td><b>\an</b><i>1-9</i></td><td>Alignment (see number keyboard)</td></tr>
+<tr><td><b>\a</b><i>1-3/5-7/9-11</i></td><td>Old alignment of SSA (ignore it)</td></tr>
+<tr><td><b>\r</b><i><font color=orange>NAME</font></i></td><td>Loads style (overrides style tags before)</td></tr>
+<tr><td valign="TOP"><b>\q</b><i>0-3</i></td><td>Wrap style<br>
+VALUE = 0: Texts have equal wide (if not possible, top line is wider)<br>
+VALUE = 1: Texts fill each line as much as possible<br>
+VALUE = 2: Texts can extend beyound the edges of screen<br>
+VALUE = 3: Texts have equal wide (if not possible, bottom lines are wider)</td></tr>
+<tr><td><b>\pos(</b><i>X, Y<b></i>)</b></td><td>Position point</td></tr>
+<tr><td><b>\move(</b><i>X1, Y1, X2, Y2, <font color=orange>TIME1, TIME2</font><b></i>)</b></td><td>Move from first point to second point during first time to second time</td></tr>
+<tr><td valign="TOP"><b>\fad(</b><i>DURATION1, DURATION2<b></i>)</b></td><td>Fading in: Start time of line until end of first duration<br>
+Fading out: End time of line minus second duration until end time of line</td></tr>
+<tr><td valign="TOP"><b>\fade(</b><i>ALPHA1, ALPHA2, ALPHA3, TIME1, TIME2, TIME3, TIME4<b></i>)</b></td><td>Hint: Alpha values are decimal here (0-255 / visible-invisible)<br>
+At the beginning: First alpha value<br>
+First fade: first time until second time change to second alpha value<br>
+Second fade: third time until fourth time change to third alpha value</td></tr>
+<tr><td><b>\t(</b><i><font color=orange>TIME1, TIME2, ACCELERATION,</font>TAGS<b></i>)</b></td><td>From first time to second time, with acceleration, object format changes by new override tags</td></tr>
+<tr><td valign="TOP"><b>\clip(</b><i><font color=orange>SCALE, </font>X1, Y1, X2, Y2<b></i>)</b></td><td>Just clipping area visible<br>
+(rectangle with first point as top-left corner and second point as bottom-right corner)</td></tr>
+<tr><td><b>\clip(</b><i><font color=orange>SCALE, </font>DRAW COMMAND<b></i>)</b></td><td>Visible clipping area is a drawing</td></tr>
+<tr><td valign="TOP"><b>\iclip(</b><i><font color=orange>SCALE, </font>X1, Y1, X2, Y2<b></i>)</b></td><td>Just clipping area invisible<br>
+(rectangle with first point is top-left corner and second point is bottom-right corner)</td></tr>
+<tr><td><b>\iclip(</b><i><font color=orange>SCALE, </font>DRAW COMMAND<b></i>)</b></td><td>Invisible clipping area is a drawing</td></tr>
+<tr><td valign="TOP"><b>\p</b><i>INTEGER NUMBER</i></td><td>VALUE > 0: Toggle text field to drawing command line<br>
+Drawing will be scaled down with factor <i>2^(VALUE-1)</i><br>
+VALUE = 0: Toggle text field back to text</td></tr>
+<tr><td><b>\pbo</b><i>INTEGER NUMBER</i></td><td>Shifting drawing on y-axis</td></tr>
+<tr><td><b>\k</b><i>INTEGER NUMBER</i></td><td>Karaoke duration (VALUE*10) *inner fill*</td></tr>
+<tr><td><b>\ko</b><i>INTEGER NUMBER</i></td><td>Karaoke duration (VALUE*10) *inner/outline fill*</td></tr>
+<tr><td><b>\kf</b><i>INTEGER NUMBER</i></td><td>Karaoke duration (VALUE*10) *inner float fill*</td></tr>
+<tr><td><b>\K</b><i>INTEGER NUMBER</i></td><td>Same as \kf</td></tr>
+<tr><td><b>\kt</b><i>INTEGER NUMBER</i></td><td>Resets real start (VALUE*10) time of current karaoke text</td></tr>
+</table>
+<br>
+<table bgcolor=#A0A0FF>
+<tr><td><font size=5>{\bord0\t(0,2000,0.5,\bord3\blur5)\t(0,5000,2,\bord0\blur0)}I'm a transforming text!</font></td></tr>
+</table>
+<br>
+<b><u><font color="red">Shape commands</font></u></b>
+<table cellspacing=2>
+<tr><td><b>m</b><i> X Y</i></td><td>Move to point (closing current shape)</td></tr>
+<tr><td><b>n</b><i> X Y</i></td><td>Move to point (without closing current shape)</td></tr>
+<tr><td><b>l</b><i> X Y</i></td><td>Line to point</td></tr>
+<tr><td><b>b</b><i> X1 Y1 X2 Y2 X3 Y3</i></td><td>Bezier curve along point one and two to point three</td></tr>
+<tr><td><b>s</b><i> X1 Y1 X2 Y2 X3 Y3 ... Xn Yn</i></td><td>Cubic curve along n-1 points to point n</td></tr>
+<tr><td><b>p</b><i> X Y</i></td><td>Extend bezier curve to point</td></tr>
+<tr><td><b>c</b></td><td>Closing current shape</td></tr>
+</table>
+<br>
+<table bgcolor=#A0A0FF>
+<tr><td><font size=5>{\an7\move(100,200,200,300)\p1}m 0 0 l 60 0 b 60 40 0 40 0 0 c</font></td></tr>
+</table>
+<br>
+<b><u><font color="red">Hints</font></u></b>
+<ul>
+<li>Possible transformations with \t:<ul>
+<li>Colors: \1c, \2c, \3c, \4c, \c</li>
+<li>Alpha: \1a, \2a, \3a, \4a, \alpha</li>
+<li>Border: \bord, \xbord, \ybord</li>
+<li>Shadow: \shad, \xshad, \yshad</li>
+<li>Transformations: \fr, \frz, \frx, \fry, \fax, \fay, \fscx, \fscy</li>
+<li>Blur: \be, \blur</li>
+<li>Font: \fs, \fsp</li>
+<li>Clips (rectangle): \clip, \iclip</li></ul>
+</li>
+<li>All times are in milliseconds</li>
+<li>Coordinates reach until 1/8 units (except drawing code)</li>
+<li>Blur affects outline, but if there's no outline, it affects the whole object (text or shape)</li>
+<li>If there's no \org defined, the ancher point of alignment is the orientation point for transformations</li>
+<li>Accelerated movement can be realized by z-axis rotation with a far away \org or stretching (\fscx and \fscy transformation) an invisible shape at the beginning of dialog line.</li>
+<li>Shapes and characters are sitting on the baseline, defined by the biggest shape or character in dialog line.<br>
+Shapes with <b>{}</b> before and characters will be right-shifted in position by the sum of width of characters/shapes before.<br>
+Minimum shape x/y coordinates less than zero can be used for left/top shifting. Minimum shape x/y coordinates greater than zero can be used for right/bottom shifting.</li>
+</ul>
+</body>
+</html>

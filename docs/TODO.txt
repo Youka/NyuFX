@@ -1,0 +1,8 @@
+* update NyuFX functions
+	* add:
+		- math.degree
+		- math.ortho
+		- shape.ring
+		- table.create
+		- tgdi library
+		- va library

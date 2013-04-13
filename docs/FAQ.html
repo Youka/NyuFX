@@ -1,0 +1,109 @@
+<html>
+<head>
+	<title>Frequently Asked Questions</title>
+	<style type="text/css">
+		h1{
+			text-decoration: underline;
+			margin-bottom: 10px;
+		}
+		h3{
+			text-decoration: underline;
+			margin-bottom: 0px;
+			margin-top: 20px;
+		}
+		p{
+			margin: 0px 0px 0px 10px;
+		}
+		a:link, a:visited, a:focus{
+			text-decoration: none;
+			font-weight: bold;
+			color: blue;
+		}
+	</style>
+</head>
+<body bgcolor="#F0F0F0">
+
+<h1>FAQ</h1>
+<p><a href="#1">What's NyuFX?</a>
+<p><a href="#2">Why or for what i should use NyuFX?</a>
+<p><a href="#3">Why Lua? Why ASS?</a>
+<p><a href="#4">How can i learn it?</a>
+<p><a href="#5">Pixels, wobbling, masks, images, curve movement... Cool, how can i use it?</a>
+<p><a href="#6">There's no function for border pixels?</a>
+<p><a href="#7">My text pixels and shapes aren't absolutely correct?!</a>
+<p><a href="#8">Where's value/function ***?</a>
+<p><a href="#9">How far can i go?</a>
+<p><a href="#10">Where i get help?</a>
+<p><a href="#11">I've found a bug!?</a>
+<hr>
+<h3><a name="1">What's NyuFX?</a></h3>
+<p>NyuFX is a karaoke effect generator, based on subtitle format ASS (Advanced Substation Alpha).
+<p>An .ass file with karaoke time data is used to produce a new .ass file with effects to karaoke text.
+<p>For generation the user only have to write a script in scripting language Lua which describes the process of effect creation.
+<p>Although the program isn't limited to karaoke, so it's also possible to create advanced typesets.
+
+<h3><a name="2">For what and why i should use NyuFX?</a></h3>
+<p>NyuFX mainly combines tags, text and shapes in ASS format, changes times, layers and writes everything to an output file, but offers special functions f.e. for shape manipulation or pixel data, so it's easy to create impressive visual 2D effects.
+<p>It's possible to fake 3D effects too, but isn't recommended because of huge output files and much work.
+<br><br>
+<p>In comparison to other karaoke effect programs, NyuFX is free(/legal), further developed or just user-friendlier.
+<p>See for yourself to some of them:
+<ul style="margin-top: 0px"><li><a href="http://docs.aegisub.org/manual/Automation">Automation4 (Lua in Aegisub)</a></li>
+<li><a href="http://forums.animesuki.com/showthread.php?t=46599">AFX (Adobe After Effects)</a><a href="http://www.v2-studios.se/AFX/easy/karaoke-tutorial-01-setting-up-pichus-karaoke-script"> [2]</a></li>
+<li><a href="http://www.tentacleworks.net/Site/ass_calc_help.html">asscalc (by Tentacle)</a> <a href="http://wiki.animeownage.de"> [2]</a></li>
+<li><a href="http://kafx.com.ar/">KAFX (KickAss FX)</a><a href="http://my.opera.com/kafx/blog/"> [2]</a></li></ul>
+
+<h3><a name="3">Why Lua? Why ASS?</a></h3>
+<p>Lua as language for effect description was chosen, because it's small, easy to use, fast in execution and has much functionality in standard environment. A good choice for programming beginners.
+<p>For more details, look <a href="http://lua-users.org/wiki/LuaComparison">here</a>.
+<p>ASS as output format for effects was chosen, because it's easy editable afterwards, fast to produce and sometimes playable as softsub.
+
+<h3><a name="4">How can i learn it?</a></h3>
+<p>First of all, knowledge about ASS and Lua is needed!
+<p>In Lua, the basics are enough. Variables, functions, conditions, loops, comparisons, math, basic/math/string/table library... Look at the Lua tutorial directory page.
+<p>In ASS, an advanced understanding which you can make is really recommend. Look for the ASS specification and try a bit around with subtitle editor program Aegisub.
+<p>After that, you can immediatly start making karaoke effects. Read <i>Getting started</i> in NyuFX documentations and look into the examples in <i>templates</i> folder.
+
+<h3><a name="5">Pixels, wobbling, masks, images, curve movement... Cool, how can i use it?</a></h3>
+<p><u>Pixels:</u> use <i>convert.*_to_pixels</i> functions to get pixel information and draw rectangle shapes with it.
+<p><u>Wobbling:</u> use <i>shape.split</i> and <i>shape.filter</i> to change shape outline points positions for deforming your shape like modal clay in a frame-per-frame animation.
+<p><u>Masks:</u> use your shapes with <i>\clip(SCALE, SHAPE)</i> tag. You're getting text shapes by <i>convert.text_to_shape</i>.
+<p><u>Images:</u> use <i>convert.image_to_pixels</i>, but be careful with the image size (=number of produces lines)!
+<p><u>Curve movement:</u> move your text/shape frame-by-frame with <i>utils.frames</i> and calculate current position with <i>math.bezier</i>.
+<br><br>
+<p>A lot is possible by combining ASS tags and using NyuFX functions, so try to design completely new effects.
+
+<h3><a name="6">There's no function for border pixels?</a></h3>
+<p>That's right, there's none, but anyhow it's possible.
+<p>Pseudocode:
+<table bgcolor="#FFFFFF"><tr><td><pre style="margin-bottom: 0px;">GET FILL PIXELS BY FILL SHAPE
+CONVERT FILL SHAPE TO OUTLINE SHAPE
+GET OUTLINE PIXELS BY OUTLINE SHAPE
+REMOVE ALL PIXELS FROM OUTLINE PIXELS WHICH HAVE THE SAME POSITION LIKE ANY OPAQUE FILL PIXEL
+OUTLINE PIXELS ARE BORDER PIXELS NOW</pre></td></tr></table>
+<p>Also, look into the examples with pixels.
+
+<h3><a name="7">My text pixels and shapes aren't absolutely correct?!</a></h3>
+<p>Text has to be rendered with 64-fold size and downscaled to original size to appear like VSFilter displays it.
+<p>NyuFX renders text with 8-fold size for conserving performance, so it's just a very close approximation.
+<p>Try to use video resolutions <b>>= 720p</b>, other fonts or just use pixels & shapes without the original line in comparison.
+
+<h3><a name="8">Where's value/function ***?</a></h3>
+<p>Maybe it doesn't exist?!
+<p>Write it by yourself and share your code to extend NyuFX for the next version.
+
+<h3><a name="9">How far can i go?</a></h3>
+<p>Your limitation is mainly the size of generated output file. Too big files cannot be loaded or encoded, so try to stay  below 200 Megabytes.
+<p>Some tricks to reduce the number of dialog lines and their text length are helping to extend your possibilities.
+<p>For very detailed 3D effects you have to use other programs like AFX, because an ASS file with such effects could be above multiple Gigabytes.
+<p>NyuFX and ASS format are for 2D effects even though they can fake 3D.
+
+<h3><a name="10">Where i get help?</a></h3>
+<p><a href="http://forum.youka.de">NyuFX forum</a>
+
+<h3><a name="11">I've found a bug!?</a></h3>
+<p>Firstly open a thread in Q&A section of NyuFX forum to report it.
+<p>It couldn't be a bug or is already fixed, but if you're alright, a developer will read it.
+
+</body>
+</html>
