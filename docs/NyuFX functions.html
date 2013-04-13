@@ -60,8 +60,10 @@
 </td></tr>
 <tr><td class="index_element"><span class="index_title">Math</span><br>
 <p><a href="#math_bezier">math.bezier</a>
+<p><a href="#math_degree">math.degree</a>
 <p><a href="#math_distance">math.distance</a>
 <p><a href="#math_ellipse">math.ellipse</a>
+<p><a href="#math_ortho">math.ortho</a>
 <p><a href="#math_randomsteps">math.randomsteps</a>
 <p><a href="#math_randomway">math.randomway</a>
 <p><a href="#math_rotate">math.rotate</a>
@@ -76,6 +78,7 @@
 <p><a href="#shape_heart">shape.heart</a>
 <p><a href="#shape_move">shape.move</a>
 <p><a href="#shape_rectangle">shape.rectangle</a>
+<p><a href="#shape_ring">shape.ring</a>
 <p><a href="#shape_split">shape.split</a>
 <p><a href="#shape_star">shape.star</a>
 <p><a href="#shape_tooutline">shape.tooutline</a>
@@ -89,6 +92,7 @@
 <tr><td class="index_element"><span class="index_title">Tables</span><br>
 <p><a href="#table_append">table.append</a>
 <p><a href="#table_copy">table.copy</a>
+<p><a href="#table_create">table.create</a>
 <p><a href="#table_max">table.max</a>
 <p><a href="#table_tostring">table.tostring</a>
 </td></tr>
@@ -262,6 +266,14 @@ print( point[1] .. " / " .. point[2] .. " / " .. point[3] )
 </td></tr></table>
 <i>Bezier curves allow non-linear movements and look mostly better than multiple linear moves.</i><br>
 <br>
+<a name="math_degree"><b><font size=4><font color=#00E000>DEG = </font> <a href="#">math.degree</a>(<font color=#FF0000>VEC1, VEC2</font>)</font></b></a><br>
+Calculates the degree between two 3D vectors. Each vector is a table containing 3 numbers.<br>
+<table class="example_box"><tr><td>
+<pre>print(math.degree({1, 1, 0}, {1, 0, 0}))
+>>-45</pre>
+</td></tr></table>
+<i>A lot of radial effects need calculations with vectors and the degree between them.</i><br>
+<br>
 <a name="math_distance"><b><font size=4><font color=#00E000>LENGTH = </font> <a href="#">math.distance</a>(<font color=#FF0000>WIDTH, HEIGHT[, DEPTH]</font>)</font></b></a><br>
 Calculates distance in 2D/3D room. Width, height and depth describing the vector in this room.<br>
 <table class="example_box"><tr><td>
@@ -280,6 +292,19 @@ print( x .. " / " .. y )
 >>300 / 250</pre>
 </td></tr></table>
 <i>An ellipse can be a circle or an oval. Use it for round moves.</i><br>
+<br>
+<a name="math_ortho"><b><font size=4><font color=#00E000>O_VEC = </font> <a href="#">math.ortho</a>(<font color=#FF0000>VEC1, VEC2</font>)</font></b></a><br>
+Calculates the orthogonal vector of two 3D vectors. Each vector is a table containing 3 numbers.<br>
+<table class="example_box"><tr><td>
+<pre>print(table.tostring(
+	math.ortho({1, 0, 0}, {0, 0, 1})
+))
+>>table: 02045598
+>>	[1] = 0
+>>	[2] = -1
+>>	[3] = 0</pre>
+</td></tr></table>
+<i>In 2D, the orthogonal of a line vector and a depth vector can be the straight left or right line of the given line.</i><br>
 <br>
 <a name="math_randomsteps"><b><font size=4><font color=#00E000>RANDOM_NUMBER = </font> <a href="#">math.randomsteps</a>(<font color=#FF0000>START, END, STRIDE</font>)</font></b></a><br>
 Returns random number from start + x*stride until end.<br>
@@ -395,6 +420,14 @@ Returns a shape command of a rectangle with given width and height.<br>
 </td></tr></table>
 <i>A rectangle with width=1 and height=1 is a pixel.</i><br>
 <br>
+<a name="shape_ring"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.ring</a>(<font color=#FF0000>OUTER_RADIUS, INNER_RADIUS</font>)</font></b></a><br>
+Returns a shape command of a ring with given inner and outer radius.<br>
+<table class="example_box"><tr><td>
+<pre>print(shape.ring(100,80))
+>>m 0 100 b 0 100 0 0 100 0 100 0 200 0 200 100 200 100 200 200 100 200 100 200 0 200 0 100 m 20 100 b 20 100 20 180 100 180 100 180 180 180 180 100 180 100 180 20 100 20 100 20 20 20 20 100</pre>
+</td></tr></table>
+<i>A ring with increasing inner radius, starting from 0, can look like an outfading point. </i><br>
+<br>
 <a name="shape_split"><b><font size=4><font color=#00E000>SHAPE = </font> <a href="#">shape.split</a>(<font color=#FF0000>SHAPE[, LINE_LENGTH]</font>)</font></b></a><br>
 Splits shape bezier curves into lines. Additional, it splits lines into shorter segments with maximum given length.<br>
 <table class="example_box"><tr><td>
@@ -490,6 +523,19 @@ print( t1[1] )
 >>"hello"</pre>
 </td></tr></table>
 <i>Creates a full copy and the original stays unchanged.</i><br>
+<br>
+<a name="table_create"><b><font size=4><font color=#00E000>TABLE = </font> <a href="#">table.create</a>(<font color=#FF0000>ARRAY_SIZE, MAPPER_SIZE</font>)</font></b></a><br>
+Creates a table with preallocated size.<br>
+<table class="example_box"><tr><td>
+<pre>local t = table.create(1000, 5)
+for i=1, 1000 do
+	t[i] = true
+end
+for i=97, 101 do
+	t[string.char(i)] = true
+end</pre>
+</td></tr></table>
+<i>Tables with preknown size should be created with this function for better performance.</i><br>
 <br>
 <a name="table_max"><b><font size=4><font color=#00E000>SIZE = </font> <a href="#">table.max</a>(<font color=#FF0000>TABLE</font>)</font></b></a><br>
 Returns the size of given table (numeric + literal indices).<br>
