@@ -1,6 +1,6 @@
 # NyuFX
 ---
-##Definition
+## Definition
 **NyuFX** is an application to create ASS (Advanced Substation Alpha) files with karaoke effects.
 
 Editors for working with Lua and ASS files, text & progressbar output fields and some other features are part of the graphical user interface for comfortable effect creation.
@@ -10,7 +10,7 @@ Pre-calculated values and graphic+media functions allow advanced effects without
 
 It's recommend to learn Lua and ASS before usage, but even without it's possible to use NyuFX because of easy learning with some examples.
 
-##Build
+## Build
 NyuFX has a project file for MSVC++10 (see ***src/NyuFX.vcxproj***).
 
 * Open the project file.
@@ -21,5 +21,5 @@ NyuFX has a project file for MSVC++10 (see ***src/NyuFX.vcxproj***).
 
 For the installer you need NSIS to execute the script ***installer/installer.nsi***, but before add *ASSDraw3.exe* and *ASSDraw3.chm* (comes with Aegisub) to complete required files.
 
-##Help
-Forum: http://forum.youka.de
+## Help
+NyuFX is deprecated. Have a look at [PyonFX](https://github.com/CoffeeStraw/PyonFX).
